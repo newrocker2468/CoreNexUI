@@ -1,0 +1,58 @@
+.card_img {
+  width: 50dvw;
+max-height: 50dvh;
+height:inherit;
+  object-fit: cover;
+  object-position: center;
+   border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+
+ transition: transform 0.1s ease-in-out
+}
+
+.card_img::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  border-radius: 1.5rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: 
+    inset 60px 0px 60px -30px rgba(0, 0, 0, 1);
+
+  z-index: 2;
+}
+
+.card_desc {
+  width: 100%;
+  border-radius: 1.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.card_desc > h2 {
+  text-align: center;
+  margin: 1rem;
+}
+.card_desc > p {
+  text-align: center;
+  margin: 1rem;
+}
+.card {
+  margin: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40dvh;
+width: 78dvw;
+     border: 2px solid #515151;
+  border-radius: 2rem;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

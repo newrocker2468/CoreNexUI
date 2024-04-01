@@ -1,0 +1,11 @@
+import { FunctionComponent } from "react";
+declare module "lucide-react" {
+  export const Moon: FunctionComponent;
+  export const Sun: FunctionComponent;
+}
+
+declare module "components/NavTest" {
+  const NavTest: FunctionComponent; 
+  export default NavTest;
+}
+

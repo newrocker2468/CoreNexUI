@@ -1,0 +1,14 @@
+.my-input{
+    width: 26rem !important;
+}
+.Logfooter,.FooterAlign{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 1rem;
+    width: 80%;
+    max-width: 35em;
+}
+.FooterAlign{
+    flex-direction: row;
+}
