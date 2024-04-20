@@ -26,6 +26,11 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
     shadowRoot.innerHTML = `
     <style>
       ${htmlcssPairs.css}
+      * {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
       body {
         height: 100vh;
         margin: 0;
@@ -97,8 +102,8 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
           backgroundColor: "#e8e8e8",
           padding: "1rem",
           // width: "100%",
-          width: "300px",
-          minHeight: "320px",
+          width: "19rem",
+          minHeight: "20rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

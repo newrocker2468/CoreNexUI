@@ -6,6 +6,8 @@ import Btn from '@/components/Btn';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CssElement from '@/components/CssElement';
+import "normalize.css";
+
 export default function Csselements() {
   const [htmlCssPairs, setHtmlCssPairs] = useState([]);
 
