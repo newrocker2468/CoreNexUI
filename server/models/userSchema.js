@@ -24,12 +24,21 @@ const userSchema = mongoose.Schema(
       image: String,
       bio: String,
     },
-    email: String,
+    email: {
+      type: String,
+      unique: true,
+    },
     lastLoggedInWith: String,
     createdAt: {
       type: Date,
       default: Date.now,
     },
+    cssElements: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CssElement",
+      },
+    ],
   },
   { timestamps: true }
 );

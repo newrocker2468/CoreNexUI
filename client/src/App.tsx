@@ -14,6 +14,7 @@ import { useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Csselements from "./Pages/Csselements";
 import Editor from "./Pages/Editor";
+import ViewCsselement from "./components/ViewCsselement";
 function App() {
   const [user, setUser] = useState({
     userName: "",
@@ -48,7 +49,8 @@ function App() {
                 element={<ChallengeDescription />}
               />
               <Route path='/Csselements' element={<Csselements />} />
-              <Route path='/Editor' element={<Editor />} />
+              <Route path='/editor/create/:id' element={<Editor />} />
+              <Route path='/editor/:id' element={<ViewCsselement />} />
             </Routes>
           </ThemeProvider>
         </NextUIProvider>

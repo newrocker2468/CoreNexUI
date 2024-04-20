@@ -29,7 +29,7 @@ const SideBar = () => {
   return (
     <>
       {" "}
-      <ScrollShadow size={120} className='w-[34dvh] h-[50dvh] ' hideScrollBar>
+      <ScrollShadow size={120} className='w-[27dvh] h-[50dvh] ' hideScrollBar>
         <div
           style={
             {

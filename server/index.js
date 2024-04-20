@@ -10,6 +10,7 @@ const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
+const CssElementdb = require("./models/CssElementSchema");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -297,6 +298,63 @@ app.post("/csschallengesget", async (req, res) => {
     res.status(500).send("An error occurred while fetching CSS challenges.");
   }
 });
+
+app.post("/editor/create/:id", async (req, res) => {
+  const { id } = req.params;
+
+if(!req.body.login){
+  console.log("not login");
+  res.json({ message: "You are not login" }).status(400);
+  return;
+}
+ let csselements;
+try{
+  if (req.body.login || id && req.body.html && req.body.css) {
+  const user = await userdb.findOne({ email: req.body.email});
+  csselements = new CssElementdb({
+    id: id,
+    html: req.body.html,
+    css: req.body.css,
+    user:user._id
+  });
+} 
+await csselements.save();
+  res.json({ message: "Code saved successfully." }).status(200);
+}
+catch(err){
+  res.json({ message: "Code not saved,something went wrong" }).status(400);
+  console.log(err);
+}
+  // CssElementdb.save();
+
+}
+
+)
+
+
+
+app.get("/allcsselements", async (req, res) => {
+  try {
+    const CssElements = await CssElementdb.find({});
+    res.status(200).json(CssElements);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching CSS elements.");
+  }
+});
+
+
+app.get("/editor/:id", async (req, res) => {
+  try {
+    const CssElements = await CssElementdb.findOne({_id:req.params.id});
+    res.status(200).json(CssElements);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching CSS elements.");
+  }
+});
+
+
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");

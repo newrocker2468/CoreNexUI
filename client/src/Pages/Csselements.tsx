@@ -1,14 +1,58 @@
 import Sidebar from '@/components/SideBar';
 import LiveEditor from '@/components/LiveEditor';
+import { v4 as uuidv4 } from "uuid";
 import { Link } from 'react-router-dom';
+import Btn from '@/components/Btn';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import CssElement from '@/components/CssElement';
 export default function Csselements() {
+  const [htmlCssPairs, setHtmlCssPairs] = useState([]);
+
+useEffect(() => {
+  // Replace with your own server URL and endpoints
+  axios
+    .get("http://localhost:3000/allcsselements")
+    .then((response) => {
+      console.log(response.data);
+      const pairs = response.data.map((item: { html: string; css: string;_id:string }) => ({
+        html: item.html,
+        css: item.css,
+        id: item._id,
+      }));
+console.log(pairs);
+      setHtmlCssPairs(pairs);
+
+    })
+    .catch((error) => console.error(error));
+    console.log(htmlCssPairs);
+}, []);
+
+  const id = uuidv4();
     return (
       <>
-        <div className='flex '>
+        <div className='inline-flex'>
           <Sidebar />
-          <h1 className='text-center '>
-<Link to='/Editor'>Editor</Link>
-          </h1>
+
+          <div className='grid'>
+            <Link
+              to={`/editor/create/${id}`}
+              className='self-center relative top-[-1rem]'
+            >
+              <Btn Text='Create' color='primary' />
+            </Link>
+
+            <div className='flex flex-wrap justify-center'>
+              {htmlCssPairs.map(
+                (pair: { id: string; html: string; css: string }) => (
+    
+                    <div className='m-3'>
+                      <CssElement htmlcssPairs={pair} key={uuidv4()} />
+                    </div>
+                )
+              )}
+            </div>
+          </div>
         </div>
       </>
     );
