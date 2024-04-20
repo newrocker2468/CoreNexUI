@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link as NextUILink } from "@nextui-org/react";
+import Link from "@/components/Link";
 import { ModeToggle } from "@/components/mode-toggle.jsx";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo.tsx";
 import { useTheme } from "./theme-provider";
-import { useEffect,useState } from "react";
-
+import { useContext, useEffect, useState } from "react";
 import LoginWithEmail from "@/components/LoginWithEmail";
 import {
   NavigationMenu,
@@ -21,7 +21,8 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
-
+import UserContext from "./UserContext";
+import { Link as RouterLink} from "react-router-dom";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -62,79 +63,101 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 export default function NavTest() {
+  const navigate = useNavigate();
   const { theme } = useTheme();
-  const [isloggedin, setIsLoggedIn] = useState(false);
-  const [image, setImage] = useState(
-    ""
-  );
-  const [userName, setUserName] = useState("");
- const navigate = useNavigate();
-const [userdata, setUserData] = useState({});
-const [description, setDescription] = useState("CoreNex UI User");
-const [avatarProps, setAvatarProps] = useState(
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png"
-);
-const getUserData = async () => {
+  const { user, setUser } = useContext(UserContext);
 
-  try{
-    const response = await axios("http://localhost:3000/login/sucess", {
-      withCredentials: true,
-    });
-    
-    console.log(userdata);
-    setUserData(response.data.user)
-    setIsLoggedIn(true);
-  setUserName(response.data.user.displayName);
-setDescription(response.data.user.description)
+  const getUserData = async () => {
+    try {
+      const response = await axios("http://localhost:3000/login/sucess", {
+        withCredentials: true,
+      });
+    const img = new Image();
+    img.src = response.data.user.google.image;
 
+//NOTE - For High resolution images
+let highres_img = response.data.user.google.image;
+      if (response.data.user.google.image.includes("s96-c")) {
+        highres_img =response.data.user.google.image.replace("s96-c", "s500-c");
+      } else if (response.data.user.google.image.includes("sz=50")) {
+        highres_img = response.data.user.google.image.replace(
+          "sz=50",
+          "sz=240"
+        );
+      }
+console.log(response.data)
 
-  setImage(response.data.user.image);
-  setAvatarProps(response.data.user.image);
-
-console.log(response.data.user.image)
-console.log(image)
-  }
-  catch(err){
-console.log(err)
-  }
+if(response.data.user.lastLoggedInWith =="google"){
+          setUser((prevState) => ({
+            ...prevState,
+            userName: response.data.user.google.displayName,
+            avatarProps: img.src,
+            highres_img: highres_img,
+            email: response.data.user.email,
+            isLoggedIn: true,
+            bio: response.data.user.google.bio,
+          }));
 
 }
-useEffect(() => {
-  getUserData();
-}, []);
-
-
-const handleLogout = async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/logout", {
-      withCredentials: true,
-    });
-    console.log(response);
-    setUserData({});
-    setIsLoggedIn(false);
-    navigate("/login");
-  } catch (err) {
-    console.error(err);
-  }
-};
+else{
+  img.src = response.data.user.github.image;
+  highres_img = response.data.user.github.image;
+        setUser((prevState) => ({
+          ...prevState,
+          userName: response.data.user.github.displayName,
+          avatarProps: img.src,
+          highres_img: highres_img,
+          email: response.data.user.email,
+          isLoggedIn: true,
+          bio: response.data.user.github.bio,
+        }));
+}
 
 
 
+      //NOTE - not sure whether this makes a diiference or not
+   
+      // img.src = response.data.user.image;
 
+      // console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  useEffect(() => {
+    getUserData();
+  }, []);
 
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/logout", {
+        withCredentials: true,
+      });
+      // console.log(response);
+      
+      setUser((prevState) => ({
+        ...prevState,
+        userName: "",
+        avatarProps:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+          highres_img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+        isLoggedIn: false,
+        Loginwithgoogle: false,
+        Loginwithgithub: false,
+      }))
 
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
       <div
         className={`flex align-center justify-around mb-[1.3em] mt-[0.9rem] text-center`}
       >
-        {/* <img
-          src='https://lh3.googleusercontent.com/a/ACg8ocKeLTcdHWK3LoEVoB6TVjUK-NSzQOG0bEcuO5z51X88=s96-c'
-          alt=''
-          className='w-[1.8rem]'
-        /> */}
         <div className='flex align-center justify-around w-[5rem]'>
           <Logo
             fill={theme === "dark" ? "#FFFFFF" : "#000000"}
@@ -176,22 +199,47 @@ const handleLogout = async () => {
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href='/home' title='Introduction'>
-                      Welcome to our platform. Explore a wide range of features
-                      and services tailored for you.
+                    <ListItem to='/home' title='Introduction'>
+                      Re-usable components built using Radix UI and Tailwind
+                      CSS.
                     </ListItem>
-                    <ListItem href='/login' title='Login'>
-                      Secure user authentication. Log in to access your
-                      personalized settings and content.
-                    </ListItem>
-                    <ListItem href='/signup' title='Sign Up'>
-                      Easy and quick user registration. Sign up to join our
-                      community and start exploring.
-                    </ListItem>
-                    <ListItem href='/signup' title='Sign Up'>
-                      Easy and quick user registration. Sign up to join our
-                      community and start exploring.
-                    </ListItem>
+             
+             
+                    {/* <li data-radix-collection-item>
+                      <RouterLink
+                        to={"/home"}
+                        className='block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+                        data-radix-collection-item='true'
+                      >
+                        <div className='text-sm font-bold leading-none'>
+                          Home
+                        </div>
+                        <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
+                          Welcome to our platform. Explore a wide range of
+                          features and services tailored for you.
+                        </p>
+                      </RouterLink>
+                    </li> */}
+
+                    {!user.isLoggedIn ? (
+                      <ListItem to='/login' title='Login'>
+                        Secure user authentication. Log in to access your
+                        personalized settings and content.
+                      </ListItem>
+                    ) : (
+                      <ListItem to='/profile' title='Profile'>
+                        Manage your profile settings and preferences. View and
+                        edit your personal information.
+                      </ListItem>
+                    )}
+                    {!user.isLoggedIn ? (
+                      <ListItem to='/signup' title='Sign Up'>
+                        Easy and quick user registration. Sign up to join our
+                        community and start exploring.
+                      </ListItem>
+                    ) : (
+                      ""
+                    )}
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -205,25 +253,30 @@ const handleLogout = async () => {
                       <ListItem
                         key={component.title}
                         title={component.title}
-                        href={component.href}
+                        to={component.href}
                       >
                         {component.description}
                       </ListItem>
                     ))}
                   </ul>
+
+                  {/* className='no-underline text-current text-sm leading-none' */}
+                  {/* className='line-clamp-2 text-sm leading-snug text-muted-foreground' */}
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link to='/home' className={navigationMenuTriggerStyle()}>
-                  <span className='font-bold'>Documentation</span>
-                </Link>
+                <RouterLink
+                  to='/docs'
+                  className={`${navigationMenuTriggerStyle()}  no-underline text-current text-sm leading-none`}
+                >
+                  <span className='font-bold '>Documentation</span>
+                </RouterLink>
               </NavigationMenuItem>
               <div
                 className='flex justify-center align-center'
                 style={{ marginLeft: "2rem" }}
               >
                 <ModeToggle />
-          
               </div>
             </NavigationMenuList>
           </NavigationMenu>
@@ -231,21 +284,22 @@ const handleLogout = async () => {
 
         <div>
           {/* <NextuiBtn name={userName} avatarProps={} description ={description}/> */}
-          {isloggedin ? (
+          {user.isLoggedIn ? (
             <div className='flex justify-center align-center pt-1.5'>
               <Userdata
-                name={userName}
-                image={avatarProps}
-                description={description}
+                name={user.userName}
+                image={user.avatarProps}
+                description={user.description}
                 handleLogout={handleLogout}
               />
-              {/* <App/> */}
+              {/* //REVIEW - For testing purpose only  */}
+              {/* <img src={`${image}`} alt='user image' /> */}
             </div>
           ) : (
-            <div className='fixed right-[4rem] top-[1.1rem]'>
-              <Link to='/login' className='btn'>
+            <div className='right-[4rem] top-[1.1rem]'>
+              <NextUILink href='/login' className='btn'>
                 <LoginWithEmail />
-              </Link>
+              </NextUILink>
             </div>
           )}
         </div>
@@ -254,17 +308,15 @@ const handleLogout = async () => {
   );
 }
 
-
-
 const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
+  React.ElementRef<typeof RouterLink>,
+  React.ComponentPropsWithoutRef<typeof RouterLink>
+>(({ className, title, children, to, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
-        <a
-          ref={ref}
+        <RouterLink
+          to={to}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
             className
@@ -275,10 +327,10 @@ const ListItem = React.forwardRef<
           <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
             {children}
           </p>
-        </a>
+        </RouterLink>
       </NavigationMenuLink>
-
     </li>
   );
 });
 ListItem.displayName = "ListItem";
+

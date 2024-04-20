@@ -1,7 +1,7 @@
 
 import "../Styles/Login.css";
 // import RandomQuoteGenerator from "@/middlewares/RandomQuoteGenerator";
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import EmailInput from "@/components/EmailInput.tsx";
 import "../output.css";
 import Btn from "@/components/Btn";
@@ -13,7 +13,9 @@ import AnchorLink from "@/components/AnchorLink";
 import { useNavigate } from "react-router-dom";
 import Alertcustom from "@/components/Alertcustom.tsx";
 import { useFormik } from "formik";
-
+import codeanimation from "../videos/code_animation (1).mp4";
+import AnimatedCode from "@/components/AnimatedCode";
+import UserContext from "@/components/UserContext";
 type FormikValues = {
   email: string;
   password: string;
@@ -27,6 +29,7 @@ type FormikValues = {
      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ||
      (value.match(/\./g) || []).length >= 2
    ) {
+ 
      error = "Invalid email address";
    }
    return error;
@@ -34,14 +37,31 @@ type FormikValues = {
 
  function validatePassword(value: FormikValues["password"]){
    let error;
-   if (value === "admin1") {
-     error = "Nice try!";
+   if (!value) {
+     error = "Required";
+   } 
+   else if (value.length < 8) {
+     error = "Password must be atleast 8 characters long";
    }
+  //  else if (!/(?=.*[0-9])/.test(value)) {
+  //    error = "Password must contain a number";
+  //  }
+  //   else if (!/(?=.*[a-z])/.test(value)) {
+  //     error = "Password must contain a lowercase letter";
+  //   }
+  //   else if (!/(?=.*[A-Z])/.test(value)) {
+  //     error = "Password must contain an uppercase letter";
+  //   }
+  //   else if (!/(?=.*[!@#$%^&*])/.test(value)) {
+  //     error = "Password must contain a special character";
+  //   }
+
    return error;
  }
 
 
 export default function Login() {
+    
  const formik = useFormik({
    initialValues: {
      email: "",
@@ -83,12 +103,20 @@ export default function Login() {
 
     if (emailError) {
       errors.email = emailError;
+          setEmailisInvalid(true);
+          return errors;
     }
-
+else{
+    setEmailisInvalid(false);
+}
     if (passwordError) {
       errors.password = passwordError;
+      setPassisInvalid(true);
+      return errors;
     }
-
+else{
+     setPassisInvalid(false);
+}
     return errors;
     
    },
@@ -97,13 +125,15 @@ export default function Login() {
 const loginwithgoogle = async () => {
   window.open("http://localhost:3000/auth/google/callback", "_self");
 };
+
   const loginwithgithub = async () => {
     window.open("http://localhost:3000/auth/github/callback", "_self");
   };
 
 const [Response, setResponse] = useState("")
 const [loading, setLoading] = useState(false);
-
+  const [EmailisInvalid, setEmailisInvalid] = useState(false);
+   const [PassisInvalid, setPassisInvalid] = useState(false);
 const [isvisible, setIsvisible] = useState(false);
   const [quote, setQuote] = useState(
     "Globalization, as defined by rich people like us, is a very nice thing... you are talking about the Internet, you are talking about cell phones, you are talking about computers. This doesn't affect two-thirds of the people of the world."
@@ -133,51 +163,63 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
           <ReloadIcon className='animate-spin h-10 w-10' />
         </div> */}
 
-     
-          <div className='flex justify-center align-center'>
-            {/* <Alertcustom
+        <div className='flex justify-center align-center'>
+          {/* <Alertcustom
               message={Response}
               isvisible={isvisible}
               setIsvisible={setIsvisible}
             /> */}
-          </div>
-          <div className='Parent-Box'>
-            <div className='Left'>
-              <div className='Box'>
-                <h2 className='h2-Login-leftbox'>Login</h2>
-                <div className='inner-box'>
-                  <h1 className='innerBox-h1'> Random Quote</h1>
-                  <div className='ParaAlign'>
-                    <p>{quote}</p>
-                  </div>
-                </div>
+        </div>
+        <div className='Parent-Box'>
+          <div className='Left'>
+            <div className='Box max-w-2xl w-[50dvw] min-w-sm'>
+              <h2 className='h2-Login-leftbox'>Login</h2>
+
+              {/* <h1 className='innerBox-h1'> Random Quote</h1> */}
+
+              <div>
+                {" "}
+                <AnimatedCode />
               </div>
+              {/* <div id='video-background'>
+                    <video autoPlay muted loop id='myVideo'>
+                      <source src={`${codeanimation}`} type='video/mp4' />
+                    </video>
+
+                    <div className='content w-[50vw]'>
+                      <h1>Heading</h1>
+                      <p>Lorem ipsum...</p>
+                    </div>
+                   
+                  </div> */}
+              {/* <p>{quote}</p> */}
             </div>
+          </div>
 
-            <div className='Right'>
-              <h1 className='h1-Login'>Welcome Back</h1>
-              <h3 className='h3-login'>Log in to your account to continue</h3>
-              <div className='Box'>
-                <Btn
-                  btnStyles='w-[400px] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
-                  logo={GoogleIcon}
-                  Text='Continue with Google'
-                  onClick={loginwithgoogle}
-                />
-                
-                <Btn
-                  btnStyles='w-[400px] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
-                  logo={GithubIcon}
-                  Text='Continue with Github'
-                  onClick={loginwithgithub}
-                />
+          <div className='Right'>
+            <h1 className='h1-Login'>Welcome Back</h1>
+            <h3 className='h3-login'>Log in to your account to continue</h3>
+            <div className='Box'>
+              <Btn
+                btnStyles='w-[400px] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
+                logo={GoogleIcon}
+                Text='Continue with Google'
+                onClick={loginwithgoogle}
+              />
 
-                <div className='hrAlign'>
-                  <hr className='hr' />
-                  <h5 className='text-white'>OR</h5>
-                  <hr className='hr' />
-                </div>
-   <form onSubmit={formik.handleSubmit}>
+              <Btn
+                btnStyles='w-[400px] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
+                logo={GithubIcon}
+                Text='Continue with Github'
+                onClick={loginwithgithub}
+              />
+
+              <div className='hrAlign'>
+                <hr className='hr' />
+                <h5 className=''>OR</h5>
+                <hr className='hr' />
+              </div>
+              <form onSubmit={formik.handleSubmit}>
                 <EmailInput
                   id='email'
                   variant='flat'
@@ -186,6 +228,7 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                   onChange={formik.handleChange}
                   validate={validateEmail}
                   errors={formik.errors}
+                  isInvalid={EmailisInvalid}
                 />
                 <Alertcustom
                   message={Response}
@@ -194,10 +237,13 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                 />
                 <PasswordInput
                   variant='flat'
-                  placeholder='enter your password'
+                  placeholder='Enter your password'
                   name='password'
                   value={formik.values.password}
                   onChange={formik.handleChange}
+                  validate={validatePassword}
+                  errors={formik.errors}
+                  isInvalid={PassisInvalid}
                 />
 
                 <div className='Logfooter'>
@@ -217,10 +263,10 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                   <span>Need to Create New Account ?</span>
                   <AnchorLink text='Sign Up' astyles='grey' to='/signup' />
                 </div>
-        </form>
-              </div>
+              </form>
             </div>
           </div>
+        </div>
       </>
     );
   }

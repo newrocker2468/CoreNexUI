@@ -11,6 +11,31 @@ font-weight: bold;
     text-align: center;
 }
 
+/* Style the video: 100% width and height to cover the entire window */
+#myVideo {
+    position: absolute;
+right: 10px;
+    top: -10rem;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#video-background{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+
+}
+.content {
+    position: fixed;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #f1f1f1;
+    width: 100%;
+    padding: 20px;
+}
 
 body{
     /* font-family: "Audiowide", sans-serif;
@@ -21,22 +46,17 @@ body{
 
 .Parent-Box {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
-.Left{
+/* .Left{
 margin: none;
 width: 40%;
 margin: 0.5rem;
 
-}
+} */
 
-.Left > .Box{
-/* border-radius: 30px;
-border: 1px solid rgb(255, 255, 255);
-background-color: black; */
-/* color: rgb(255, 255, 255); */
-}
+
 .h2-Login-leftbox{
     text-align: center;
 
@@ -47,7 +67,7 @@ background-color: black; */
 }
 
 .inner-box{
-    height: 100vh;
+    height: auto;
 border-radius: 30px;
     margin: 2.5rem;
     margin-top: 10px;
@@ -60,21 +80,16 @@ border-radius: 30px;
 
  .Right{
 margin: 0.5rem;
-width: 60%;
-/* border: 1px solid black; */
+width: 50dvw;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+flex-direction: column;
 border-radius: 30px;
 }  
-.Right >.Box{
-/* border: 1px solid black; */
 
-}
 p{
     text-align: center;
-}
-.ParaAlign{
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .Right > .Box{

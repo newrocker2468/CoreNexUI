@@ -9,15 +9,14 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const userdb = require("./models/userSchema");
-
-
+const Csschallengesdb = require("./models/csschallengesSchema");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://firebasestorage.googleapis.com"],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
@@ -53,15 +52,46 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await userdb.findOne({ googleId: profile.id });
+        let user = await userdb.findOne({ email: profile.emails[0].value });
         if (!user) {
           user = new userdb({
-            googleId: profile.id,
-            displayName: profile.displayName,
+            google: {
+              Id: profile.id,
+              displayName: profile.displayName,
+              image: profile.photos[0].value,
+              bio: "",
+            },
+            github: {
+              Id: "",
+              displayName: "",
+              image: "",
+              bio: "",
+            },
             email: profile.emails[0].value,
-            image: profile.photos[0].value,
+            lastLoggedInWith: "google",
           });
+
           await user.save();
+        } else {
+          console.log("User already exists");
+          user = await userdb.findOneAndUpdate(
+            // Assign the result to user
+            { email: profile.emails[0].value }, // Use the correct field for email
+            {
+              $set: {
+                google: {
+                  Id: profile.id,
+                  displayName: profile.displayName,
+                  image: profile.photos[0].value,
+                  bio: "",
+                },
+                lastLoggedInWith: "google",
+              },
+            },
+            { new: true }
+          );
+          console.log(user); // Log the updated user
+          return done(null, user);
         }
 
         return done(null, user);
@@ -103,24 +133,60 @@ passport.use(
       callbackURL: "/auth/github/callback",
       authorizationURL:
         "https://github.com/login/oauth/authorize?prompt=consent",
+      scope: ["user", "repo"],
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
-        let user = await userdb.findOne({ githubId: profile.id });
+        console.log("hi");
+        console.log(profile._json.bio);
+        let user = await userdb.findOne({ email: profile._json.blog });
         if (!user) {
           user = new userdb({
-            githubId: profile.id,
-            displayName: profile.displayName,
-            email: profile._json.blog,
-            image: profile.photos[0].value,
+            github: {
+              Id: profile.id,
+              displayName: profile.displayName,
+              image: profile.photos[0].value,
+              bio: profile._json.bio,
+            },
+            lastLoggedInWith: "github",
           });
+
           await user.save();
+        } else {
+          console.log("User already exists");
+          user = await userdb.findOneAndUpdate(
+            // Assign the result to user
+            { email: profile._json.blog }, // Use the correct field for email
+            {
+              $set: {
+                github: {
+                  Id: profile.id,
+                  displayName: profile.displayName,
+                  image: profile.photos[0].value,
+                  bio: profile._json.bio,
+                },
+                lastLoggedInWith: "github",
+                email: profile._json.blog,
+              },
+            },
+
+            { new: true }
+          );
+          console.log(user);
+
+          return done(null, user);
         }
+
+        console.log(user); // Log the updated user
         return done(null, user);
       } catch (err) {
         console.log(err);
       }
+
       console.log(profile);
+
+      console.log("hi");
+      console.log(profile._json);
       done(null, profile);
     }
   )
@@ -128,7 +194,7 @@ passport.use(
 
 app.get(
   "/auth/github",
-  passport.authenticate("github", { scope: ["user:email"] })
+  passport.authenticate("github", { scope: ["user", "repo"] })
 );
 
 app.get(
@@ -139,16 +205,15 @@ app.get(
   })
 );
 
-// app.post("/home", (req, res) => {
-// if (
-//   req.body.username === "newrocker2468@gmail.com" &&
-//   req.body.password === "admin"
-// ) {
-//   res.json({ message: "Login Successfull" });
-// } else {
-//   res.json({ message: "Login Failed" });
-// }
-// });
+app.get("/csschallenges", async (req, res) => {
+  try {
+    const Csschallenges = await Csschallengesdb.find({});
+    res.status(200).json(Csschallenges);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching CSS challenges.");
+  }
+});
 
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
@@ -159,6 +224,78 @@ app.get("/logout", function (req, res) {
       res.status(200).send("Logged out.");
     }
   });
+});
+app.get("/csschallenges/:id", async (req, res) => {
+  let csschallenges = await Csschallengesdb.findOne({ id: req.params.id });
+  res.json({ csschallenges });
+});
+app.post("/csschallenges/:id", async (req, res) => {
+  let Csschallenges = await Csschallengesdb.findOne({ id: req.params.id });
+  if (!Csschallenges) {
+    // console.log(req.body);
+    Csschallenges = new Csschallengesdb({
+      id: req.params.id,
+      title: req.body.title,
+      sdesc: req.body.sdesc,
+      description: req.body.description,
+      img: req.body.img,
+      status: req.body.status,
+      date: req.body.date,
+    });
+    Csschallenges.save();
+    res.json({ message: "CSS challenges added successfully." });
+  } else {
+    res.json({ message: "CSS challenges already exists."});
+  }
+});
+app.post("/csschallengesupdate", async (req, res) => {
+const{id,title,sdesc,description,img,status,date}=req.body
+  try {
+    const challenges = await Csschallengesdb.findOneAndUpdate(
+      { id: id },
+      {
+        $set: {
+          title: title,
+          sdesc: sdesc,
+          description: description,
+          img: img,
+          status: status,
+          date: date,
+        },
+      },
+      { new: true }
+    );
+    console.log(challenges);
+    res.status(200).json(challenges);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while updating CSS challenges.");
+  }
+});
+app.post("/csschallengesdelete", async (req, res) => {
+  const { id } = req.body;
+  console.log("id " + id);
+  try {
+    const challenges = await Csschallengesdb.findOneAndDelete({ id: id });
+    console.log(challenges);
+    res.status(200).json({ message: "CSS challenges deleted successfully."});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message:"An error occurred while deleting CSS challenges."});
+  }
+
+})
+app.post("/csschallengesget", async (req, res) => {
+  const { id } = req.body;
+  console.log("id " + id);
+  try {
+    const challenges = await Csschallengesdb.findOne({ id: id });
+    console.log(challenges);
+    res.status(200).json(challenges);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching CSS challenges.");
+  }
 });
 
 app.listen(3000, () => {

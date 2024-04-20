@@ -6,9 +6,10 @@ import { BrowserRouter } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider.jsx";
 
-
+import RootLayout from './components/Alert.tsx';
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+    <RootLayout/>
     <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
     <NextUIProvider>
       <BrowserRouter>

@@ -24,15 +24,17 @@ export default function SideBarcomp() {
             },
           }}
         >
-            <header className='flex align-center justify-center'>
-          <span className='text-center'>
+          <header className='flex align-center justify-center'>
+            <span className='text-center'>
               <h1 className='ml-4'>
-            
                 <i className='fa-solid fa-house'></i> Dashboard
               </h1>
-          </span>
-            </header>
+            </span>
+          </header>
           <MenuItem component={<Link to='/home' />}> Home</MenuItem>
+          <MenuItem component={<Link to='/elements' />}> Elements</MenuItem>
+          <MenuItem component={<Link to='/Challenges' />}> Challenges</MenuItem>
+          <MenuItem component={<Link to='/Spot-Light' />}> Spot-Light</MenuItem>
           <MenuItem component={<Link to='/elements' />}> Elements</MenuItem>
           <MenuItem component={<Link to='/Challenges' />}> Challenges</MenuItem>
           <MenuItem component={<Link to='/Spot-Light' />}> Spot-Light</MenuItem>

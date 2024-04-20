@@ -4,6 +4,13 @@ declare module "lucide-react" {
   export const Sun: FunctionComponent;
 }
 
+
+declare global {
+  interface Window {
+    monaco: any;
+  }
+}
+
 declare module "components/NavTest" {
   const NavTest: FunctionComponent; 
   export default NavTest;

@@ -1,0 +1,24 @@
+.css-card-img{
+    height: 95%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 1rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.1s ease-in-out;
+}
+.css-card{
+        border-radius: 1.2rem;
+    width: 25rem;
+    height: 25rem;    
+}
+.csscards{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}

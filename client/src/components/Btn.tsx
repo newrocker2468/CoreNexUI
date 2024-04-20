@@ -1,4 +1,5 @@
 import { Button } from "@nextui-org/react";
+import { LucideIcon } from "lucide-react";
 import { FC } from "react";
 type color =
   | "default"
@@ -10,10 +11,14 @@ type color =
 interface BtnProps {
   btnStyles?: string;
   Text: string;
-  logo?: string;
+  logo?: string | LucideIcon;
   color?: color;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?:
+    | React.MouseEventHandler<HTMLButtonElement>
+    | ((id: string | undefined) => Promise<void>);
   isloading?: boolean;
+  logoWidth?: number;
+  onPress?: () => void;
 }
 const Btn: FC<BtnProps> = ({
   btnStyles,
@@ -22,16 +27,19 @@ const Btn: FC<BtnProps> = ({
   color,
   onClick,
   isloading,
+  logoWidth,
+  onPress,
 }) => {
   return (
     <>
       <Button
         size='md'
-        type="submit"
+        type='submit'
         className={`${btnStyles}`}
         color={color}
         onClick={onClick}
         isLoading={isloading}
+        onPress={onPress}
         spinner={
           <svg
             className='animate-spin h-5 w-5 text-current'
@@ -56,7 +64,7 @@ const Btn: FC<BtnProps> = ({
         }
       >
         {logo ? (
-          <div style={{ width: 28, marginRight: -1 }}>
+          <div style={{ width: logoWidth || 28, marginRight: -1 }}>
             <img src={logo} alt='' />
           </div>
         ) : (

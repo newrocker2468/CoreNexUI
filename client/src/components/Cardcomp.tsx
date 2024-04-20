@@ -31,14 +31,16 @@ export default function Cardcomp() {
               src='/images/breathing-app-icon.jpeg'
             />
             <div className='flex flex-col'>
-              <p className='text-tiny /60 text-white'>Breathing App</p>
+              <p className='text-tiny /60 text-white'>Try Now </p>
               <p className='text-tiny /60 text-white'>
-                Get a good night's sleep.
+                {/* Get a good night's sleep. */}
               </p>
             </div>
           </div>
-          <Button radius='full' size='sm'>
-            Get App
+          <Button radius='full' size='sm' color='primary'>
+            <Link to='/Csselements' className='p-5'>
+              Try
+            </Link>
           </Button>
         </CardFooter>
       </Card>
@@ -71,17 +73,17 @@ export default function Cardcomp() {
                 Get a good night's sleep.
               </p>
             </div>
-          </div>
-          <Link to='/Csschallenges'>
-            <Button
-              className='text-tiny font-bold'
-              color='primary'
-              radius='full'
-              size='sm'
-            >
+          </div>{" "}
+          <Button
+            className='text-tiny font-bold p-0 min-w-0 min-h-0'
+            color='primary'
+            radius='full'
+            size='sm'
+          >
+            <Link to='/Csschallenges' className='p-5'>
               Visit
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </CardFooter>
       </Card>
 

@@ -1,6 +1,10 @@
+import { AlertCircle } from "lucide-react";
 import { Input } from "@nextui-org/react";
 import "../Styles/FormInput.css";
 import { FC } from "react";
+import MailIcon from "../Icons/MailIcon";
+import ErrorAlert from "./ErrorAlert";
+import ErrorMessage from "./ErrorMessage";
 type Errors = {
   email?: string;
   password?: string;
@@ -15,6 +19,7 @@ interface EmailInputProps {
   id: string;
   validate?: (value: string) => string | undefined;
   errors: Errors;
+  isInvalid: boolean;
 }
 
 const EmailInput: FC<EmailInputProps> = ({
@@ -25,24 +30,36 @@ const EmailInput: FC<EmailInputProps> = ({
   id,
   validate,
   errors,
+  isInvalid,
 }) => {
   // const variants = ["flat", "bordered", "underlined", "faded"];
-console.log(errors)
+
   return (
     <div style={{ margin: 10 }} className='my-input'>
       <Input
         onChange={onChange}
-        value={value}
+        // value={value}
         isClearable={true}
         type='email'
         variant={variant}
         label='Email'
         placeholder='Enter your email'
         name={name}
+        isInvalid={isInvalid}
         id={id}
         validate={validate}
+        startContent={
+          <MailIcon className='text-xl text-default-400 pointer-events-none flex-shrink-0' />
+        }
       />
-     {errors && errors.email && <p className='text-red-500'>{errors.email}</p>}
+      {errors.email && (
+        <>
+  <ErrorMessage errors={errors} name={`${name}`}/>
+        </>
+      )}
+      {/* {errors && errors.email && (
+        <ErrorAlert title='Opps! Error' description={errors.email} />
+      )} */}
     </div>
   );
 };

@@ -5,12 +5,13 @@ import {
   DropdownMenu,
   DropdownItem,
   User,
+  Link,
 } from "@nextui-org/react";
 import {FC} from 'react';
 interface UserdataProps {
     name: string;
     description?: string;
-    image?: string;
+    image?: string |object;
     handleLogout: () => void;
   }
 
@@ -24,7 +25,6 @@ interface UserdataProps {
         <DropdownTrigger>
           <User
             as='button'
-
             avatarProps={{
               isBordered: true,
               src: `${image}`,
@@ -40,11 +40,17 @@ interface UserdataProps {
           />
         </DropdownTrigger>
         <DropdownMenu aria-label='User Actions' variant='flat'>
-          <DropdownItem key='profile' className='h-14 gap-2'>
+          <DropdownItem key='profile' className='h-14 gap-2 text-center'>
             <p className='font-bold'>Signed in as</p>
-            <p className='font-bold'>{name}</p>
+            <Link href='/profile' className='no-underline text-current'>
+              <p className='font-bold'>{name}</p>
+            </Link>
           </DropdownItem>
-          <DropdownItem key='settings'>My Settings</DropdownItem>
+          <DropdownItem key='settings'>
+            <Link href='/profile' className='no-underline text-current'>
+              My Settings
+            </Link>
+          </DropdownItem>
           <DropdownItem key='team_settings'>Team Settings</DropdownItem>
           <DropdownItem key='analytics'>Analytics</DropdownItem>
           <DropdownItem key='system'>System</DropdownItem>

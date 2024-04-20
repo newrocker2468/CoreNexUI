@@ -1,31 +1,60 @@
-import Home from "./Pages/Home"
-import './App.css'
-import {Routes,Route, useNavigate} from 'react-router-dom'
+import Home from "./Pages/Home";
+import "./App.css";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
 import NavTest from "./components/NavTest";
 import Csschallenges from "./Pages/Csschallenges";
+import ChallengeDescription from "./Pages/ChallengeDescription";
+import UserContext from "./components/UserContext";
+import Profile from "./Pages/Profile";
+import { useState } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import Csselements from "./Pages/Csselements";
+import Editor from "./Pages/Editor";
 function App() {
+  const [user, setUser] = useState({
+    userName: "",
+    data: {},
+    description: "CoreNex UI User",
+    avatarProps:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+    highres_img:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+    email: "",
+    isLoggedIn: false,
+    bio: "",
+  });
 
   const navigate = useNavigate();
+
   return (
     <>
-      <NextUIProvider navigate={navigate}>
-        <ThemeProvider defaultTheme='light'>
-        <NavTest />
-        <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/home' element={<Home />} />
-          <Route path='/Csschallenges' element={<Csschallenges />} />
-        </Routes>
-        </ThemeProvider>
-      </NextUIProvider>
+      <UserContext.Provider value={{ user, setUser }}>
+        <NextUIProvider navigate={navigate}>
+          <ThemeProvider defaultTheme='light'>
+            <NavTest />
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/signup' element={<Signup />} />
+              <Route path='/home' element={<Home />} />
+              <Route path='/Csschallenges' element={<Csschallenges />} />
+              <Route path='/Profile' element={<Profile />} />
+              <Route
+                path='/Csschallenges/:id'
+                element={<ChallengeDescription />}
+              />
+              <Route path='/Csselements' element={<Csselements />} />
+              <Route path='/Editor' element={<Editor />} />
+            </Routes>
+          </ThemeProvider>
+        </NextUIProvider>
+      </UserContext.Provider>
     </>
   );
 }
 
-export default App
+export default App;
