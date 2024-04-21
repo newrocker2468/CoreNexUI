@@ -383,6 +383,47 @@ app.post("/event/:id",async(req,res)=>{
     res.status(500).json({message:"An error has occured while fetching event "})
     
   }
+});
+
+app.post("/event/:id/create", async (req, res) => {
+  let Event;
+  try{
+Event = new Eventsdb({
+  id:req.param.id,
+  eventName:req.body.Name,
+  description:req.body.description,
+  img:req.body.img,
+  status:req.body.status,
+  date:req.body.date
+});
+Event.save();
+res.status(200).json({message:"event successfully added"})
+} catch(error){
+  console.error(error);
+  res.status(500).json({message:"an error has occured while fetching event"})
+}
+})
+
+
+app.post("/event/:id/update", async (req, res) => {
+  try{
+const Event = await Eventsdb.findByIDAndupdateOne({_id: req.params.id});
+res.status(200).json({message:"event successfully updated"})
+} catch(error){
+  console.error(error);
+  res.status(500).json({message:"an error has occured while updating event"})
+}
+   
+})
+
+app.post("/event/:id/delete", async (req, res) => {
+  try{
+const Event = await Eventsdb.findByIDAnddeleteOne({_id: req.params.id});
+res.status(200).json({message:"event successfully deleted"})
+} catch(error){
+  console.error(error);
+  res.status(500).json({message:"an error has occured while deleting event"})
+}
 })
 
 
