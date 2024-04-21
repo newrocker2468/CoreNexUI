@@ -1,17 +1,6 @@
 const mongoose = require('mongoose');
 const userSchema = mongoose.Schema(
   {
-    // googleId:String,
-    // githubId:String,
-    // displayName:String,
-    // email:String,
-    // image:String,
-    // bio:String,
-    // createdAt:{
-    //     type:Date,
-    //     default:Date.now
-    // }
-
     google: {
       Id: String,
       displayName: String,
@@ -36,7 +25,7 @@ const userSchema = mongoose.Schema(
     cssElements: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "CssElement",
+        ref: "csselements",
       },
     ],
   },

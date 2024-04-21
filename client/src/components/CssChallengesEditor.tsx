@@ -2,11 +2,11 @@ import { Textarea } from "@nextui-org/react";
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
-import { Button } from "@nextui-org/react"; 
+import { Button } from "@nextui-org/react";
 import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import Editor from "@monaco-editor/react"; 
+// import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import Editor from "@monaco-editor/react";
 import { useParams } from "react-router-dom";
 import UserContext from "./UserContext";
 import { set } from "date-fns";
@@ -15,15 +15,14 @@ function LiveEditor() {
   const { user, setUser } = useContext(UserContext);
 
   const [html, setHtml] = useState(
-    localStorage.getItem("html") || "<!--Code Here -->"
+    localStorage.getItem("challengehtml") || "<!--Code Here -->"
   );
-  const [css, setCss] = useState(localStorage.getItem("css") || "");
+  const [css, setCss] = useState(localStorage.getItem("challengecss") || "");
   console.log(id);
-  
 
   const saveCode = () => {
-    localStorage.setItem("html", html);
-    localStorage.setItem("css", css);
+    localStorage.setItem("challengehtml", html);
+    localStorage.setItem("challengecss", css);
   };
 
   function handleEditorDidMount(editor, monaco) {
@@ -535,24 +534,22 @@ function LiveEditor() {
     return () => clearTimeout(timer);
   }, [html, css]);
 
-const login = user.isLoggedIn
-const email = user.email
+  const login = user.isLoggedIn;
+  const email = user.email;
   const uploadToDatabase = () => {
-      fetch(`http://localhost:3000/editor/create/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify({ html, css, login, email }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        });
-  }
-
-
+    // fetch(`http://localhost:3000/editor/create/${id}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     credentials: "include",
+    //   },
+    //   body: JSON.stringify({ html, css, login, email }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //   });
+  };
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -586,7 +583,7 @@ const email = user.email
   `);
     doc.close();
   }, [html, css]);
-  const { theme } = useTheme();
+//   const { theme } = useTheme();
 
   return (
     <div style={{ display: "flex", justifyContent: "space-around" }}>
@@ -607,24 +604,7 @@ const email = user.email
           }}
         />
       </div>
-      {/* <Editor
-        options={{
-          minimap: {
-            enabled: false,
-          },
-          fontFamily:
-            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-          fontSize: 16,
-          wordWrap: "on",
-        }}
-        height='90vh'
-        defaultLanguage='html'
-        value={html}
-        onChange={(newValue) => setHtml(newValue)}
-        defaultValue='// Enter Your Html Code Here'
-        onMount={handleEditorDidMount}
-        className='border-2 border-black rounded overflow-hidden'
-      /> */}
+
       <div className='flex  flex-col h-[60dvh]  w-[48dvw] '>
         <div className='flex justify-end absolute right-0'>
           <div className='mr-[4rem]'>
@@ -641,19 +621,6 @@ const email = user.email
             <Card>
               <CardBody>
                 <div style={{ maxHeight: "400px", overflowY: "hidden" }}>
-                  {/* <CodeEditor
-                    value={html}
-                    language='html'
-                    placeholder='Please enter JS code.'
-                    onChange={(evn) => setHtml(evn.target.value)}
-                    padding={20}
-                    style={{
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: "1rem",
-                    }}
-                    data-color-mode={theme === "dark" ? "dark" : "light"}
-                  /> */}
                   <Editor
                     options={{
                       minimap: {
@@ -667,8 +634,12 @@ const email = user.email
                     height='100vh'
                     defaultLanguage='html'
                     value={html}
-                    onChange={(newValue) => setHtml(newValue)}
-                    defaultValue='// Enter Your Html Code Here'
+                    onChange={(newValue) => {
+                      if (newValue !== undefined) {
+                        setHtml(newValue);
+                      }
+                    }}
+                    defaultValue=''
                     onMount={handleEditorDidMount}
                     className='border-2 border-black rounded overflow-hidden'
                   />
@@ -706,8 +677,12 @@ const email = user.email
                     height='100vh'
                     defaultLanguage='css'
                     value={css}
-                    onChange={(newValue) => setCss(newValue)}
-                    defaultValue='// Enter Your Html Code Here'
+                    onChange={(newValue) => {
+                      if (newValue !== undefined) {
+                        setCss(newValue);
+                      }
+                    }}
+                    defaultValue=''
                     onMount={handleEditorDidMount}
                     className='border-2 border-black rounded overflow-hidden'
                   />

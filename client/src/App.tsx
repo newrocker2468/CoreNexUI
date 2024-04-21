@@ -15,6 +15,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import Csselements from "./Pages/Csselements";
 import Editor from "./Pages/Editor";
 import ViewCsselement from "./components/ViewCsselement";
+import CssChallengecreate from "./Pages/CssChallengecreate";
 function App() {
   const [user, setUser] = useState({
     userName: "",
@@ -47,6 +48,10 @@ function App() {
               <Route
                 path='/Csschallenges/:id'
                 element={<ChallengeDescription />}
+              />
+              <Route
+                path='/CssChallengecreate/:id'
+                element={<CssChallengecreate />}
               />
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />
