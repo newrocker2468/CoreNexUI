@@ -2,19 +2,28 @@ import AnimatedLoading from "@/components/AnimatedLoading";
 import UserContext from "@/components/UserContext";
 import { useContext } from "react";
 import SideBarcomp from "@/components/Sidebarcomp";
+import { jwtDecode } from "jwt-decode";
+
 const Profile = () => {
-    const { user } = useContext(UserContext);
-function printUntilAt(s :string) {
-  let i = 0;
-  const arr=[]
-  while (i < s.length && s[i] !== "@") {
-arr.push(s[i])
-    i++;
+  // const token = localStorage.getItem("token");
+  // const decodedToken = jwtDecode(token);
+  // console.log(decodedToken);
+
+  const { user } = useContext(UserContext);
+
+  function printUntilAt(s: string) {
+    let i = 0;
+    const arr = [];
+    while (i < s.length && s[i] !== "@") {
+      arr.push(s[i]);
+      i++;
+    }
+    return arr.join("");
   }
-  return arr.join('')
-}
-const emailname = printUntilAt(user.email)
-    console.log(user);
+
+  const emailname = printUntilAt(user.email);
+  console.log(user);
+  if (localStorage.getItem("token")) {
     return (
       <>
         <SideBarcomp />
@@ -40,5 +49,12 @@ const emailname = printUntilAt(user.email)
         </div>
       </>
     );
-}
+  } else {
+    return (
+      <>
+        <h1>login first</h1>
+      </>
+    );
+  }
+};
 export default Profile;

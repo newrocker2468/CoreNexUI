@@ -11,6 +11,10 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
+const jwt = require("jsonwebtoken");
+function generateAccessToken(user) {
+  return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: "1800s" });
+}
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -117,8 +121,8 @@ app.get(
 );
 
 app.get("/login/sucess", async (req, res) => {
-  if (req.user) {
-    res.status(200).json({ message: "user login", user: req.user });
+  if (req.user) {const accessToken = generateAccessToken(req.user);
+    res.status(200).json({ message: "user login", user: req.user, accessToken: accessToken});
   } else {
     res.status(400).json({ message: "user not login" });
   }
@@ -354,6 +358,15 @@ app.get("/editor/:id", async (req, res) => {
   }
 });
 
+app.post("/editor/:id/delete", async (req, res) => {
+  try {
+    const CssElements = await CssElementdb.findByIdAndDelete({ _id: req.params.id });
+    res.status(200).json({ message: "CSS elements deleted successfully."});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching CSS elements.");
+  }
+});
 
 
 app.listen(3000, () => {

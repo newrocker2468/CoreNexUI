@@ -5,8 +5,11 @@ import axios from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SideBar from './SideBar';
+import { toast } from 'sonner';
+import { useNavigate } from "react-router-dom";
 
 const ViewCsselement = () => {
+  const navigate = useNavigate();
     const { id } = useParams();
   const [html, setHtml] = useState("<!--Code Here -->"
   );
@@ -513,7 +516,16 @@ function handleEditorDidMount(editor, monaco) {
   });
 }
 
-
+const deleteelement = () => {
+    axios.post(`http://localhost:3000/editor/${id}/delete`)
+    .then((response) => {
+        console.log(response);
+        toast.success("Element Deleted Successfully");
+            navigate("/Csselements");
+  
+    })
+    .catch((error) => console.error(error));
+}
   const iframeRef = useRef<HTMLIFrameElement>(null);
 useEffect(() => {
   const iframe = iframeRef.current;
@@ -585,6 +597,14 @@ return (
       <div className='flex  flex-col h-[60dvh]  w-[48dvw] '>
         <div className='flex justify-end absolute right-0'>
           <div className='mr-[4rem]'>
+            <Button
+              color='danger'
+              size='sm'
+              className='m-2'
+              onClick={() => deleteelement()}
+            >
+              Delete
+            </Button>
           </div>
         </div>
         <Tabs aria-label='Options'>

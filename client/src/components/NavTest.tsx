@@ -70,8 +70,12 @@ export default function NavTest() {
   const getUserData = async () => {
     try {
       const response = await axios("http://localhost:3000/login/sucess", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
         withCredentials: true,
       });
+      localStorage.setItem("token", response.data.accessToken);
     const img = new Image();
     img.src = response.data.user.google.image;
 
@@ -135,7 +139,7 @@ else{
         withCredentials: true,
       });
       // console.log(response);
-      
+      localStorage.removeItem("token");
       setUser((prevState) => ({
         ...prevState,
         userName: "",
