@@ -2,7 +2,6 @@ import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Link } from "react-router-dom";
 import { useTheme } from "./theme-provider";
 import { ScrollShadow } from "@nextui-org/react";
-import elements from "@/Icons/elements.png"
 const SideBar = () => {
   const { theme } = useTheme();
 
@@ -28,8 +27,7 @@ const SideBar = () => {
 
   return (
     <>
-      {" "}
-      <ScrollShadow size={120} className='w-[27dvh] h-[50dvh] ' hideScrollBar>
+
         <div
           style={
             {
@@ -38,9 +36,10 @@ const SideBar = () => {
               // paddingBottom: "15rem",
             }
           }
-        >
+          >
           {/* collapsed={true} */}
-          <Sidebar rootStyles={styles}>
+          <ScrollShadow size={120} hideScrollBar>
+          <Sidebar rootStyles={styles} width="200">
             <Menu
               className={theme === "dark" ? "bg-black" : "bg-white"}
               menuItemStyles={{
@@ -116,8 +115,8 @@ const SideBar = () => {
             </MenuItem> */}
             </Menu>
           </Sidebar>
-        </div>
       </ScrollShadow>
+        </div>
     </>
   );
 };

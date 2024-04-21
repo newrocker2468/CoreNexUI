@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Csschallengecard from "./Csschallengecard";
 import "@/Styles/CssChallengeDescription.css";
 import uiverse from "@/images/uiversecss2.jpg";
@@ -7,6 +7,8 @@ import axios from "axios";
 import { useState } from "react";
 import DeleteModal from "./DeleteModal";
 import EditChallengeModal from "./EditChallengeModal";
+import Btn from "./Btn";
+import { v4 as uuidv4 } from "uuid";
 interface Challenge1 {
   id: string | undefined;
   title: string | undefined;
@@ -23,7 +25,6 @@ interface Challenge1 {
 const CssChallengeDescription = () => {
   const params = useParams();
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
-  const [showEditToast, setShowEditToast] = useState(false);
 
   
 // console.log(Cssdata)
@@ -53,14 +54,13 @@ const CssChallengeDescription = () => {
     );
   }
 
+
   return (
     <>
       <div className='flex justify-center align-center m-5'>
         <EditChallengeModal
           Cssdata={Cssdata}
           setCssdata={setCssdata}
-          showEditToast={showEditToast}
-          setShowEditToast={setShowEditToast}
         />
       </div>
       <div className='flex justify-center align-center m-5'>
@@ -78,6 +78,9 @@ const CssChallengeDescription = () => {
           edate={Cssdata.date.to}
         />
       </div>
+      <Link to={`/CssChallengecreate/${uuidv4()}`}>
+        <Btn Text='Submit' color='primary' />
+      </Link>
       <section>
         <div className='flex justify-center align-center'>
           <div className='w-[50%]'>

@@ -44,13 +44,12 @@ console.log(pairs);
               <Btn Text='Create' color='primary' />
             </Link>
 
-            <div className='flex flex-wrap justify-center'>
+            <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
               {htmlCssPairs.map(
                 (pair: { id: string; html: string; css: string }) => (
-    
-                    <div className='m-3'>
-                      <CssElement htmlcssPairs={pair} key={uuidv4()} />
-                    </div>
+                  <div className='m-3'>
+                    <CssElement htmlcssPairs={pair} key={uuidv4()} />
+                  </div>
                 )
               )}
             </div>

@@ -215,15 +215,6 @@ app.get(
   })
 );
 
-app.get("/csschallenges", async (req, res) => {
-  try {
-    const Csschallenges = await Csschallengesdb.find({});
-    res.status(200).json(Csschallenges);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred while fetching CSS challenges.");
-  }
-});
 
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
@@ -235,6 +226,19 @@ app.get("/logout", function (req, res) {
     }
   });
 });
+
+
+
+app.get("/csschallenges", async (req, res) => {
+  try {
+    const Csschallenges = await Csschallengesdb.find({});
+    res.status(200).json(Csschallenges);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching CSS challenges.");
+  }
+});
+
 app.get("/csschallenges/:id", async (req, res) => {
   let csschallenges = await Csschallengesdb.findOne({ id: req.params.id });
   res.json({ csschallenges });
@@ -319,15 +323,18 @@ if(!req.body.login){
  let csselements;
 try{
   if (req.body.login || id && req.body.html && req.body.css) {
-  const user = await userdb.findOne({ email: req.body.email});
+  const user = await userdb.findOne({ email: req.body.email })
   csselements = new CssElementdb({
     id: id,
     html: req.body.html,
     css: req.body.css,
     user:user._id
   });
+
+  user.cssElements.push(csselements._id);
+  await user.save();
+  await csselements.save();
 } 
-await csselements.save();
   res.json({ message: "Code saved successfully." }).status(200);
 }
 catch(err){
@@ -344,7 +351,8 @@ catch(err){
 
 app.get("/allcsselements", async (req, res) => {
   try {
-    const CssElements = await CssElementdb.find({});
+    const CssElements = await CssElementdb.find({}).populate("user");
+    console.log(CssElements);
     res.status(200).json(CssElements);
   } catch (error) {
     console.error(error);
@@ -426,7 +434,20 @@ res.status(200).json({message:"event successfully deleted"})
 }
 })
 
+app.post("/CssChallengecreate/:id/create", async (req, res) => {
+  // const { id } = req.params;
+  // if (req.body.login || id && req.body.html && req.body.css) {
+  // const user = await userdb.findOne({ email: req.body.email });
+  // let csselements = new CssElementdb({
+  //   id: id,
+  //   html: req.body.html,
+  //   css: req.body.css,
+  //   user:user._id
+  // });
+  // let CssChallengeselements = await Csschallengesdb.findOne({ id: id });
+  // await csselements.save();
 
+});
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
