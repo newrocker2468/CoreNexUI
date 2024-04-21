@@ -12,6 +12,11 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
+
+//git fetch origin
+//git checkout master
+//git merge origin/master
+//npm i 
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: "1800s" });
 }
@@ -364,9 +369,21 @@ app.post("/editor/:id/delete", async (req, res) => {
     res.status(200).json({ message: "CSS elements deleted successfully."});
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred while fetching CSS elements.");
+    res.status(500).json({message:"An error occurred while fetching CSS elements."});
   }
-});
+});//getallevents
+//events/:id
+
+app.post("/event/:id",async(req,res)=>{
+  try{
+    const Event = await Eventsdb.findOne({_id: req.params.id});
+    res.status(200).json({Event})
+  }catch(error){
+    console.error(error);
+    res.status(500).json({message:"An error has occured while fetching event "})
+    
+  }
+})
 
 
 app.listen(3000, () => {
