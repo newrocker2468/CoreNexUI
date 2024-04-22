@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 const notesUploadSchema = new mongoose.Schema({
-events:{
+notes:{
     id:String,
     topicName:String,
     description:String,
     img:String,
     date:{from:String, to:String},
-
 
 },
   user: {

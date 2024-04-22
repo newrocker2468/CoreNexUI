@@ -468,7 +468,7 @@ app.post("/notesUpload/:id/upload",async(req,res)=>{
 app.post("/notesupload/:id/update", async(req,res)=>{
   try{
     const Note = await Notesdb.findByIDAndupdateOne({_id: req.params.id});
-    res.status(200).json({message:"Document successfully updated"})
+    res.status(200).json(Note)
     } catch(error){
       console.error(error);
       res.status(500).json({message:"an error has occured while updating the Document"})
@@ -489,17 +489,17 @@ app.post("/notesupload/:id/update", async(req,res)=>{
         })
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
-  // const { id } = req.params;
-  // if (req.body.login || id && req.body.html && req.body.css) {
-  // const user = await userdb.findOne({ email: req.body.email });
-  // let csselements = new CssElementdb({
-  //   id: id,
-  //   html: req.body.html,
-  //   css: req.body.css,
-  //   user:user._id
-  // });
-  // let CssChallengeselements = await Csschallengesdb.findOne({ id: id });
-  // await csselements.save();
+/*   const { id } = req.params;
+  if (req.body.login || id && req.body.html && req.body.css) {
+  const user = await userdb.findOne({ email: req.body.email });
+  let csselements = new CssElementdb({
+    id: id,
+    html: req.body.html,
+    css: req.body.css,
+    user:user._id
+  });
+  let CssChallengeselements = await Csschallengesdb.findOne({ id: id });
+  await csselements.save(); */
 
 });
 app.listen(3000, () => {
