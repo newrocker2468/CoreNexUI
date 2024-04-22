@@ -12,13 +12,10 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
-<<<<<<< HEAD
 const bcrypt = require('bcryptjs')
-
-=======
 const cookieParser = require("cookie-parser");
 const uuidv4 = require("uuid").v4;
->>>>>>> 289f00028c69bbcdeef2a2909a5ac5617aeb940f
+
 //git fetch origin
 //git checkout master
 //git merge origin/master
