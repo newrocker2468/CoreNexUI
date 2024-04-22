@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FC } from "react";
 import "@/Styles/Csselements.css";
 import { useParams } from "react-router-dom";
@@ -13,6 +12,22 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+useEffect(() => {
+  const div = divRef.current;
+  if (!div) return;
+
+  // Get the content size
+  const contentWidth = div.scrollWidth;
+  const contentHeight = div.scrollHeight;
+
+  // Calculate the new size
+  const newWidth = contentWidth * 1.1;
+  const newHeight = contentHeight * 1.1;
+
+  // Set the new size
+  div.style.width = `${newWidth}px`;
+  div.style.height = `${newHeight}px`;
+}, [htmlcssPairs.html, htmlcssPairs.css, navigate, htmlcssPairs.id]);
 
   useEffect(() => {
     const div = divRef.current;
@@ -78,38 +93,35 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
           
         } 
       }
-        // event.stopPropagation();
-        // navigate(`/editor/${htmlcssPairs.id}`);
     });
 
-    // Prevent clicks on the main div from bubbling up to the outer div
-    const mainDiv = shadowRoot.querySelector(".main");
-    // mainDiv.addEventListener("click", (event) => {
-    //   event.stopPropagation();
-    // });
+
   }, [htmlcssPairs.html, htmlcssPairs.css, navigate, htmlcssPairs.id]);
 
   return (
     <>
       <div
         ref={divRef}
+        className='container'
         style={{
           borderRadius: "1rem",
           zIndex: 1,
           position: "relative",
           cursor: "pointer",
           backgroundColor: "#e8e8e8",
-          // padding: "2.25rem",
-          // width: "100%",
-          // width: "19rem",
-          minWidth: "250px",
-          maxWidth: "520px",
-          minHeight: "20rem",
+          width: "auto", // change this to auto
+          minWidth: "100%", // minimum width
+          maxWidth: "100%", // maximum width
+          height: "auto", // change this to auto
+          minHeight: "20rem", // set a minimum height
+          maxHeight: "100%", // set a maximum height
           display: "flex",
-          alignItems: "center",
+          alignItems: "stretch", // add this
           justifyContent: "center",
+          overflow: "hidden", // change this to auto to handle overflow
         }}
       />
+
       <h1></h1>
     </>
   );

@@ -13,12 +13,14 @@ import AnchorLink from "@/components/AnchorLink";
 import { useNavigate } from "react-router-dom";
 import Alertcustom from "@/components/Alertcustom.tsx";
 import { useFormik } from "formik";
-import codeanimation from "../videos/code_animation (1).mp4";
 import AnimatedCode from "@/components/AnimatedCode";
 import UserContext from "@/components/UserContext";
+import axios from "axios";
+
 type FormikValues = {
   email: string;
   password: string;
+  Remember: boolean;
 };
 
  function validateEmail(value: FormikValues["email"]) {
@@ -61,15 +63,35 @@ type FormikValues = {
 
 
 export default function Login() {
-    
+    const { user, setUser } = useContext(UserContext);
+    const [Remember, setRemember] = useState(false);
  const formik = useFormik({
    initialValues: {
      email: "",
      password: "",
+     Remember: false,
    },
    onSubmit: (values) => {
+ try {
+   axios
+     .post(
+       "http://localhost:3000/login",
+       {
+         email: values.email,
+         password: values.password,
+         remember: Remember,
+       },
+       { withCredentials: true }
+     )
+     .then((response) => {
+       console.log(response.data);
+     });
+ } catch (err) {
+   console.log(err);
+ }
+  setLoading(true);
     //  alert(JSON.stringify(values, null, 2));
-     console.log(values);
+    //  console.log(values);
      
     // fetch("http://localhost:3000/home", {
       
@@ -123,21 +145,120 @@ else{
  });
 
 const loginwithgoogle = async () => {
-  window.open("http://localhost:3000/auth/google/callback", "_self");
-};
 
+ try {
+   const response = await axios.get("http://localhost:3000/validate-token", {
+     withCredentials: true,
+   });
+   const user = response.data.user;
+         const name = user.google.displayName; 
+      if (name) {
+        const profile = user["google"];
+        let highres_img = profile.image;
+        if (profile.image.includes("s96-c")) {
+          highres_img = profile.image.replace("s96-c", "s500-c");
+        } else if (profile.image.includes("sz=50")) {
+          highres_img = profile.image.replace("sz=50", "sz=240");
+        }
+        console.log(user);
+        setUser((prevState) => ({
+          ...prevState,
+          userName: profile.displayName,
+          avatarProps: profile.image,
+          highres_img: highres_img,
+          isLoggedIn: true,
+          email: user.email!,
+          bio: profile.bio,
+        }));
+        navigate("/home");
+      }
+      else{
+        if (Remember) {
+          window.open(
+            "http://localhost:3000/auth/google/callback?rememberMe=true",
+            "_self"
+          );
+        } else {
+          window.open(
+            "http://localhost:3000/auth/google/callback?rememberMe=false",
+            "_self"
+          );
+        }
+      }
+ } 
+ catch (error) {
+   console.log("Please log in again");
+if (Remember) {
+  window.open(
+    "http://localhost:3000/auth/google/callback?rememberMe=true",
+    "_self"
+  );
+} else {
+  window.open(
+    "http://localhost:3000/auth/google/callback?rememberMe=false",
+    "_self"
+  );
+}
+ }
+
+}
   const loginwithgithub = async () => {
-    window.open("http://localhost:3000/auth/github/callback", "_self");
-  };
+try {
+  const response = await axios.get("http://localhost:3000/validate-token", {
+    withCredentials: true,
+  });
+  const user = response.data.user;
+  const name = user.github.displayName;
+  if (name) {
+    const profile = user["github"];
+    console.log(user);
+    setUser((prevState) => ({
+      ...prevState,
+      userName: profile.displayName,
+      avatarProps: profile.image,
+      highres_img: profile.img,
+      isLoggedIn: true,
+      email: user.email!,
+      bio: profile.bio,
+    }));
+    navigate("/home");
+  } else {
+   if (Remember) {
+     window.open(
+       "http://localhost:3000/auth/github/callback?rememberMe=true",
+       "_self"
+     );
+   } else {
+     window.open(
+       "http://localhost:3000/auth/github/callback?rememberMe=false",
+       "_self"
+     );
+   }
+  }
+} catch (error) {
+  console.log("Please log in again");
 
+if (Remember) {
+  window.open(
+    "http://localhost:3000/auth/github/callback?rememberMe=true",
+    "_self"
+  );
+} else {
+  window.open(
+    "http://localhost:3000/auth/github/callback?rememberMe=false",
+    "_self"
+  );
+}
+}
+  };
 const [Response, setResponse] = useState("")
 const [loading, setLoading] = useState(false);
   const [EmailisInvalid, setEmailisInvalid] = useState(false);
    const [PassisInvalid, setPassisInvalid] = useState(false);
 const [isvisible, setIsvisible] = useState(false);
-  const [quote, setQuote] = useState(
-    "Globalization, as defined by rich people like us, is a very nice thing... you are talking about the Internet, you are talking about cell phones, you are talking about computers. This doesn't affect two-thirds of the people of the world."
-  );  
+  // const [quote, setQuote] = useState(
+  //   "Globalization, as defined by rich people like us, is a very nice thing... you are talking about the Internet, you are talking about cell phones, you are talking about computers. This doesn't affect two-thirds of the people of the world."
+  // );  
 const navigate = useNavigate();
 const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
   setLoading(true);
@@ -247,7 +368,13 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                 />
 
                 <div className='Logfooter'>
-                  <CheckBox text='Remember for 15 days' />
+                  <CheckBox
+                    text='Remember for 15 days'
+                    onChange={()=>{
+                      setRemember(!Remember);
+                    }}
+                    name="Remember"
+                  />
                   <AnchorLink
                     text='Forgot Password?'
                     astyles='grey'

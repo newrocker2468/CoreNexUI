@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
 import UserContext from "./UserContext";
 import { Link as RouterLink} from "react-router-dom";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -61,73 +62,69 @@ const components: { title: string; href: string; description: string }[] = [
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ];
+interface MyJwtPayload extends JwtPayload {
+  [key: string]: any; 
+  google?: {
+    displayName?: string;
+    image?: string;
+    bio?: string;
+
+    // include other properties of 'google' here
+  };
+  github?: {
+    displayName?: string;
+    image?: string;
+    bio?: string;
+
+    // include other properties of 'github' here
+  };
+  email?: string ;
+  lastLoggedInWith?: string;
+
+  // include other properties of your JWT payload here
+}
 
 export default function NavTest() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
 
-  const getUserData = async () => {
+const getUserData = async () => {
     try {
       const response = await axios("http://localhost:3000/login/sucess", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
         withCredentials: true,
       });
-      localStorage.setItem("token", response.data.accessToken);
-    const img = new Image();
-    img.src = response.data.user.google.image;
+      const user = jwtDecode<MyJwtPayload>(response.data.user);
 
-//NOTE - For High resolution images
-let highres_img = response.data.user.google.image;
-      if (response.data.user.google.image.includes("s96-c")) {
-        highres_img =response.data.user.google.image.replace("s96-c", "s500-c");
-      } else if (response.data.user.google.image.includes("sz=50")) {
-        highres_img = response.data.user.google.image.replace(
-          "sz=50",
-          "sz=240"
-        );
-      }
-console.log(response.data)
+      localStorage.setItem("token", response.data.token);
+      const platform = user.lastLoggedInWith; // google or github
+      if (platform) {
+        const profile = user[platform];
+        let highres_img = profile.image;
+        if (profile.image.includes("s96-c")) {
+          highres_img = profile.image.replace("s96-c", "s500-c");
+        } else if (profile.image.includes("sz=50")) {
+          highres_img = profile.image.replace("sz=50", "sz=240");
+        }
+        console.log(user.email);
 
-if(response.data.user.lastLoggedInWith =="google"){
           setUser((prevState) => ({
             ...prevState,
-            userName: response.data.user.google.displayName,
-            avatarProps: img.src,
+            userName: profile.displayName,
+            avatarProps: profile.image,
             highres_img: highres_img,
-            email: response.data.user.email,
             isLoggedIn: true,
-            bio: response.data.user.google.bio,
+            email: user.email!,
+            bio: profile.bio,
           }));
-
-}
-else{
-  img.src = response.data.user.github.image;
-  highres_img = response.data.user.github.image;
-        setUser((prevState) => ({
-          ...prevState,
-          userName: response.data.user.github.displayName,
-          avatarProps: img.src,
-          highres_img: highres_img,
-          email: response.data.user.email,
-          isLoggedIn: true,
-          bio: response.data.user.github.bio,
-        }));
-}
-
-
-
-      //NOTE - not sure whether this makes a diiference or not
-   
-      // img.src = response.data.user.image;
-
-      // console.log(response.data);
+        
+      }
+      console.log(user);
     } catch (err) {
       console.log(err);
     }
-  };
+};
+
 
   useEffect(() => {
     getUserData();
@@ -139,7 +136,6 @@ else{
         withCredentials: true,
       });
       // console.log(response);
-      localStorage.removeItem("token");
       setUser((prevState) => ({
         ...prevState,
         userName: "",

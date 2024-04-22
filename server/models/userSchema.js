@@ -17,6 +17,9 @@ const userSchema = mongoose.Schema(
       type: String,
       unique: true,
     },
+    password:{
+      type: String,
+    },
     lastLoggedInWith: String,
     createdAt: {
       type: Date,
@@ -28,6 +31,12 @@ const userSchema = mongoose.Schema(
         ref: "csselements",
       },
     ],
+    Permissions: [
+      {
+        type:String,
+        default: "Newuser"
+      }
+    ]
   },
   { timestamps: true }
 );
