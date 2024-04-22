@@ -28,17 +28,9 @@ const SideBar = () => {
   return (
     <>
 
-        <div
-          style={
-            {
-              // overflowY: "auto",
-              // overflowX: "hidden",
-              // paddingBottom: "15rem",
-            }
-          }
-          >
+
+          <ScrollShadow size={120} hideScrollBar className="" >
           {/* collapsed={true} */}
-          <ScrollShadow size={120} hideScrollBar>
           <Sidebar rootStyles={styles} width="200">
             <Menu
               className={theme === "dark" ? "bg-black" : "bg-white"}
@@ -116,7 +108,7 @@ const SideBar = () => {
             </Menu>
           </Sidebar>
       </ScrollShadow>
-        </div>
+
     </>
   );
 };
