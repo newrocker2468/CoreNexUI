@@ -12,6 +12,7 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs')
 
 //git fetch origin
 //git checkout master
@@ -487,6 +488,36 @@ app.post("/notesupload/:id/update", async(req,res)=>{
         }
            
         })
+
+        app.post("/register",async(req,res)=>{
+          try{
+          const{password,email}=req.body;
+          const hash = await bcrypt.hash(password,12);
+          const user = new userdb({
+            google: {
+              Id: "",
+              displayName: "",
+              image: "",
+              bio: "",
+            },
+            github: {
+              Id: "",
+              displayName: "",
+              image: "",
+              bio: "",
+            },
+            email: email,
+            password:hash,
+            lastLoggedInWith: "default",
+          })
+          await user.save(); 
+          res.status(200).json({message:"registration done successfully"})
+        }catch(error){
+          console.error(error);
+          res.status(500).json({message:"error has occured during registration"})
+        }   
+        })
+
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
 /*   const { id } = req.params;
