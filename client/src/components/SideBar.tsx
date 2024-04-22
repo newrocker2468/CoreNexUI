@@ -29,7 +29,7 @@ const SideBar = () => {
     <>
 
 
-          <ScrollShadow size={120} hideScrollBar className="" >
+          <ScrollShadow size={120} hideScrollBar className="">
           {/* collapsed={true} */}
           <Sidebar rootStyles={styles} width="200">
             <Menu
