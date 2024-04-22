@@ -1,11 +1,11 @@
 import Cardcomp from '@/components/Cardcomp';
-import SideBarcomp from '@/components/Sidebarcomp';
-
+import Sidebarcomp from '@/components/Sidebarcomp';
+// issue sidebar taking full width
 export default function Home() {
 
   return (
     <>
-      <SideBarcomp />
+      <Sidebarcomp/>
       <div className='ml-[200px]'>
   
 

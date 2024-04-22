@@ -434,6 +434,60 @@ res.status(200).json({message:"event successfully deleted"})
 }
 })
 
+//route for notes upload
+app.post("/notesUpload/:id",async(req,res)=>{
+  try{
+    const Note = await Notesdb.findone({_id:req.params.id});
+    res.status(200).json({Note})
+
+  } catch(error){
+    console.error(error);
+    res.status(500).json({message:"An error has occured while fetching the notes "})
+  }
+
+})
+
+app.post("/notesUpload/:id/upload",async(req,res)=>{
+  try{
+    const Note = new Notesdb({
+      id:req.params.id,
+      topicName:req.body.Name,
+      description:req.body.description,
+      img:req.body.img,
+      date:req.body.date,
+
+    });
+    Note.save();
+    res.status(200).json({message:"Document added successfully"})
+  }catch(error){
+    console.error(error);
+    res.status(500).json({message:"An error occured when added the Document"})
+  }
+})
+
+app.post("/notesupload/:id/update", async(req,res)=>{
+  try{
+    const Note = await Notesdb.findByIDAndupdateOne({_id: req.params.id});
+    res.status(200).json({message:"Document successfully updated"})
+    } catch(error){
+      console.error(error);
+      res.status(500).json({message:"an error has occured while updating the Document"})
+    }
+       
+    })
+
+
+    app.post("/notesupload/:id/delete", async(req,res)=>{
+      try{
+        const Note = await Notesdb.findByIDAnddeleteOne({_id: req.params.id});
+        res.status(200).json({message:"Document successfully Deleted"})
+        } catch(error){
+          console.error(error);
+          res.status(500).json({message:"an error has occured while deleting the Document"})
+        }
+           
+        })
+
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
   // const { id } = req.params;
   // if (req.body.login || id && req.body.html && req.body.css) {
@@ -451,3 +505,5 @@ app.post("/CssChallengecreate/:id/create", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
+
+
