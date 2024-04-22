@@ -2,7 +2,7 @@
 import  { useState, useEffect, useRef, useContext } from "react";
 import { Tabs, Tab, Card, CardBody, useDisclosure } from "@nextui-org/react";
 import { Button } from "@nextui-org/react"; 
-import { useTheme } from "./theme-provider";
+// import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import Editor from "@monaco-editor/react"; 
@@ -15,17 +15,17 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/react";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import ModalRadioCreateCss from "./RadioCreateCss";
+import RadioCreateCss from "./ModalRadioCreateCss";
 function LiveEditor() {
   const [isModalVisible, setIsModalVisible] = useState(true);
 const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user, setUser } = useContext(UserContext);
-  const [selectedValue, setSelectedValue] = useState(null);
   const [html, setHtml] = useState(
     localStorage.getItem("html") || "<!--Code Here -->"
-  );
+  );   const divRef = useRef<HTMLDivElement>(null);
+
   const [css, setCss] = useState(localStorage.getItem("css") || "");
   console.log(id);
   
@@ -598,12 +598,77 @@ const email = user.email
   `);
     doc.close();
   }, [html, css]);
+
+  useEffect(() => {
+    const div = divRef.current;
+    if (!div) return;
+
+    // Only attach a shadow root if one doesn't already exist
+    let shadowRoot = div.shadowRoot;
+    if (!shadowRoot) {
+      shadowRoot = div.attachShadow({ mode: "open" });
+    }
+    shadowRoot.innerHTML = `
+    <style>
+      ${css}
+     * {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+        body {
+          display:flex;
+          align-items: center;
+          justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #e8e8e8;
+      }
+.container{
+           display:flex;
+          align-items: center;
+          justify-content: center;
+}
+    </style>
+    <div class='container'>
+    ${html}
+    </div>
+  `;
+    // shadowRoot.addEventListener("click", (event) => {
+    //   event.stopPropagation();
+    // });
+
+    // div.addEventListener("click", (event) => {
+    //   if (event.target === div) {
+    //     if (window.location.pathname === `/Csselements`) {
+    //       navigate(`/editor/${htmlcssPairs.id}`);
+    //     }
+    //   }
+    // });
+  }, [html, css]);
+
+useEffect(() => {
+  const div = divRef.current;
+  if (!div) return;
+
+  // Get the content size
+  const contentWidth = div.scrollWidth;
+  const contentHeight = div.scrollHeight;
+
+  // Calculate the new size
+  const newWidth = contentWidth * 1.1;
+  const newHeight = contentHeight * 1.1;
+
+  // Set the new size
+  div.style.width = `${newWidth}px`;
+  div.style.height = `${newHeight}px`;
+}, [html,css]);
   const redirect =() =>{
     navigate('/Csselements')
   }
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   
- const { isOpen, onOpen, onOpenChange } = useDisclosure();
+ const { onOpenChange } = useDisclosure();
   return (
     <div style={{ display: "flex", justifyContent: "space-around" }}>
       <SideBar />
@@ -620,54 +685,14 @@ const email = user.email
       >
         <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
           <ModalContent>
-            {(onClose) => (
+            {() => (
               <>
                 <ModalHeader className='flex flex-col gap-1'>
                   Modal Title
                 </ModalHeader>
                 <ModalBody>
                   <div className='flex align-center justify-center'>
-                    <div className='flex w-full flex-wrap md:flex-nowrap gap-4 align-center justify-center'>
-                      <Autocomplete
-                        label='Css element category'
-                        placeholder='Select your element Category'
-                        className='max-w-xs'
-                        onSearch={(value) => setSelectedValue(value)}
-                      >
-                        <AutocompleteItem key={"button"} value='button'>
-                          Button
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"checkbox"} value='checkbox'>
-                          Checkbox
-                        </AutocompleteItem>
-                        <AutocompleteItem
-                          key={"switches"}
-                          value='toggleswitches'
-                        >
-                          Switches
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"cards"} value='cards'>
-                          Input
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"loaders"} value='loaders'>
-                          Loaders
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"radio"} value='radiobuttons'>
-                          Radio Buttons
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"Forms"} value='Forms'>
-                          Forms
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"patterns"} value='patterns'>
-                          Patterns
-                        </AutocompleteItem>
-                        <AutocompleteItem key={"tooltips"} value='tooltips'>
-                          Tooltips
-                        </AutocompleteItem>
-                      </Autocomplete>
-                      {selectedValue === null && <p>Please select a value</p>}
-
-                    </div>
+                    <RadioCreateCss />
                   </div>
                 </ModalBody>
                 <ModalFooter>
@@ -682,7 +707,6 @@ const email = user.email
                   </Button>
                   <Button
                     color='primary'
-                    disabled={selectedValue === null}
                     onPress={() => {
                       setIsModalVisible(false);
                     }}
@@ -695,13 +719,25 @@ const email = user.email
           </ModalContent>
         </Modal>
         <h3>Output</h3>
-        <iframe
-          ref={iframeRef}
-          title='output'
-          className='h-[70dvh]'
+        <div
+          ref={divRef}
+          className='container'
           style={{
-            border: "none",
             borderRadius: "1rem",
+            zIndex: 1,
+            position: "relative",
+            cursor: "pointer",
+            backgroundColor: "#e8e8e8",
+            width: "auto", 
+            minWidth: "100%", 
+            maxWidth: "100%", 
+            height: "auto", 
+            minHeight: "20rem", 
+            maxHeight: "100%", 
+            display: "flex",
+            alignItems: "center", 
+            justifyContent: "center",
+            overflow: "hidden", 
           }}
         />
       </div>
@@ -735,7 +771,11 @@ const email = user.email
                     height='100vh'
                     defaultLanguage='html'
                     value={html}
-                    onChange={(newValue) => setHtml(newValue)}
+                    onChange={(newValue) => {
+                      if (newValue !== undefined) {
+                        setHtml(newValue);
+                      }
+                    }}
                     defaultValue='<!--Code Here -->'
                     onMount={handleEditorDidMount}
                     className='border-2 border-black rounded overflow-hidden'
@@ -761,7 +801,11 @@ const email = user.email
                     height='100vh'
                     defaultLanguage='css'
                     value={css}
-                    onChange={(newValue) => setCss(newValue)}
+                    onChange={(newValue) => {
+                      if (newValue !== undefined) {
+                        setCss(newValue);
+                      }
+                    }}
                     defaultValue=''
                     onMount={handleEditorDidMount}
                     className='border-2 border-black rounded overflow-hidden'
