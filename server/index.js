@@ -12,21 +12,12 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
-<<<<<<< HEAD
-
 const bcrypt = require('bcryptjs')
-
-
-=======
-const bcrypt = require('bcryptjs')
->>>>>>> 28a5bc8d9b5a2ca96b440139aac71e61074752da
 const cookieParser = require("cookie-parser");
-const bcryptjs = require("bcryptjs");
-const uuidv4 = require("uuid").v4;
-<<<<<<< HEAD
-=======
 
->>>>>>> 28a5bc8d9b5a2ca96b440139aac71e61074752da
+const uuidv4 = require("uuid").v4;
+
+
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -603,7 +594,7 @@ app.post("/notesupload/:id/update", async(req,res)=>{
 
         app.post("/login",async(req,res)=>{
         try{
-          const{email,password}=req.body;
+          const{email,password,remember}=req.body;
           const user = await userdb.findOne({email:email});
           const validPassword= bcrypt.compare(password,user.password)
           if(validPassword){  
