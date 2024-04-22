@@ -1,15 +1,15 @@
 import Cardcomp from '@/components/Cardcomp';
-import SideBarcomp from '@/components/Sidebarcomp';
+import SideBar from "@/components/SideBar";
 
 export default function Home() {
 
   return (
     <>
-      <SideBarcomp />
-      <div className='ml-[200px]'>
-  
+      <div className='flex'>
+        <SideBar />
+ 
+          <Cardcomp />
 
-        <Cardcomp />
       </div>
     </>
   );

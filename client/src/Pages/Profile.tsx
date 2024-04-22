@@ -2,6 +2,7 @@ import AnimatedLoading from "@/components/AnimatedLoading";
 import UserContext from "@/components/UserContext";
 import { useContext } from "react";
 import SideBarcomp from "@/components/Sidebarcomp";
+import SideBar from "@/components/SideBar";
 import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
@@ -26,26 +27,28 @@ const Profile = () => {
   if (localStorage.getItem("token")) {
     return (
       <>
-        <SideBarcomp />
-        <div className='flex flex-col w-[70%] p-5 ml-[12rem]'>
-          <div className='flex justify-flex-start  '>
-            <AnimatedLoading
-              img={`${user.highres_img}`}
-              width={250}
-              height={200}
-            />
-            <div className='ml-5'>
-              <p>{user.userName}</p>
-              <p>{emailname}</p>
-              <p>{user.bio}</p>
+        <div className="flex">
+          <SideBar />
+          <div className='flex flex-col w-[70%] p-5 '>
+            <div className='flex justify-flex-start  '>
+              <AnimatedLoading
+                img={`${user.highres_img}`}
+                width={250}
+                height={200}
+              />
+              <div className='ml-5'>
+                <p>{user.userName}</p>
+                <p>{emailname}</p>
+                <p>{user.bio}</p>
+              </div>
             </div>
+            <section>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
+              qui obcaecati unde quas dicta quisquam, sint quod quia minima
+              error eligendi molestias voluptatum cumque est recusandae
+              reiciendis modi illum soluta.
+            </section>
           </div>
-          <section>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit qui
-            obcaecati unde quas dicta quisquam, sint quod quia minima error
-            eligendi molestias voluptatum cumque est recusandae reiciendis modi
-            illum soluta.
-          </section>
         </div>
       </>
     );
