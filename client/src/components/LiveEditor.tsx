@@ -1,19 +1,28 @@
-import { Textarea } from "@nextui-org/react";
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-import CodeEditor from "@uiw/react-textarea-code-editor";
+
+import  { useState, useEffect, useRef, useContext } from "react";
+import { Tabs, Tab, Card, CardBody, useDisclosure } from "@nextui-org/react";
 import { Button } from "@nextui-org/react"; 
 import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import Editor from "@monaco-editor/react"; 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "./UserContext";
-import { set } from "date-fns";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import ModalRadioCreateCss from "./ModalRadioCreateCss";
 function LiveEditor() {
+  const [isModalVisible, setIsModalVisible] = useState(true);
+const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { user, setUser } = useContext(UserContext);
-
+  const [selectedValue, setSelectedValue] = useState(null);
   const [html, setHtml] = useState(
     localStorage.getItem("html") || "<!--Code Here -->"
   );
@@ -529,6 +538,9 @@ function LiveEditor() {
       }
     });
   }
+useEffect(() => {
+  setIsModalVisible(true);
+}, []);
 
   useEffect(() => {
     const timer = setTimeout(saveCode, 30000);
@@ -586,16 +598,102 @@ const email = user.email
   `);
     doc.close();
   }, [html, css]);
+  const redirect =() =>{
+    navigate('/Csselements')
+  }
   const { theme } = useTheme();
-
+  
+ const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <div style={{ display: "flex", justifyContent: "space-around" }}>
       <SideBar />
-
+      <Button
+        onPress={() => {
+          setIsModalVisible(true);
+        }}
+      >
+        Open Modal
+      </Button>
       <div
         style={{ height: "max-content" }}
         className='flex justify-center align-center flex-col w-[48dvw] mt-[2rem]'
       >
+        <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className='flex flex-col gap-1'>
+                  Modal Title
+                </ModalHeader>
+                <ModalBody>
+                  <div className='flex align-center justify-center'>
+                    <div className='flex w-full flex-wrap md:flex-nowrap gap-4 align-center justify-center'>
+                      <Autocomplete
+                        label='Css element category'
+                        placeholder='Select your element Category'
+                        className='max-w-xs'
+                        onSearch={(value) => setSelectedValue(value)}
+                      >
+                        <AutocompleteItem key={"button"} value='button'>
+                          Button
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"checkbox"} value='checkbox'>
+                          Checkbox
+                        </AutocompleteItem>
+                        <AutocompleteItem
+                          key={"switches"}
+                          value='toggleswitches'
+                        >
+                          Switches
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"cards"} value='cards'>
+                          Input
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"loaders"} value='loaders'>
+                          Loaders
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"radio"} value='radiobuttons'>
+                          Radio Buttons
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"Forms"} value='Forms'>
+                          Forms
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"patterns"} value='patterns'>
+                          Patterns
+                        </AutocompleteItem>
+                        <AutocompleteItem key={"tooltips"} value='tooltips'>
+                          Tooltips
+                        </AutocompleteItem>
+                      </Autocomplete>
+                      {selectedValue === null && <p>Please select a value</p>}
+
+                    </div>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color='danger'
+                    variant='light'
+                    onPress={() => {
+                      redirect();
+                    }}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    color='primary'
+                    disabled={selectedValue === null}
+                    onPress={() => {
+                      setIsModalVisible(false);
+                    }}
+                  >
+                    Start
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         <h3>Output</h3>
         <iframe
           ref={iframeRef}
@@ -607,24 +705,6 @@ const email = user.email
           }}
         />
       </div>
-      {/* <Editor
-        options={{
-          minimap: {
-            enabled: false,
-          },
-          fontFamily:
-            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-          fontSize: 16,
-          wordWrap: "on",
-        }}
-        height='90vh'
-        defaultLanguage='html'
-        value={html}
-        onChange={(newValue) => setHtml(newValue)}
-        defaultValue='// Enter Your Html Code Here'
-        onMount={handleEditorDidMount}
-        className='border-2 border-black rounded overflow-hidden'
-      /> */}
       <div className='flex  flex-col h-[60dvh]  w-[48dvw] '>
         <div className='flex justify-end absolute right-0'>
           <div className='mr-[4rem]'>
@@ -640,20 +720,8 @@ const email = user.email
           <Tab key='Html' title='HTML'>
             <Card>
               <CardBody>
-                <div style={{ maxHeight: "400px", overflowY: "hidden" }}>
-                  {/* <CodeEditor
-                    value={html}
-                    language='html'
-                    placeholder='Please enter JS code.'
-                    onChange={(evn) => setHtml(evn.target.value)}
-                    padding={20}
-                    style={{
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: "1rem",
-                    }}
-                    data-color-mode={theme === "dark" ? "dark" : "light"}
-                  /> */}
+                <div style={{ maxHeight: "68dvh", overflowY: "hidden" }}>
+                  {/* height: auto; min-height: 50dvh; max-height: 70dvh; */}
                   <Editor
                     options={{
                       minimap: {
@@ -668,7 +736,7 @@ const email = user.email
                     defaultLanguage='html'
                     value={html}
                     onChange={(newValue) => setHtml(newValue)}
-                    defaultValue='// Enter Your Html Code Here'
+                    defaultValue='<!--Code Here -->'
                     onMount={handleEditorDidMount}
                     className='border-2 border-black rounded overflow-hidden'
                   />
@@ -679,20 +747,7 @@ const email = user.email
           <Tab key='Css' title='Css'>
             <Card>
               <CardBody>
-                <div style={{ maxHeight: "68dvh", overflowY: "scroll" }}>
-                  {/* <CodeEditor
-                    value={css}
-                    language='css'
-                    placeholder='//Enter your css code here.'
-                    onChange={(e) => setCss(e.target.value)}
-                    padding={15}
-                    style={{
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: "1rem",
-                    }}
-                    data-color-mode={theme === "dark" ? "dark" : "light"}
-                  /> */}
+                <div style={{ maxHeight: "68dvh", overflowY: "hidden" }}>
                   <Editor
                     options={{
                       minimap: {
@@ -707,7 +762,7 @@ const email = user.email
                     defaultLanguage='css'
                     value={css}
                     onChange={(newValue) => setCss(newValue)}
-                    defaultValue='// Enter Your Html Code Here'
+                    defaultValue=''
                     onMount={handleEditorDidMount}
                     className='border-2 border-black rounded overflow-hidden'
                   />

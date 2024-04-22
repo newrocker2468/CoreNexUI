@@ -558,135 +558,94 @@ useEffect(() => {
 
 return (
   <>
-    <div style={{ display: "flex", justifyContent: "space-around" }}>
+    <div style={{ display: "flex"}}>
       <SideBar />
 
-      <div
-        style={{ height: "max-content" }}
-        className='flex justify-center align-center flex-col w-[48dvw] mt-[2rem]'
-      >
-        <h3>Output</h3>
-        <iframe
-          ref={iframeRef}
-          title='output'
-          className='h-[70dvh]'
-          style={{
-            border: "none",
-            borderRadius: "1rem",
-          }}
-        />
-      </div>
-      {/* <Editor
-        options={{
-          minimap: {
-            enabled: false,
-          },
-          fontFamily:
-            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-          fontSize: 16,
-          wordWrap: "on",
-        }}
-        height='90vh'
-        defaultLanguage='html'
-        value={html}
-        onChange={(newValue) => setHtml(newValue)}
-        defaultValue='// Enter Your Html Code Here'
-        onMount={handleEditorDidMount}
-        className='border-2 border-black rounded overflow-hidden'
-      /> */}
-      <div className='flex  flex-col h-[60dvh]  w-[48dvw] '>
-        <div className='flex justify-end absolute right-0'>
-          <div className='mr-[4rem]'>
-            <Button
-              color='danger'
-              size='sm'
-              className='m-2'
-              onClick={() => deleteelement()}
-            >
-              Delete
-            </Button>
-          </div>
+      <div className='flex flex-wrap justify-center w-full'>
+        <div
+          style={{ height: "max-content" }}
+          className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
+        >
+          <h3>Output</h3>
+          <iframe
+            ref={iframeRef}
+            title='output'
+            className='h-[70dvh]'
+            style={{
+              border: "none",
+              borderRadius: "1rem",
+            }}
+          />
         </div>
-        <Tabs aria-label='Options'>
-          <Tab key='Html' title='HTML'>
-            <Card>
-              <CardBody>
-                <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
-                  {/* <CodeEditor
-                    value={html}
-                    language='html'
-                    placeholder='Please enter JS code.'
-                    onChange={(evn) => setHtml(evn.target.value)}
-                    padding={20}
-                    style={{
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: "1rem",
-                    }}
-                    data-color-mode={theme === "dark" ? "dark" : "light"}
-                  /> */}
-                  <Editor
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: 18,
-                      wordWrap: "on",
-                    }}
-                    height='100vh'
-                    defaultLanguage='html'
-                    value={html}
-                    onChange={(newValue) => setHtml(newValue)}
-                    defaultValue='// Enter Your Html Code Here'
-                    onMount={handleEditorDidMount}
-                    className='border-2 border-black rounded overflow-hidden'
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-          <Tab key='Css' title='Css'>
-            <Card>
-              <CardBody>
-                <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
-                  {/* <CodeEditor
-                    value={css}
-                    language='css'
-                    placeholder='//Enter your css code here.'
-                    onChange={(e) => setCss(e.target.value)}
-                    padding={15}
-                    style={{
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: "1rem",
-                    }}
-                    data-color-mode={theme === "dark" ? "dark" : "light"}
-                  /> */}
-                  <Editor
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: 18,
-                      wordWrap: "on",
-                    }}
-                    height='100vh'
-                    defaultLanguage='css'
-                    value={css}
-                    onChange={(newValue) => setCss(newValue)}
-                    defaultValue='// Enter Your Html Code Here'
-                    onMount={handleEditorDidMount}
-                    className='border-2 border-black rounded overflow-hidden'
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-        </Tabs>
+
+        <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
+          <div className='flex justify-end absolute right-0'>
+            <div className='mr-[4rem]'>
+              <Button
+                color='danger'
+                size='sm'
+                className='m-2'
+                onClick={() => deleteelement()}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+          <Tabs aria-label='Options'>
+            <Tab key='Html' title='HTML'>
+              <Card>
+                <CardBody>
+                  <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
+                    <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontFamily:
+                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                        fontSize: 18,
+                        wordWrap: "on",
+                      }}
+                      height='100vh'
+                      defaultLanguage='html'
+                      value={html}
+                      onChange={(newValue) => setHtml(newValue)}
+                      defaultValue='<!--Enter Your Html Code Here-->'
+                      onMount={handleEditorDidMount}
+                      className='border-2 border-black rounded overflow-hidden'
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Tab>
+            <Tab key='Css' title='Css'>
+              <Card>
+                <CardBody>
+                  <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
+                    <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontFamily:
+                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                        fontSize: 18,
+                        wordWrap: "on",
+                      }}
+                      height='100vh'
+                      defaultLanguage='css'
+                      value={css}
+                      onChange={(newValue) => setCss(newValue)}
+                      defaultValue=''
+                      onMount={handleEditorDidMount}
+                      className='border-2 border-black rounded overflow-hidden'
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Tab>
+          </Tabs>
+        </div>
       </div>
     </div>
   </>

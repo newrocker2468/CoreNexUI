@@ -12,8 +12,13 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
+<<<<<<< HEAD
 const bcrypt = require('bcryptjs')
 
+=======
+const cookieParser = require("cookie-parser");
+const uuidv4 = require("uuid").v4;
+>>>>>>> 289f00028c69bbcdeef2a2909a5ac5617aeb940f
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -42,7 +47,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.serializeUser((user, done) => {
@@ -52,6 +56,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
+app.use(cookieParser());
 //!SECTION Google Auth
 passport.use(
   new GoogleStrategy(
@@ -62,53 +67,57 @@ passport.use(
       scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await userdb.findOne({ email: profile.emails[0].value });
-        if (!user) {
-          user = new userdb({
-            google: {
-              Id: profile.id,
-              displayName: profile.displayName,
-              image: profile.photos[0].value,
-              bio: "",
-            },
-            github: {
-              Id: "",
-              displayName: "",
-              image: "",
-              bio: "",
-            },
-            email: profile.emails[0].value,
-            lastLoggedInWith: "google",
-          });
+   try {
+     let user = await userdb.findOne({ email: profile.emails[0].value });
+     if (!user) {
+       user = new userdb({
+         google: {
+           Id: profile.id,
+           displayName: profile.displayName,
+           image: profile.photos[0].value,
+           bio: "",
+         },
+         github: {
+           Id: "",
+           displayName: "",
+           image: "",
+           bio: "",
+         },
+         email: profile.emails[0].value,
+         lastLoggedInWith: "google",
+         password: uuidv4(),
+       });
 
-          await user.save();
-        } else {
-          console.log("User already exists");
-          user = await userdb.findOneAndUpdate(
-            // Assign the result to user
-            { email: profile.emails[0].value }, // Use the correct field for email
-            {
-              $set: {
-                google: {
-                  Id: profile.id,
-                  displayName: profile.displayName,
-                  image: profile.photos[0].value,
-                  bio: "",
-                },
-                lastLoggedInWith: "google",
-              },
-            },
-            { new: true }
-          );
-          console.log(user); // Log the updated user
-          return done(null, user);
-        }
+       await user.save();
+     } else {
+       console.log("User already exists");
+       // Check if the fields are empty before updating
+         user = await userdb.findOneAndUpdate(
+           { email: profile.emails[0].value },
+           {
+             $set: {
+               google: {
+                 Id: profile.id,
+                 displayName: profile.displayName,
+                 image: profile.photos[0].value,
+                 bio: "",
+               },
+               lastLoggedInWith: "google",
+               password: uuidv4(),
+             },
+           },
+           { new: true }
+         );
+       
+       console.log(user);
+       return done(null, user);
+     }
 
-        return done(null, user);
-      } catch (err) {
-        return done(err, null);
-      }
+     return done(null, user);
+   } catch (err) {
+     return done(err, null);
+   }
+
     }
   )
 );
@@ -127,8 +136,39 @@ app.get(
 );
 
 app.get("/login/sucess", async (req, res) => {
-  if (req.user) {const accessToken = generateAccessToken(req.user);
-    res.status(200).json({ message: "user login", user: req.user, accessToken: accessToken});
+  if (req.user) {
+    const user = req.user;
+    // const token = generateAccessToken();
+    const token = jwt.sign(
+      {
+        email: user.email,
+        permissions: user.permissions,
+        google: {
+          displayName: user.google.displayName || "",
+          image: user.google.image || "",
+          bio: user.google.bio || "",
+        },
+        github: {
+          displayName: user.github.displayName || "",
+          image: user.github.image || "",
+          bio: user.github.bio || "",
+        },
+        lastLoggedInWith: user.lastLoggedInWith,
+      },
+      process.env.TOKEN_SECRET
+    );
+    const rememberMe = req.query.rememberMe === "true";
+    const maxAge = rememberMe
+      ? 15 * 24 * 60 * 60 * 1000
+      : 2 * 24 * 60 * 60 * 1000; 
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: maxAge,
+      sameSite: "none",
+      secure: true,
+    });console.log(maxAge)
+
+    res.status(200).json({ message: "user login", user: token });
   } else {
     res.status(400).json({ message: "user not login" });
   }
@@ -159,6 +199,14 @@ passport.use(
               image: profile.photos[0].value,
               bio: profile._json.bio,
             },
+            google: {
+              Id: "",
+              displayName: "",
+              image: "",
+              bio: "",
+            },
+            email: profile._json.blog,
+            password: uuidv4(),
             lastLoggedInWith: "github",
           });
 
@@ -216,7 +264,34 @@ app.get(
   })
 );
 
+app.post("/login", async (req, res) => {
+const {email,password,remember}=req.body;
+const token =req.cookies.token;
+if(token){
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    res.status(200).json({ user: decoded });
+  })
+}
+else{
+  const user = await userdb.findOne({ email: email });
+  if (!user) {
+    console.log("User not found");
+    // return res.status(400).json({ message: "User not found" });
+  }
 
+  if (user.password !== password) {
+    console.log("Password is incorrect");
+    // return res.status(400).json({ message: "Password is incorrect" });
+  }
+  if(user.password === password){
+    console.log("password is correct");
+}
+}
+
+});
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
     if (err) {
@@ -520,7 +595,7 @@ app.post("/notesupload/:id/update", async(req,res)=>{
 
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
-/*   const { id } = req.params;
+ const { id } = req.params;
   if (req.body.login || id && req.body.html && req.body.css) {
   const user = await userdb.findOne({ email: req.body.email });
   let csselements = new CssElementdb({
@@ -529,10 +604,33 @@ app.post("/CssChallengecreate/:id/create", async (req, res) => {
     css: req.body.css,
     user:user._id
   });
-  let CssChallengeselements = await Csschallengesdb.findOne({ id: id });
-  await csselements.save(); */
-
+  await csselements.save(); 
+  }
 });
+
+app.get("/validate-token", (req, res) => {
+if(req.cookies.token){
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+ 
+    res.status(200).json({ user: decoded });
+  });}
+  else{
+    console.log("no token provided");
+    res.status(401).json({ message: "No token provided" });
+  }
+});
+
+
+
+
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
