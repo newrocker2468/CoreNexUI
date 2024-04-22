@@ -12,13 +12,13 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
-<<<<<<< HEAD
+
 const bcrypt = require('bcryptjs')
 
-=======
+
 const cookieParser = require("cookie-parser");
+const bcryptjs = require("bcryptjs");
 const uuidv4 = require("uuid").v4;
->>>>>>> 289f00028c69bbcdeef2a2909a5ac5617aeb940f
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -592,6 +592,22 @@ app.post("/notesupload/:id/update", async(req,res)=>{
           res.status(500).json({message:"error has occured during registration"})
         }   
         })
+
+        app.post("/login",async(req,res)=>{
+        try{
+          const{email,password}=req.body;
+          const user = await userdb.findOne({email:email});
+          const validPassword= bcrypt.compare(password,user.password)
+          if(validPassword){  
+            res.status(200).json({message:"Logged in successfully"})
+          }
+        }catch(error){
+              res.status(500).json({message:"Invalid try Again"})
+            }
+             
+          })
+          
+        
 
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
