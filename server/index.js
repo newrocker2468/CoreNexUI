@@ -14,7 +14,9 @@ const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs')
 const cookieParser = require("cookie-parser");
+
 const uuidv4 = require("uuid").v4;
+
 
 //git fetch origin
 //git checkout master
@@ -131,6 +133,8 @@ app.get(
     failureRedirect: "http://localhost:5173/login",
   })
 );
+
+
 
 app.get("/login/sucess", async (req, res) => {
   // console.log(req.query.rememberMe);
@@ -661,6 +665,22 @@ app.post("/notesupload/:id/update", async(req,res)=>{
           res.status(500).json({message:"error has occured during registration"})
         }   
         })
+
+        app.post("/login",async(req,res)=>{
+        try{
+          const{email,password,remember}=req.body;
+          const user = await userdb.findOne({email:email});
+          const validPassword= bcrypt.compare(password,user.password)
+          if(validPassword){  
+            res.status(200).json({message:"Logged in successfully"})
+          }
+        }catch(error){
+              res.status(500).json({message:"Invalid try Again"})
+            }
+             
+          })
+          
+        
 
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
