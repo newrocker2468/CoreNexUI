@@ -1,19 +1,23 @@
 import { css } from '@emotion/react';
 import { Editor } from '@monaco-editor/react';
-import { Button, Card, CardBody, Tab, Tabs } from '@nextui-org/react';
+import { Button, Card, CardBody, Switch, Tab, Tabs } from '@nextui-org/react';
 import axios from 'axios';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SideBar from './SideBar';
 import { toast } from 'sonner';
 import { useNavigate } from "react-router-dom";
-
+import UserContext from "@/components/UserContext";
+import { useTheme } from "./theme-provider";
 const ViewCsselement = () => {
+  const {theme} = useTheme();
+    const { user } = useContext(UserContext);
+    const[sameUser,setSameUser] = useState(false)
   const navigate = useNavigate();
     const { id } = useParams();
-  const [html, setHtml] = useState("<!--Code Here -->"
-  );
+  const [html, setHtml] = useState("<!--Code Here -->");
   const [css, setCss] = useState( "");
+  const [isSelected, setIsSelected] = useState(theme === "light" ? false : true);
     useEffect(() => {
         axios.get(`http://localhost:3000/editor/${id}`)
         .then((response) => {
@@ -517,26 +521,40 @@ function handleEditorDidMount(editor, monaco) {
 }
 
 const deleteelement = () => {
-    axios.post(`http://localhost:3000/editor/${id}/delete`)
+  axios
+    .post(
+      `http://localhost:3000/editor/${id}/delete`,
+      {},
+      { withCredentials: true }
+    )
     .then((response) => {
-        console.log(response);
-        toast.success("Element Deleted Successfully");
-            navigate("/Csselements");
-  
+      console.log(response);
+      toast.success("Element Deleted Successfully");
+      navigate("/Csselements");
     })
     .catch((error) => console.error(error));
-}
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-useEffect(() => {
-  const iframe = iframeRef.current;
-  if (!iframe || !iframe.contentWindow) return;
+};
 
-  const doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(`
+  const divRef = useRef<HTMLDivElement>(null);
+ useEffect(() => {
+   const div = divRef.current;
+   if (!div) return;
+
+   // Only attach a shadow root if one doesn't already exist
+   let shadowRoot = div.shadowRoot;
+   if (!shadowRoot) {
+     shadowRoot = div.attachShadow({ mode: "open" });
+   }
+   shadowRoot.innerHTML = `
     <style>
       ${css}
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
         body {
+              all: initial;
           display:flex;
           align-items: center;
           justify-content: center;
@@ -544,51 +562,118 @@ useEffect(() => {
         margin: 0;
         background-color: #e8e8e8;
       }
-      
+.container{
+           all: initial;
+           display:flex;
+          align-items: center;
+          justify-content: center;
+}
     </style>
     <div class='container'>
     ${html}
+    
     </div>
-  `);
-  doc.close();
-}, [html, css]);
+  `;
+   // shadowRoot.addEventListener("click", (event) => {
+   //   event.stopPropagation();
+   // });
+
+   // div.addEventListener("click", (event) => {
+   //   if (event.target === div) {
+   //     if (window.location.pathname === `/Csselements`) {
+   //       navigate(`/editor/${htmlcssPairs.id}`);
+   //     }
+   //   }
+   // });
+ }, [html, css]);
+
+ useEffect(() => {
+   const div = divRef.current;
+   if (!div) return;
+   // const contentWidth = div.scrollWidth;
+   const contentHeight = div.scrollHeight;
+
+   // const newWidth = contentWidth * 1.1;
+   const newHeight = contentHeight;
+
+   div.style.width = `40dvw`;
+   div.style.height = `70dvh`;
+ }, [html, css]);
 
 
-
+useEffect(() => {
+  const response = axios.get(`http://localhost:3000/getuserdata`,{
+    withCredentials: true
+  })
+  .then((response) => {
+setSameUser(response.data.sameUser)
+  })
+})
 
 return (
   <>
-    <div style={{ display: "flex"}}>
+    <div style={{ display: "flex" }}>
       <SideBar />
 
       <div className='flex flex-wrap justify-center w-full'>
         <div
           style={{ height: "max-content" }}
           className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
-        >
+          >
           <h3>Output</h3>
-          <iframe
-            ref={iframeRef}
-            title='output'
-            className='h-[70dvh]'
-            style={{
-              border: "none",
-              borderRadius: "1rem",
-            }}
-          />
+          <div className='relative'>
+            <div className='absolute top-3 right-4 '>
+              <Switch
+                isSelected={isSelected}
+                onValueChange={setIsSelected}
+                className='z-10'
+              >
+                {isSelected ? (
+                  <span className='text-black font-bold'>#e8e8e8</span>
+                ) : (
+                  <span className='font-bold text-white'>#212121</span>
+                )}
+              </Switch>
+            </div>
+            <div
+              ref={divRef}
+              className='container'
+              style={{
+                borderRadius: "1rem",
+                zIndex: 1,
+                position: "relative",
+                backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+                width: "auto",
+                minWidth: "100%",
+                maxWidth: "100%",
+                height: "auto",
+                minHeight: "20rem",
+                maxHeight: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+            />
+          </div>
         </div>
 
         <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
           <div className='flex justify-end absolute right-0'>
             <div className='mr-[4rem]'>
-              <Button
-                color='danger'
-                size='sm'
-                className='m-2'
-                onClick={() => deleteelement()}
-              >
-                Delete
-              </Button>
+              {((user.Permissions &&
+                (user.Permissions.includes("admin") ||
+                  user.Permissions.includes("deletecsselement"))) ||
+                sameUser) && (
+                <Button
+                  color='danger'
+                  size='sm'
+                  className='m-2'
+                  onClick={() => deleteelement()}
+                >
+                  Delete
+                </Button>
+              )}
             </div>
           </div>
           <Tabs aria-label='Options'>

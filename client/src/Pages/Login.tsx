@@ -144,7 +144,9 @@ else{
    },
  });
 
+
 const loginwithgoogle = async () => {
+  console.log("clicked");
 
  try {
    const response = await axios.get("http://localhost:3000/validate-token", {
@@ -152,6 +154,7 @@ const loginwithgoogle = async () => {
    });
    const user = response.data.user;
          const name = user.google.displayName; 
+          console.log("validate-token response:", response);
       if (name) {
         const profile = user["google"];
         let highres_img = profile.image;
@@ -169,6 +172,7 @@ const loginwithgoogle = async () => {
           isLoggedIn: true,
           email: user.email!,
           bio: profile.bio,
+          Permissions: user.Permissions,
         }));
         navigate("/home");
       }
@@ -203,7 +207,11 @@ if (Remember) {
 
 }
   const loginwithgithub = async () => {
+    
 try {
+  const res = await axios.get("http://localhost:3000/validate-token", {
+    withCredentials: true,
+  })
   const response = await axios.get("http://localhost:3000/validate-token", {
     withCredentials: true,
   });
@@ -220,27 +228,23 @@ try {
       isLoggedIn: true,
       email: user.email!,
       bio: profile.bio,
+      Permissions: user.Permissions,
     }));
     navigate("/home");
   } else {
-   if (Remember) {
+
      window.open(
-       "http://localhost:3000/auth/github/callback?rememberMe=true",
+       "http://localhost:3000/auth/github/callback",
        "_self"
      );
-   } else {
-     window.open(
-       "http://localhost:3000/auth/github/callback?rememberMe=false",
-       "_self"
-     );
-   }
+   
   }
 } catch (error) {
   console.log("Please log in again");
 
 if (Remember) {
   window.open(
-    "http://localhost:3000/auth/github/callback?rememberMe=true",
+    "http://localhost:3000/auth/github/callback",
     "_self"
   );
 } else {

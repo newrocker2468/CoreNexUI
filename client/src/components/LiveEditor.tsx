@@ -1,13 +1,17 @@
 
 import  { useState, useEffect, useRef, useContext } from "react";
 import { Tabs, Tab, Card, CardBody, useDisclosure } from "@nextui-org/react";
-import { Button } from "@nextui-org/react"; 
+import { Switch } from "@nextui-org/react";
+import {  Button } from "@nextui-org/react";
+import { Link } from "@nextui-org/react";
 // import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import Editor from "@monaco-editor/react"; 
 import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "./UserContext";
+import { usePrompt } from "react-router-dom";
+
 import {
   Modal,
   ModalContent,
@@ -16,17 +20,18 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import RadioCreateCss from "./ModalRadioCreateCss";
-function LiveEditor() {
+import { toast } from "sonner";
+
+const LiveEditor=()=> {
   const [isModalVisible, setIsModalVisible] = useState(true);
 const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user, setUser } = useContext(UserContext);
-  const [html, setHtml] = useState(
-    localStorage.getItem("html") || "<!--Code Here -->"
-  );   const divRef = useRef<HTMLDivElement>(null);
-
-  const [css, setCss] = useState(localStorage.getItem("css") || "");
+  const [html, setHtml] = useState( "<!--Code Here -->");   
+  const divRef = useRef<HTMLDivElement>(null);
+ const [isSelected, setIsSelected] = useState(false);
+  const [css, setCss] = useState("");
   console.log(id);
   
 
@@ -548,7 +553,10 @@ useEffect(() => {
   }, [html, css]);
 
 const login = user.isLoggedIn
+
+
 const email = user.email
+  const [Category, setCategory] = useState("");
   const uploadToDatabase = () => {
       fetch(`http://localhost:3000/editor/create/${id}`, {
         method: "POST",
@@ -556,48 +564,30 @@ const email = user.email
           "Content-Type": "application/json",
           credentials: "include",
         },
-        body: JSON.stringify({ html, css, login, email }),
+        body: JSON.stringify({ html, css, login, email, Category, isSelected }),
       })
         .then((res) => res.json())
         .then((data) => {
+          if (data.message) {
+            navigate("/Csselements");
+            toast.success(data.message, {
+              position: "top-center",
+              action:
+                data.message === "You are not logged in. Login First" ? (
+                  <Link isBlock showAnchorIcon href='/login' color='foreground'>
+                    Login
+                  </Link>
+                ) : null,
+            });
+          }
+
           console.log(data);
         });
   }
 
 
 
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe || !iframe.contentWindow) return;
-
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
-    <style>
-      ${css}
-      * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-        body {
-          display:flex;
-          align-items: center;
-          justify-content: center;
-        height: 100vh;
-        margin: 0;
-        background-color: #e8e8e8;
-      }
-      
-    </style>
-    <div class='container'>
-    ${html}
-    </div>
-  `);
-    doc.close();
-  }, [html, css]);
 
   useEffect(() => {
     const div = divRef.current;
@@ -611,12 +601,13 @@ const email = user.email
     shadowRoot.innerHTML = `
     <style>
       ${css}
-     * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
         body {
+              all: initial;
           display:flex;
           align-items: center;
           justify-content: center;
@@ -625,6 +616,7 @@ const email = user.email
         background-color: #e8e8e8;
       }
 .container{
+           all: initial;
            display:flex;
           align-items: center;
           justify-content: center;
@@ -632,6 +624,7 @@ const email = user.email
     </style>
     <div class='container'>
     ${html}
+    
     </div>
   `;
     // shadowRoot.addEventListener("click", (event) => {
@@ -650,171 +643,188 @@ const email = user.email
 useEffect(() => {
   const div = divRef.current;
   if (!div) return;
-
-  // Get the content size
-  const contentWidth = div.scrollWidth;
+  // const contentWidth = div.scrollWidth;
   const contentHeight = div.scrollHeight;
 
-  // Calculate the new size
-  const newWidth = contentWidth * 1.1;
-  const newHeight = contentHeight * 1.1;
+  // const newWidth = contentWidth * 1.1;
+  const newHeight = contentHeight;
 
-  // Set the new size
-  div.style.width = `${newWidth}px`;
-  div.style.height = `${newHeight}px`;
+  div.style.width = `40dvw`;
+  div.style.height = `70dvh`;
 }, [html,css]);
   const redirect =() =>{
     navigate('/Csselements')
   }
+
   // const { theme } = useTheme();
   
  const { onOpenChange } = useDisclosure();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 800
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSidebarVisible(window.innerWidth > 1200);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
-    <div style={{ display: "flex", justifyContent: "space-around" }}>
-      <SideBar />
-      <Button
-        onPress={() => {
-          setIsModalVisible(true);
-        }}
-      >
-        Open Modal
-      </Button>
-      <div
-        style={{ height: "max-content" }}
-        className='flex justify-center align-center flex-col w-[48dvw] mt-[2rem]'
-      >
-        <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {() => (
-              <>
-                <ModalHeader className='flex flex-col gap-1'>
-                  Modal Title
-                </ModalHeader>
-                <ModalBody>
-                  <div className='flex align-center justify-center'>
-                    <RadioCreateCss />
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color='danger'
-                    variant='light'
-                    onPress={() => {
-                      redirect();
-                    }}
-                  >
-                    Close
-                  </Button>
-                  <Button
-                    color='primary'
-                    onPress={() => {
-                      setIsModalVisible(false);
-                    }}
-                  >
-                    Start
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-        <h3>Output</h3>
+    <div style={{ display: "flex" }}>
+      {isSidebarVisible && (
+        <div className='flex-shrink-0 overflow-auto h-screen'>
+          <SideBar />
+        </div>
+      )}
+
+      <div className='flex flex-wrap justify-center w-full'>
         <div
-          ref={divRef}
-          className='container'
-          style={{
-            borderRadius: "1rem",
-            zIndex: 1,
-            position: "relative",
-            cursor: "pointer",
-            backgroundColor: "#e8e8e8",
-            width: "auto", 
-            minWidth: "100%", 
-            maxWidth: "100%", 
-            height: "auto", 
-            minHeight: "20rem", 
-            maxHeight: "100%", 
-            display: "flex",
-            alignItems: "center", 
-            justifyContent: "center",
-            overflow: "hidden", 
-          }}
-        />
-      </div>
-      <div className='flex  flex-col h-[60dvh]  w-[48dvw] '>
-        <div className='flex justify-end absolute right-0'>
-          <div className='mr-[4rem]'>
-            <Button onClick={saveCode} color='primary'>
-              Save
-            </Button>
-            <Button onClick={uploadToDatabase} color='primary'>
-              Upload To database
-            </Button>
+          style={{ height: "max-content" }}
+          className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
+        >
+          <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
+            <ModalContent>
+              {() => (
+                <>
+                  <ModalHeader className='flex flex-col gap-1'>
+                    Modal Title
+                  </ModalHeader>
+                  <ModalBody>
+                    <div className='flex align-center justify-center'>
+                      <RadioCreateCss
+                        Category={Category}
+                        setCategory={setCategory}
+                        setHtml={setHtml}
+                        setCss={setCss}
+                      />
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color='danger'
+                      variant='light'
+                      onPress={() => {
+                        redirect();
+                      }}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      color='primary'
+                      onPress={() => {
+                        setIsModalVisible(false);
+                      }}
+                    >
+                      Start
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+          <h3>Output</h3>
+          <div className='relative'>
+            <div className='absolute top-3 right-4 '>
+              <Switch
+                isSelected={isSelected}
+                onValueChange={setIsSelected}
+                className='z-10'
+              >
+                {!isSelected ? (
+                  <span className='text-black font-bold'>#e8e8e8</span>
+                ) : (
+                  <span className='font-bold text-white'>#212121</span>
+                )}
+              </Switch>
+            </div>
+            <div
+              ref={divRef}
+              className='container'
+              style={{
+                borderRadius: "1rem",
+                zIndex: 1,
+                position: "relative",
+                backgroundColor: `${!isSelected ? "#e8e8e8" : "#212121"}`,
+                width: "auto",
+                minWidth: "100%",
+                maxWidth: "100%",
+                height: "auto",
+                minHeight: "20rem",
+                maxHeight: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+            />
           </div>
         </div>
-        <Tabs aria-label='Options'>
-          <Tab key='Html' title='HTML'>
-            <Card>
-              <CardBody>
-                <div style={{ maxHeight: "68dvh", overflowY: "hidden" }}>
-                  {/* height: auto; min-height: 50dvh; max-height: 70dvh; */}
-                  <Editor
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: 18,
-                      wordWrap: "on",
-                    }}
-                    height='100vh'
-                    defaultLanguage='html'
-                    value={html}
-                    onChange={(newValue) => {
-                      if (newValue !== undefined) {
-                        setHtml(newValue);
-                      }
-                    }}
-                    defaultValue='<!--Code Here -->'
-                    onMount={handleEditorDidMount}
-                    className='border-2 border-black rounded overflow-hidden'
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-          <Tab key='Css' title='Css'>
-            <Card>
-              <CardBody>
-                <div style={{ maxHeight: "68dvh", overflowY: "hidden" }}>
-                  <Editor
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: 18,
-                      wordWrap: "on",
-                    }}
-                    height='100vh'
-                    defaultLanguage='css'
-                    value={css}
-                    onChange={(newValue) => {
-                      if (newValue !== undefined) {
-                        setCss(newValue);
-                      }
-                    }}
-                    defaultValue=''
-                    onMount={handleEditorDidMount}
-                    className='border-2 border-black rounded overflow-hidden'
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-        </Tabs>
+
+        <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
+          <div className='flex justify-end absolute right-0'>
+            <div className='mr-[4rem]'>
+              <Button onClick={uploadToDatabase} color='primary'>
+                Upload To database
+              </Button>
+            </div>
+          </div>
+          <Tabs aria-label='Options'>
+            <Tab key='Html' title='HTML'>
+              <Card>
+                <CardBody>
+                  <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
+                    <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontFamily:
+                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                        fontSize: 18,
+                        wordWrap: "on",
+                      }}
+                      height='100vh'
+                      defaultLanguage='html'
+                      value={html}
+                      onChange={(newValue) => setHtml(newValue)}
+                      defaultValue='<!--Enter Your Html Code Here-->'
+                      onMount={handleEditorDidMount}
+                      className='border-2 border-black rounded overflow-hidden'
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Tab>
+            <Tab key='Css' title='Css'>
+              <Card>
+                <CardBody>
+                  <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
+                    <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontFamily:
+                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                        fontSize: 18,
+                        wordWrap: "on",
+                      }}
+                      height='100vh'
+                      defaultLanguage='css'
+                      value={css}
+                      onChange={(newValue) => setCss(newValue)}
+                      defaultValue=''
+                      onMount={handleEditorDidMount}
+                      className='border-2 border-black rounded overflow-hidden'
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Tab>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

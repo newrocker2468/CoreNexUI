@@ -59,49 +59,49 @@ const SideBar = () => {
           >
             <SubMenu label='Elements'>
               <MenuItem component={<Link to='/Csselements' />}> All</MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/button' />}>
                 {" "}
                 Buttons
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/checkbox' />}>
                 {" "}
                 Checkboxes
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/switches' />}>
                 {" "}
                 Toggle Switches
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/cards' />}>
                 {" "}
                 Cards
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/loaders' />}>
                 {" "}
                 Loaders
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/Input' />}>
                 {" "}
                 Inputs
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/radiobuttons' />}>
                 {" "}
                 Radio buttons
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/Forms' />}>
                 {" "}
                 Forms
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/patterns' />}>
                 {" "}
                 Patterns
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/tooltips' />}>
                 {" "}
                 Tooltips
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/buttons' />}>
+              <MenuItem component={<Link to='/Csselements/Myfavorites' />}>
                 {" "}
-                My favorites
+                Myfavorites
               </MenuItem>
             </SubMenu>
             <MenuItem component={<Link to='/Csschallenges' />}>

@@ -106,7 +106,7 @@ passport.use(
            { new: true }
          );
        
-       console.log(user);
+      //  console.log(user);
        return done(null, user);
      }
 
@@ -133,13 +133,14 @@ app.get(
 );
 
 app.get("/login/sucess", async (req, res) => {
+  // console.log(req.query.rememberMe);
   if (req.user) {
+    console.log("User logisssssssssssssssss");
     const user = req.user;
     // const token = generateAccessToken();
     const token = jwt.sign(
       {
         email: user.email,
-        permissions: user.permissions,
         google: {
           displayName: user.google.displayName || "",
           image: user.google.image || "",
@@ -151,6 +152,7 @@ app.get("/login/sucess", async (req, res) => {
           bio: user.github.bio || "",
         },
         lastLoggedInWith: user.lastLoggedInWith,
+        Permissions: user.Permissions,
       },
       process.env.TOKEN_SECRET
     );
@@ -164,8 +166,25 @@ app.get("/login/sucess", async (req, res) => {
       sameSite: "none",
       secure: true,
     });console.log(maxAge)
-
-    res.status(200).json({ message: "user login", user: token });
+ if (rememberMe) {
+   const rememberMeToken = jwt.sign(
+     {
+       id: user.id,
+       issuedAt: Date.now(),
+     },
+     process.env.REMEMBER_ME_TOKEN_SECRET,
+     {
+       expiresIn: "15d",
+     }
+   );
+   res.cookie("rememberMeToken", rememberMeToken, {
+     httpOnly: true,
+     maxAge: 15 * 24 * 60 * 60 * 1000,
+     sameSite: "none",
+    //  secure: true,
+   });
+ }
+    res.status(200).json({ message: "user login", user: token, rememberMe: rememberMe});
   } else {
     res.status(400).json({ message: "user not login" });
   }
@@ -295,6 +314,9 @@ app.get("/logout", function (req, res) {
       console.log(err);
       res.status(500).send("Could not log out.");
     } else {
+  res.clearCookie("token");
+  // // Clear the 'rememberMeToken' cookie
+  // res.clearCookie("rememberMeToken");
       res.status(200).send("Logged out.");
     }
   });
@@ -362,6 +384,7 @@ const{id,title,sdesc,description,img,status,date}=req.body
 app.post("/csschallengesdelete", async (req, res) => {
   const { id } = req.body;
   console.log("id " + id);
+  
   try {
     const challenges = await Csschallengesdb.findOneAndDelete({ id: id });
     console.log(challenges);
@@ -390,18 +413,19 @@ app.post("/editor/create/:id", async (req, res) => {
 
 if(!req.body.login){
   console.log("not login");
-  res.json({ message: "You are not login" }).status(400);
+  res.json({ message: "You are not logged in. Login First" }).status(400);
   return;
 }
  let csselements;
 try{
-  if (req.body.login || id && req.body.html && req.body.css) {
+  if (req.body.login ||  req.body.html && req.body.css) {
   const user = await userdb.findOne({ email: req.body.email })
   csselements = new CssElementdb({
     id: id,
     html: req.body.html,
     css: req.body.css,
-    user:user._id
+    elementtype: req.body.Category,
+    user: user._id,
   });
 
   user.cssElements.push(csselements._id);
@@ -425,7 +449,6 @@ catch(err){
 app.get("/allcsselements", async (req, res) => {
   try {
     const CssElements = await CssElementdb.find({}).populate("user");
-    console.log(CssElements);
     res.status(200).json(CssElements);
   } catch (error) {
     console.error(error);
@@ -445,15 +468,64 @@ app.get("/editor/:id", async (req, res) => {
 });
 
 app.post("/editor/:id/delete", async (req, res) => {
+  // console.log(req.cookies.token);
   try {
-    const CssElements = await CssElementdb.findByIdAndDelete({ _id: req.params.id });
-    res.status(200).json({ message: "CSS elements deleted successfully."});
+    const token = req.cookies.token;
+    const decodedToken = jwt.decode(token);
+
+    const user = await userdb.findOne({ email: decodedToken.email });
+     const CssElements = await CssElementdb.findById({_id:req.params.id});
+
+// console.log(decodedoken);
+    // Check if decodedToken is not null and permissions includes 'admin' or 'delete'
+    if (
+      decodedToken &&
+      (decodedToken.Permissions.includes("admin") ||
+        decodedToken.Permissions.includes("deletecsselement") ||
+        user._id.toString() === CssElements.user.toString())
+    ) {
+      const CssElements = await CssElementdb.findOneAndDelete({
+        _id: req.params.id,
+      });
+  
+      res.status(200).json({ message: "CSS elements deleted successfully." });
+    } else {
+      res
+        .status(401)
+        .json({ message: "You are not authorized to delete the element" });
+    }
   } catch (error) {
     console.error(error);
-    res.status(500).json({message:"An error occurred while fetching CSS elements."});
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching CSS elements." });
   }
-});//getallevents
-//events/:id
+});
+
+app.get("/getuserdata", async (req, res) => {
+const token = req.cookies.token;
+if(token){
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    const user = await userdb.findOne({ email: decoded.email });
+    const CssElements = await CssElementdb.findOne({ user: user._id });
+if(user && CssElements){
+    if (user._id.toString() === CssElements.user.toString()) {
+      res.status(200).json({ sameUser: true });
+    }
+
+}
+    // res.status(200).json({ user: decoded });
+  });
+
+}
+else{
+  res.status(401).json({ message: "No token provided" });
+
+}
+})
 
 app.post("/event/:id",async(req,res)=>{
   try{
@@ -615,7 +687,7 @@ if(req.cookies.token){
     if (err) {
       return res.status(500).json({ message: "Failed to authenticate token" });
     }
- 
+    // console.log(decoded);
     res.status(200).json({ user: decoded });
   });}
   else{
@@ -625,7 +697,17 @@ if(req.cookies.token){
 });
 
 
+app.get("/Csselements/:category", async (req,res)=>{
+ try {
+   const category = req.params.category;
+   const elements = await CssElementdb.find({ elementtype: category });
+   console.log(elements);
+   res.json(elements);
+ } catch (err) {
+   res.status(500).json({ message: err.message });
+ }
 
+});
 
 
 app.listen(3000, () => {

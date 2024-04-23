@@ -9,6 +9,7 @@ interface User {
   isLoggedIn: boolean;
   email: string;
   bio:string;
+  Permissions: string[];
 }
 
 interface UserContextProps {
@@ -27,7 +28,7 @@ const UserContext = React.createContext<UserContextProps>({
       "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
     isLoggedIn: false,
     email: "",
-      bio:"",
+      bio:"",Permissions: ["newuser"],
   },
   setUser: () => {},
 });

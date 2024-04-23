@@ -1,28 +1,41 @@
-import { Textarea } from "@nextui-org/react";
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-import CodeEditor from "@uiw/react-textarea-code-editor";
+import { useState, useEffect, useRef, useContext } from "react";
+import { Tabs, Tab, Card, CardBody, useDisclosure } from "@nextui-org/react";
+import { Switch } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
-import { useTheme } from "./theme-provider";
+import { Link } from "@nextui-org/react";
+// import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
-// import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import Editor from "@monaco-editor/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "./UserContext";
-import { set } from "date-fns";
-function LiveEditor() {
-  const { id } = useParams<{ id: string }>();
-  const { user, setUser } = useContext(UserContext);
+import { usePrompt } from "react-router-dom";
 
-  const [html, setHtml] = useState(
-    localStorage.getItem("challengehtml") || "<!--Code Here -->"
-  );
-  const [css, setCss] = useState(localStorage.getItem("challengecss") || "");
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@nextui-org/react";
+import RadioCreateCss from "./ModalRadioCreateCss";
+import { toast } from "sonner";
+
+const LiveEditor = () => {
+  const [isModalVisible, setIsModalVisible] = useState(true);
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { user, setUser } = useContext(UserContext);
+  const [html, setHtml] = useState("<!--Code Here -->");
+  const divRef = useRef<HTMLDivElement>(null);
+  const [isSelected, setIsSelected] = useState(false);
+  const [css, setCss] = useState("");
   console.log(id);
 
   const saveCode = () => {
-    localStorage.setItem("challengehtml", html);
-    localStorage.setItem("challengecss", css);
+    localStorage.setItem("html", html);
+    localStorage.setItem("css", css);
   };
 
   function handleEditorDidMount(editor, monaco) {
@@ -528,6 +541,9 @@ function LiveEditor() {
       }
     });
   }
+  useEffect(() => {
+    setIsModalVisible(true);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(saveCode, 30000);
@@ -535,39 +551,56 @@ function LiveEditor() {
   }, [html, css]);
 
   const login = user.isLoggedIn;
+
   const email = user.email;
+  const [Category, setCategory] = useState("");
   const uploadToDatabase = () => {
-    // fetch(`http://localhost:3000/editor/create/${id}`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     credentials: "include",
-    //   },
-    //   body: JSON.stringify({ html, css, login, email }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   });
+    fetch(`http://localhost:3000/editor/create/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
+      body: JSON.stringify({ html, css, login, email, Category, isSelected }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.message) {
+          navigate("/Csselements");
+          toast.success(data.message, {
+            position: "top-center",
+            action:
+              data.message === "You are not logged in. Login First" ? (
+                <Link isBlock showAnchorIcon href='/login' color='foreground'>
+                  Login
+                </Link>
+              ) : null,
+          });
+        }
+
+        console.log(data);
+      });
   };
 
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
   useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe || !iframe.contentWindow) return;
+    const div = divRef.current;
+    if (!div) return;
 
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
+    // Only attach a shadow root if one doesn't already exist
+    let shadowRoot = div.shadowRoot;
+    if (!shadowRoot) {
+      shadowRoot = div.attachShadow({ mode: "open" });
+    }
+    shadowRoot.innerHTML = `
     <style>
       ${css}
       * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
         body {
+              all: initial;
           display:flex;
           align-items: center;
           justify-content: center;
@@ -575,125 +608,219 @@ function LiveEditor() {
         margin: 0;
         background-color: #e8e8e8;
       }
-      
+.container{
+           all: initial;
+           display:flex;
+          align-items: center;
+          justify-content: center;
+}
     </style>
     <div class='container'>
     ${html}
+    
     </div>
-  `);
-    doc.close();
+  `;
+    // shadowRoot.addEventListener("click", (event) => {
+    //   event.stopPropagation();
+    // });
+
+    // div.addEventListener("click", (event) => {
+    //   if (event.target === div) {
+    //     if (window.location.pathname === `/Csselements`) {
+    //       navigate(`/editor/${htmlcssPairs.id}`);
+    //     }
+    //   }
+    // });
   }, [html, css]);
-//   const { theme } = useTheme();
 
+  useEffect(() => {
+    const div = divRef.current;
+    if (!div) return;
+    // const contentWidth = div.scrollWidth;
+    const contentHeight = div.scrollHeight;
+
+    // const newWidth = contentWidth * 1.1;
+    const newHeight = contentHeight;
+
+    div.style.width = `40dvw`;
+    div.style.height = `70dvh`;
+  }, [html, css]);
+  const redirect = () => {
+    navigate("/Csselements");
+  };
+
+  // const { theme } = useTheme();
+
+  const { onOpenChange } = useDisclosure();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 800
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSidebarVisible(window.innerWidth > 1200);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
-    <div style={{ display: "flex", justifyContent: "space-around" }}>
-      <SideBar />
+    <div style={{ display: "flex" }}>
+      {isSidebarVisible && (
+        <div className='flex-shrink-0 overflow-auto h-screen'>
+          <SideBar />
+        </div>
+      )}
 
-      <div
-        style={{ height: "max-content" }}
-        className='flex justify-center align-center flex-col w-[48dvw] mt-[2rem]'
-      >
-        <h3>Output</h3>
-        <iframe
-          ref={iframeRef}
-          title='output'
-          className='h-[70dvh]'
-          style={{
-            border: "none",
-            borderRadius: "1rem",
-          }}
-        />
-      </div>
-
-      <div className='flex  flex-col h-[60dvh]  w-[48dvw] '>
-        <div className='flex justify-end absolute right-0'>
-          <div className='mr-[4rem]'>
-            <Button onClick={saveCode} color='primary'>
-              Save
-            </Button>
-            <Button onClick={uploadToDatabase} color='primary'>
-              Upload To database
-            </Button>
+      <div className='flex flex-wrap justify-center w-full'>
+        <div
+          style={{ height: "max-content" }}
+          className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
+        >
+          <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
+            <ModalContent>
+              {() => (
+                <>
+                  <ModalHeader className='flex flex-col gap-1'>
+                    Modal Title
+                  </ModalHeader>
+                  <ModalBody>
+                    <div className='flex align-center justify-center'>
+                      <RadioCreateCss
+                        Category={Category}
+                        setCategory={setCategory}
+                        setHtml={setHtml}
+                        setCss={setCss}
+                      />
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color='danger'
+                      variant='light'
+                      onPress={() => {
+                        redirect();
+                      }}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      color='primary'
+                      onPress={() => {
+                        setIsModalVisible(false);
+                      }}
+                    >
+                      Start
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+          <h3>Output</h3>
+          <div className='relative'>
+            <div className='absolute top-3 right-4 '>
+              <Switch
+                isSelected={isSelected}
+                onValueChange={setIsSelected}
+                className='z-10'
+              >
+                {!isSelected ? (
+                  <span className='text-black font-bold'>#e8e8e8</span>
+                ) : (
+                  <span className='font-bold text-white'>#212121</span>
+                )}
+              </Switch>
+            </div>
+            <div
+              ref={divRef}
+              className='container'
+              style={{
+                borderRadius: "1rem",
+                zIndex: 1,
+                position: "relative",
+                backgroundColor: `${!isSelected ? "#e8e8e8" : "#212121"}`,
+                width: "auto",
+                minWidth: "100%",
+                maxWidth: "100%",
+                height: "auto",
+                minHeight: "20rem",
+                maxHeight: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+            />
           </div>
         </div>
-        <Tabs aria-label='Options'>
-          <Tab key='Html' title='HTML'>
-            <Card>
-              <CardBody>
-                <div style={{ maxHeight: "400px", overflowY: "hidden" }}>
-                  <Editor
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: 18,
-                      wordWrap: "on",
-                    }}
-                    height='100vh'
-                    defaultLanguage='html'
-                    value={html}
-                    onChange={(newValue) => {
-                      if (newValue !== undefined) {
-                        setHtml(newValue);
-                      }
-                    }}
-                    defaultValue=''
-                    onMount={handleEditorDidMount}
-                    className='border-2 border-black rounded overflow-hidden'
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-          <Tab key='Css' title='Css'>
-            <Card>
-              <CardBody>
-                <div style={{ maxHeight: "68dvh", overflowY: "scroll" }}>
-                  {/* <CodeEditor
-                    value={css}
-                    language='css'
-                    placeholder='//Enter your css code here.'
-                    onChange={(e) => setCss(e.target.value)}
-                    padding={15}
-                    style={{
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: "1rem",
-                    }}
-                    data-color-mode={theme === "dark" ? "dark" : "light"}
-                  /> */}
-                  <Editor
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                      fontFamily:
-                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                      fontSize: 18,
-                      wordWrap: "on",
-                    }}
-                    height='100vh'
-                    defaultLanguage='css'
-                    value={css}
-                    onChange={(newValue) => {
-                      if (newValue !== undefined) {
-                        setCss(newValue);
-                      }
-                    }}
-                    defaultValue=''
-                    onMount={handleEditorDidMount}
-                    className='border-2 border-black rounded overflow-hidden'
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-        </Tabs>
+
+        <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
+          <div className='flex justify-end absolute right-0'>
+            <div className='mr-[4rem]'>
+              <Button  color='primary'>
+                Submit
+              </Button>
+            </div>
+          </div>
+          <Tabs aria-label='Options'>
+            <Tab key='Html' title='HTML'>
+              <Card>
+                <CardBody>
+                  <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
+                    <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontFamily:
+                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                        fontSize: 18,
+                        wordWrap: "on",
+                      }}
+                      height='100vh'
+                      defaultLanguage='html'
+                      value={html}
+                      onChange={(newValue) => setHtml(newValue)}
+                      defaultValue='<!--Enter Your Html Code Here-->'
+                      onMount={handleEditorDidMount}
+                      className='border-2 border-black rounded overflow-hidden'
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Tab>
+            <Tab key='Css' title='Css'>
+              <Card>
+                <CardBody>
+                  <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
+                    <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontFamily:
+                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                        fontSize: 18,
+                        wordWrap: "on",
+                      }}
+                      height='100vh'
+                      defaultLanguage='css'
+                      value={css}
+                      onChange={(newValue) => setCss(newValue)}
+                      defaultValue=''
+                      onMount={handleEditorDidMount}
+                      className='border-2 border-black rounded overflow-hidden'
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Tab>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default LiveEditor;

@@ -16,6 +16,8 @@ import Csselements from "./Pages/Csselements";
 import Editor from "./Pages/Editor";
 import ViewCsselement from "./components/ViewCsselement";
 import CssChallengecreate from "./Pages/CssChallengecreate";
+import RootLayout from "./components/Alert";
+import CssElementsCategory from "./components/CssElementsCategory";
 function App() {
   const [user, setUser] = useState({
     userName: "",
@@ -28,6 +30,7 @@ function App() {
     email: "",
     isLoggedIn: false,
     bio: "",
+    Permissions: ["newuser"],
   });
 
   const navigate = useNavigate();
@@ -37,6 +40,7 @@ function App() {
       <UserContext.Provider value={{ user, setUser }}>
         <NextUIProvider navigate={navigate}>
           <ThemeProvider defaultTheme='light'>
+            <RootLayout />
             <NavTest />
             <Routes>
               <Route path='/' element={<Home />} />
@@ -45,6 +49,11 @@ function App() {
               <Route path='/home' element={<Home />} />
               <Route path='/Csschallenges' element={<Csschallenges />} />
               <Route path='/Profile' element={<Profile />} />
+              <Route
+                path='/Csselements/:category'
+                element={<CssElementsCategory />}
+              />
+              ;
               <Route
                 path='/Csschallenges/:id'
                 element={<ChallengeDescription />}

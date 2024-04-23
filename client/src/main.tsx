@@ -9,10 +9,10 @@ import { ThemeProvider } from "@/components/theme-provider.jsx";
 import RootLayout from './components/Alert.tsx';
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RootLayout/>
     <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
     <NextUIProvider>
       <BrowserRouter>
+    <RootLayout/>
         {/* <main className='purple-dark text-foreground bg-background'> */}
           <App />
         {/* </main> */}

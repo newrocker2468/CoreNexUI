@@ -47,7 +47,7 @@
 //   );
 // };
 // export default Alertcustom;
-import {CloseButton,} from "@chakra-ui/react";
+// import {CloseButton,} from "@chakra-ui/react";
 import { Terminal } from "lucide-react";
 import { FC } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -72,7 +72,7 @@ position:"relative"
       <Terminal className='h-4 w-4' />
       <AlertTitle>Alert!</AlertTitle>
       <AlertDescription>{message}</AlertDescription>
-      <CloseButton onClick={handleClose} style={{position:"absolute",right:"1rem",top:"1rem"}}/>
+      {/* <CloseButton onClick={handleClose} style={{position:"absolute",right:"1rem",top:"1rem"}}/> */}
     </Alert>
   );
 };
