@@ -12,16 +12,15 @@ const userdb = require("./models/userSchema");
 const Csschallengesdb = require("./models/csschallengesSchema");
 const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcryptjs')
+const bcrypt = require("bcryptjs");
 const cookieParser = require("cookie-parser");
 
 const uuidv4 = require("uuid").v4;
 
-
 //git fetch origin
 //git checkout master
 //git merge origin/master
-//npm i 
+//npm i
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: "1800s" });
 }
@@ -66,57 +65,56 @@ passport.use(
       scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
-   try {
-     let user = await userdb.findOne({ email: profile.emails[0].value });
-     if (!user) {
-       user = new userdb({
-         google: {
-           Id: profile.id,
-           displayName: profile.displayName,
-           image: profile.photos[0].value,
-           bio: "",
-         },
-         github: {
-           Id: "",
-           displayName: "",
-           image: "",
-           bio: "",
-         },
-         email: profile.emails[0].value,
-         lastLoggedInWith: "google",
-         password: uuidv4(),
-       });
+      try {
+        let user = await userdb.findOne({ email: profile.emails[0].value });
+        if (!user) {
+          user = new userdb({
+            google: {
+              Id: profile.id,
+              displayName: profile.displayName,
+              image: profile.photos[0].value,
+              bio: "",
+            },
+            github: {
+              Id: "",
+              displayName: "",
+              image: "",
+              bio: "",
+            },
+            email: profile.emails[0].value,
+            lastLoggedInWith: "google",
+            password: uuidv4(),
+          });
 
-       await user.save();
-     } else {
-       console.log("User already exists");
-       // Check if the fields are empty before updating
-         user = await userdb.findOneAndUpdate(
-           { email: profile.emails[0].value },
-           {
-             $set: {
-               google: {
-                 Id: profile.id,
-                 displayName: profile.displayName,
-                 image: profile.photos[0].value,
-                 bio: "",
-               },
-               lastLoggedInWith: "google",
-               password: uuidv4(),
-             },
-           },
-           { new: true }
-         );
-       
-      //  console.log(user);
-       return done(null, user);
-     }
+          await user.save();
+        } else {
+          console.log("User already exists");
+          // Check if the fields are empty before updating
+          user = await userdb.findOneAndUpdate(
+            { email: profile.emails[0].value },
+            {
+              $set: {
+                google: {
+                  Id: profile.id,
+                  displayName: profile.displayName,
+                  image: profile.photos[0].value,
+                  bio: "",
+                },
+                lastLoggedInWith: "google",
+                password: uuidv4(),
+              },
+            },
+            { new: true }
+          );
 
-     return done(null, user);
-   } catch (err) {
-     return done(err, null);
-   }
+          //  console.log(user);
+          return done(null, user);
+        }
 
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
     }
   )
 );
@@ -133,8 +131,6 @@ app.get(
     failureRedirect: "http://localhost:5173/login",
   })
 );
-
-
 
 app.get("/login/sucess", async (req, res) => {
   // console.log(req.query.rememberMe);
@@ -163,32 +159,35 @@ app.get("/login/sucess", async (req, res) => {
     const rememberMe = req.query.rememberMe === "true";
     const maxAge = rememberMe
       ? 15 * 24 * 60 * 60 * 1000
-      : 2 * 24 * 60 * 60 * 1000; 
+      : 2 * 24 * 60 * 60 * 1000;
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: maxAge,
       sameSite: "none",
       secure: true,
-    });console.log(maxAge)
- if (rememberMe) {
-   const rememberMeToken = jwt.sign(
-     {
-       id: user.id,
-       issuedAt: Date.now(),
-     },
-     process.env.REMEMBER_ME_TOKEN_SECRET,
-     {
-       expiresIn: "15d",
-     }
-   );
-   res.cookie("rememberMeToken", rememberMeToken, {
-     httpOnly: true,
-     maxAge: 15 * 24 * 60 * 60 * 1000,
-     sameSite: "none",
-    //  secure: true,
-   });
- }
-    res.status(200).json({ message: "user login", user: token, rememberMe: rememberMe});
+    });
+    console.log(maxAge);
+    if (rememberMe) {
+      const rememberMeToken = jwt.sign(
+        {
+          id: user.id,
+          issuedAt: Date.now(),
+        },
+        process.env.REMEMBER_ME_TOKEN_SECRET,
+        {
+          expiresIn: "15d",
+        }
+      );
+      res.cookie("rememberMeToken", rememberMeToken, {
+        httpOnly: true,
+        maxAge: 15 * 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        //  secure: true,
+      });
+    }
+    res
+      .status(200)
+      .json({ message: "user login", user: token, rememberMe: rememberMe });
   } else {
     res.status(400).json({ message: "user not login" });
   }
@@ -285,32 +284,32 @@ app.get(
 );
 
 app.post("/login", async (req, res) => {
-const {email,password,remember}=req.body;
-const token =req.cookies.token;
-if(token){
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(500).json({ message: "Failed to authenticate token" });
+  const { email, password, remember } = req.body;
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+      }
+      res.status(200).json({ user: decoded });
+    });
+  } else {
+    const user = await userdb.findOne({ email: email });
+    if (!user) {
+      console.log("User not found");
+      // return res.status(400).json({ message: "User not found" });
     }
-    res.status(200).json({ user: decoded });
-  })
-}
-else{
-  const user = await userdb.findOne({ email: email });
-  if (!user) {
-    console.log("User not found");
-    // return res.status(400).json({ message: "User not found" });
-  }
 
-  if (user.password !== password) {
-    console.log("Password is incorrect");
-    // return res.status(400).json({ message: "Password is incorrect" });
+    if (user.password !== password) {
+      console.log("Password is incorrect");
+      // return res.status(400).json({ message: "Password is incorrect" });
+    }
+    if (user.password === password) {
+      console.log("password is correct");
+    }
   }
-  if(user.password === password){
-    console.log("password is correct");
-}
-}
-
 });
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
@@ -318,15 +317,13 @@ app.get("/logout", function (req, res) {
       console.log(err);
       res.status(500).send("Could not log out.");
     } else {
-  res.clearCookie("token");
-  // // Clear the 'rememberMeToken' cookie
-  // res.clearCookie("rememberMeToken");
+      res.clearCookie("token");
+      // // Clear the 'rememberMeToken' cookie
+      // res.clearCookie("rememberMeToken");
       res.status(200).send("Logged out.");
     }
   });
 });
-
-
 
 app.get("/csschallenges", async (req, res) => {
   try {
@@ -358,11 +355,11 @@ app.post("/csschallenges/:id", async (req, res) => {
     Csschallenges.save();
     res.json({ message: "CSS challenges added successfully." });
   } else {
-    res.json({ message: "CSS challenges already exists."});
+    res.json({ message: "CSS challenges already exists." });
   }
 });
 app.post("/csschallengesupdate", async (req, res) => {
-const{id,title,sdesc,description,img,status,date}=req.body
+  const { id, title, sdesc, description, img, status, date } = req.body;
   try {
     const challenges = await Csschallengesdb.findOneAndUpdate(
       { id: id },
@@ -388,17 +385,18 @@ const{id,title,sdesc,description,img,status,date}=req.body
 app.post("/csschallengesdelete", async (req, res) => {
   const { id } = req.body;
   console.log("id " + id);
-  
+
   try {
     const challenges = await Csschallengesdb.findOneAndDelete({ id: id });
     console.log(challenges);
-    res.status(200).json({ message: "CSS challenges deleted successfully."});
+    res.status(200).json({ message: "CSS challenges deleted successfully." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({message:"An error occurred while deleting CSS challenges."});
+    res
+      .status(500)
+      .json({ message: "An error occurred while deleting CSS challenges." });
   }
-
-})
+});
 app.post("/csschallengesget", async (req, res) => {
   const { id } = req.body;
   console.log("id " + id);
@@ -415,40 +413,34 @@ app.post("/csschallengesget", async (req, res) => {
 app.post("/editor/create/:id", async (req, res) => {
   const { id } = req.params;
 
-if(!req.body.login){
-  console.log("not login");
-  res.json({ message: "You are not logged in. Login First" }).status(400);
-  return;
-}
- let csselements;
-try{
-  if (req.body.login ||  req.body.html && req.body.css) {
-  const user = await userdb.findOne({ email: req.body.email })
-  csselements = new CssElementdb({
-    id: id,
-    html: req.body.html,
-    css: req.body.css,
-    elementtype: req.body.Category,
-    user: user._id,
-  });
+  if (!req.body.login) {
+    console.log("not login");
+    res.json({ message: "You are not logged in. Login First" }).status(400);
+    return;
+  }
+  let csselements;
+  try {
+    if (req.body.login || (req.body.html && req.body.css)) {
+      const user = await userdb.findOne({ email: req.body.email });
+      csselements = new CssElementdb({
+        id: id,
+        html: req.body.html,
+        css: req.body.css,
+        elementtype: req.body.Category,
+        user: user._id,
+      });
 
-  user.cssElements.push(csselements._id);
-  await user.save();
-  await csselements.save();
-} 
-  res.json({ message: "Code saved successfully." }).status(200);
-}
-catch(err){
-  res.json({ message: "Code not saved,something went wrong" }).status(400);
-  console.log(err);
-}
+      user.cssElements.push(csselements._id);
+      await user.save();
+      await csselements.save();
+    }
+    res.json({ message: "Code saved successfully." }).status(200);
+  } catch (err) {
+    res.json({ message: "Code not saved,something went wrong" }).status(400);
+    console.log(err);
+  }
   // CssElementdb.save();
-
-}
-
-)
-
-
+});
 
 app.get("/allcsselements", async (req, res) => {
   try {
@@ -460,13 +452,12 @@ app.get("/allcsselements", async (req, res) => {
   }
 });
 
-
 app.get("/editor/:id", async (req, res) => {
   try {
-    const CssElements = await CssElementdb.findOne({_id:req.params.id});
+    const CssElements = await CssElementdb.findOne({ _id: req.params.id });
     res.status(200).json(CssElements);
   } catch (error) {
-    console.error(error);
+    delete console.error(error);
     res.status(500).send("An error occurred while fetching CSS elements.");
   }
 });
@@ -478,9 +469,9 @@ app.post("/editor/:id/delete", async (req, res) => {
     const decodedToken = jwt.decode(token);
 
     const user = await userdb.findOne({ email: decodedToken.email });
-     const CssElements = await CssElementdb.findById({_id:req.params.id});
+    const CssElements = await CssElementdb.findById({ _id: req.params.id });
 
-// console.log(decodedoken);
+    // console.log(decodedoken);
     // Check if decodedToken is not null and permissions includes 'admin' or 'delete'
     if (
       decodedToken &&
@@ -491,7 +482,11 @@ app.post("/editor/:id/delete", async (req, res) => {
       const CssElements = await CssElementdb.findOneAndDelete({
         _id: req.params.id,
       });
-  
+      const userdb1 = await userdb.updateOne(
+        { _id: user._id },
+        { $pull: { cssElements: req.params.id } }
+      );
+
       res.status(200).json({ message: "CSS elements deleted successfully." });
     } else {
       res
@@ -507,231 +502,229 @@ app.post("/editor/:id/delete", async (req, res) => {
 });
 
 app.get("/getuserdata", async (req, res) => {
-const token = req.cookies.token;
-if(token){
-  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
-    if (err) {
-      return res.status(500).json({ message: "Failed to authenticate token" });
-    }
-    const user = await userdb.findOne({ email: decoded.email });
-    const CssElements = await CssElementdb.findOne({ user: user._id });
-if(user && CssElements){
-    if (user._id.toString() === CssElements.user.toString()) {
-      res.status(200).json({ sameUser: true });
-    }
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+      }
+      const user = await userdb.findOne({ email: decoded.email });
+      const CssElements = await CssElementdb.findOne({ user: user._id });
+      if (user && CssElements) {
+        if (user._id.toString() === CssElements.user.toString()) {
+          res.status(200).json({ sameUser: true });
+        }
+      }
+      // res.status(200).json({ user: decoded });
+    });
+  } else {
+    res.status(401).json({ message: "No token provided" });
+  }
+});
 
-}
-    // res.status(200).json({ user: decoded });
-  });
-
-}
-else{
-  res.status(401).json({ message: "No token provided" });
-
-}
-})
-
-app.post("/event/:id",async(req,res)=>{
-  try{
-    const Event = await Eventsdb.findOne({_id: req.params.id});
-    res.status(200).json({Event})
-  }catch(error){
+app.post("/event/:id", async (req, res) => {
+  try {
+    const Event = await Eventsdb.findOne({ _id: req.params.id });
+    res.status(200).json({ Event });
+  } catch (error) {
     console.error(error);
-    res.status(500).json({message:"An error has occured while fetching event "})
-    
+    res
+      .status(500)
+      .json({ message: "An error has occured while fetching event " });
   }
 });
 
 app.post("/event/:id/create", async (req, res) => {
   let Event;
-  try{
-Event = new Eventsdb({
-  id:req.param.id,
-  eventName:req.body.Name,
-  description:req.body.description,
-  img:req.body.img,
-  status:req.body.status,
-  date:req.body.date
+  try {
+    Event = new Eventsdb({
+      id: req.param.id,
+      eventName: req.body.Name,
+      description: req.body.description,
+      img: req.body.img,
+      status: req.body.status,
+      date: req.body.date,
+    });
+    Event.save();
+    res.status(200).json({ message: "event successfully added" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "an error has occured while fetching event" });
+  }
 });
-Event.save();
-res.status(200).json({message:"event successfully added"})
-} catch(error){
-  console.error(error);
-  res.status(500).json({message:"an error has occured while fetching event"})
-}
-})
-
 
 app.post("/event/:id/update", async (req, res) => {
-  try{
-const Event = await Eventsdb.findByIDAndupdateOne({_id: req.params.id});
-res.status(200).json({message:"event successfully updated"})
-} catch(error){
-  console.error(error);
-  res.status(500).json({message:"an error has occured while updating event"})
-}
-   
-})
+  try {
+    const Event = await Eventsdb.findByIDAndupdateOne({ _id: req.params.id });
+    res.status(200).json({ message: "event successfully updated" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "an error has occured while updating event" });
+  }
+});
 
 app.post("/event/:id/delete", async (req, res) => {
-  try{
-const Event = await Eventsdb.findByIDAnddeleteOne({_id: req.params.id});
-res.status(200).json({message:"event successfully deleted"})
-} catch(error){
-  console.error(error);
-  res.status(500).json({message:"an error has occured while deleting event"})
-}
-})
+  try {
+    const Event = await Eventsdb.findByIDAnddeleteOne({ _id: req.params.id });
+    res.status(200).json({ message: "event successfully deleted" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "an error has occured while deleting event" });
+  }
+});
 
 //route for notes upload
-app.post("/notesUpload/:id",async(req,res)=>{
-  try{
-    const Note = await Notesdb.findone({_id:req.params.id});
-    res.status(200).json({Note})
-
-  } catch(error){
+app.post("/notesUpload/:id", async (req, res) => {
+  try {
+    const Note = await Notesdb.findone({ _id: req.params.id });
+    res.status(200).json({ Note });
+  } catch (error) {
     console.error(error);
-    res.status(500).json({message:"An error has occured while fetching the notes "})
+    res
+      .status(500)
+      .json({ message: "An error has occured while fetching the notes " });
   }
+});
 
-})
-
-app.post("/notesUpload/:id/upload",async(req,res)=>{
-  try{
+app.post("/notesUpload/:id/upload", async (req, res) => {
+  try {
     const Note = new Notesdb({
-      id:req.params.id,
-      topicName:req.body.Name,
-      description:req.body.description,
-      img:req.body.img,
-      date:req.body.date,
-
+      id: req.params.id,
+      topicName: req.body.Name,
+      description: req.body.description,
+      img: req.body.img,
+      date: req.body.date,
     });
     Note.save();
-    res.status(200).json({message:"Document added successfully"})
-  }catch(error){
+    res.status(200).json({ message: "Document added successfully" });
+  } catch (error) {
     console.error(error);
-    res.status(500).json({message:"An error occured when added the Document"})
+    res
+      .status(500)
+      .json({ message: "An error occured when added the Document" });
   }
-})
+});
 
-app.post("/notesupload/:id/update", async(req,res)=>{
-  try{
-    const Note = await Notesdb.findByIDAndupdateOne({_id: req.params.id});
-    res.status(200).json(Note)
-    } catch(error){
-      console.error(error);
-      res.status(500).json({message:"an error has occured while updating the Document"})
+app.post("/notesupload/:id/update", async (req, res) => {
+  try {
+    const Note = await Notesdb.findByIDAndupdateOne({ _id: req.params.id });
+    res.status(200).json(Note);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "an error has occured while updating the Document" });
+  }
+});
+
+app.post("/notesupload/:id/delete", async (req, res) => {
+  try {
+    const Note = await Notesdb.findByIDAnddeleteOne({ _id: req.params.id });
+    res.status(200).json({ message: "Document successfully Deleted" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "an error has occured while deleting the Document" });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  try {
+    const { password, email } = req.body;
+    const hash = await bcrypt.hash(password, 12);
+    const user = new userdb({
+      google: {
+        Id: "",
+        displayName: "",
+        image: "",
+        bio: "",
+      },
+      github: {
+        Id: "",
+        displayName: "",
+        image: "",
+        bio: "",
+      },
+      email: email,
+      password: hash,
+      lastLoggedInWith: "default",
+    });
+    await user.save();
+    res.status(200).json({ message: "registration done successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "error has occured during registration" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password, remember } = req.body;
+    const user = await userdb.findOne({ email: email });
+    const validPassword = bcrypt.compare(password, user.password);
+    if (validPassword) {
+      res.status(200).json({ message: "Logged in successfully" });
     }
-       
-    })
-
-
-    app.post("/notesupload/:id/delete", async(req,res)=>{
-      try{
-        const Note = await Notesdb.findByIDAnddeleteOne({_id: req.params.id});
-        res.status(200).json({message:"Document successfully Deleted"})
-        } catch(error){
-          console.error(error);
-          res.status(500).json({message:"an error has occured while deleting the Document"})
-        }
-           
-        })
-
-        app.post("/register",async(req,res)=>{
-          try{
-          const{password,email}=req.body;
-          const hash = await bcrypt.hash(password,12);
-          const user = new userdb({
-            google: {
-              Id: "",
-              displayName: "",
-              image: "",
-              bio: "",
-            },
-            github: {
-              Id: "",
-              displayName: "",
-              image: "",
-              bio: "",
-            },
-            email: email,
-            password:hash,
-            lastLoggedInWith: "default",
-          })
-          await user.save(); 
-          res.status(200).json({message:"registration done successfully"})
-        }catch(error){
-          console.error(error);
-          res.status(500).json({message:"error has occured during registration"})
-        }   
-        })
-
-        app.post("/login",async(req,res)=>{
-        try{
-          const{email,password,remember}=req.body;
-          const user = await userdb.findOne({email:email});
-          const validPassword= bcrypt.compare(password,user.password)
-          if(validPassword){  
-            res.status(200).json({message:"Logged in successfully"})
-          }
-        }catch(error){
-              res.status(500).json({message:"Invalid try Again"})
-            }
-             
-          })
-          
-        
-
+  } catch (error) {
+    res.status(500).json({ message: "Invalid try Again" });
+  }
+});
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
- const { id } = req.params;
-  if (req.body.login || id && req.body.html && req.body.css) {
-  const user = await userdb.findOne({ email: req.body.email });
-  let csselements = new CssElementdb({
-    id: id,
-    html: req.body.html,
-    css: req.body.css,
-    user:user._id
-  });
-  await csselements.save(); 
+  const { id } = req.params;
+  if (req.body.login || (id && req.body.html && req.body.css)) {
+    const user = await userdb.findOne({ email: req.body.email });
+    let csselements = new CssElementdb({
+      id: id,
+      html: req.body.html,
+      css: req.body.css,
+      user: user._id,
+    });
+    await csselements.save();
   }
 });
 
 app.get("/validate-token", (req, res) => {
-if(req.cookies.token){
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(500).json({ message: "Failed to authenticate token" });
+  if (req.cookies.token) {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
     }
-    // console.log(decoded);
-    res.status(200).json({ user: decoded });
-  });}
-  else{
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+      }
+      // console.log(decoded);
+      res.status(200).json({ user: decoded });
+    });
+  } else {
     console.log("no token provided");
     res.status(401).json({ message: "No token provided" });
   }
 });
 
-
-app.get("/Csselements/:category", async (req,res)=>{
- try {
-   const category = req.params.category;
-   const elements = await CssElementdb.find({ elementtype: category });
-   console.log(elements);
-   res.json(elements);
- } catch (err) {
-   res.status(500).json({ message: err.message });
- }
-
+app.get("/Csselements/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+    const elements = await CssElementdb.find({ elementtype: category });
+    console.log(elements);
+    res.json(elements);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
-
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
-
-
