@@ -146,9 +146,21 @@ else{
 
 
 const loginwithgoogle = async () => {
-  console.log("clicked");
 
  try {
+
+  axios.post(
+    "http://localhost:3000/login/save",
+    {
+      email: formik.values.email,
+      password: formik.values.password,
+      remember: formik.values.Remember,
+    },
+    { withCredentials: true }
+  );
+
+
+  
    const response = await axios.get("http://localhost:3000/validate-token", {
      withCredentials: true,
    });
@@ -374,9 +386,10 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                 <div className='Logfooter'>
                   <CheckBox
                     text='Remember for 15 days'
-                    onChange={()=>{
-                      setRemember(!Remember);
-                    }}
+                    // onChange={()=>{
+                    //   setRemember(!Remember);
+                    // }}
+                    onChange={formik.handleChange}
                     name="Remember"
                   />
                   <AnchorLink

@@ -8,13 +8,18 @@ const CssElementSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-elementtype:{
-  type: String,
-  required: true,
-},
+  elementtype: {
+    type: String,
+    required: true,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
+  },
+  approvalStatus: {
+    type: String,
+    enum: ["approved", "inReview", "rejected"],
+    default: "inReview",
   },
 });
 const CssElement = mongoose.model("csselements", CssElementSchema);

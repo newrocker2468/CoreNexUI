@@ -2,9 +2,11 @@ import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Link } from "react-router-dom";
 import { useTheme } from "./theme-provider";
 import { ScrollShadow } from "@nextui-org/react";
+import UserContext from "./UserContext";
+import { useContext } from "react";
 const SideBar = () => {
   const { theme } = useTheme();
-
+  const { user, setUser } = useContext(UserContext);
   // Define styles for light and dark themes
   const styles =
     theme === "dark"
@@ -109,6 +111,13 @@ const SideBar = () => {
               Challenges
             </MenuItem>
             <MenuItem component={<Link to='/docs' />}> Documentation</MenuItem>
+            {user?.Permissions?.includes("admin") && (
+              <MenuItem component={<Link to='/admin' />}>
+                {" "}
+                Admin Controls
+              </MenuItem>
+            )}
+
             {/* <MenuItem component={<Link to='/Create' />}>
               {" "}
              + Create new element

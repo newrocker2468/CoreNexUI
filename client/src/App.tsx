@@ -1,6 +1,6 @@
 import Home from "./Pages/Home";
 import "./App.css";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate,useLocation} from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
@@ -10,7 +10,7 @@ import Csschallenges from "./Pages/Csschallenges";
 import ChallengeDescription from "./Pages/ChallengeDescription";
 import UserContext from "./components/UserContext";
 import Profile from "./Pages/Profile";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Csselements from "./Pages/Csselements";
 import Editor from "./Pages/Editor";
@@ -18,7 +18,11 @@ import ViewCsselement from "./components/ViewCsselement";
 import CssChallengecreate from "./Pages/CssChallengecreate";
 import RootLayout from "./components/Alert";
 import CssElementsCategory from "./components/CssElementsCategory";
+import AdminPanel from "./Pages/AdminPanel";
 function App() {
+  const location = useLocation();
+    const navigate = useNavigate();
+
   const [user, setUser] = useState({
     userName: "",
     data: {},
@@ -32,8 +36,14 @@ function App() {
     bio: "",
     Permissions: ["newuser"],
   });
-
-  const navigate = useNavigate();
+useEffect(() => {
+  if (
+    user.isLoggedIn &&
+    (location.pathname === "/login" || location.pathname === "/signup")
+  ) {
+    navigate("/home");
+  }
+}, [user.isLoggedIn, location.pathname]);
 
   return (
     <>
@@ -65,6 +75,7 @@ function App() {
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />
+              <Route path='/admin' element={<AdminPanel />} />
             </Routes>
           </ThemeProvider>
         </NextUIProvider>

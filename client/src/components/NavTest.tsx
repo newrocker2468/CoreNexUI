@@ -88,43 +88,7 @@ export default function NavTest() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
-
-const getUserData = async () => {
-    try {
-      //!SECTION this is to get token
-      const response = await axios("http://localhost:3000/login/sucess", {
-        withCredentials: true,
-      });
-      const user = jwtDecode<MyJwtPayload>(response.data.user);
-  
-      const platform = user.lastLoggedInWith; // google or github
-      if (platform) {
-        const profile = user[platform];
-        let highres_img = profile.image;
-        if (profile.image.includes("s96-c")) {
-          highres_img = profile.image.replace("s96-c", "s500-c");
-        } else if (profile.image.includes("sz=50")) {
-          highres_img = profile.image.replace("sz=50", "sz=240");
-        }
-
-          setUser((prevState) => ({
-            ...prevState,
-            userName: profile.displayName,
-            avatarProps: profile.image,
-            highres_img: highres_img,
-            isLoggedIn: true,
-            email: user.email!,
-            bio: profile.bio,
-            Permissions: user.Permissions,
-          }));
-        
-      }
-      // console.log(user);
-    } catch (err) {
-      console.log(err);
-    }
-};
-
+ const [token, setToken] = useState(null);
 
 useEffect(() => {
   const fetchUser = async () => {
@@ -161,9 +125,6 @@ useEffect(() => {
 fetchUser();
 }, []);
 
-  useEffect(() => {
-    getUserData();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -182,7 +143,7 @@ fetchUser();
         Loginwithgithub: false,
         Permissions: ["newuser"],
       }))
-
+    setToken(null);
       navigate("/login");
     } catch (err) {
       console.error(err);

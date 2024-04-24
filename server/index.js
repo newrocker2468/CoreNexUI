@@ -38,6 +38,7 @@ app.use(
 
 app.use(express.json());
 
+app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -54,7 +55,6 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
-app.use(cookieParser());
 //!SECTION Google Auth
 passport.use(
   new GoogleStrategy(
@@ -106,7 +106,7 @@ passport.use(
             },
             { new: true }
           );
-
+              
           //  console.log(user);
           return done(null, user);
         }
@@ -127,71 +127,142 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:5173/home",
     failureRedirect: "http://localhost:5173/login",
-  })
-);
-
-app.get("/login/sucess", async (req, res) => {
-  // console.log(req.query.rememberMe);
-  if (req.user) {
-    console.log("User logisssssssssssssssss");
-    const user = req.user;
-    // const token = generateAccessToken();
+  }),
+  function (req, res) {
+    // Successful authentication, create JWT.
     const token = jwt.sign(
       {
-        email: user.email,
+        email: req.user.email,
         google: {
-          displayName: user.google.displayName || "",
-          image: user.google.image || "",
-          bio: user.google.bio || "",
+          displayName: req.user.google.displayName || "",
+          image: req.user.google.image || "",
+          bio: req.user.google.bio || "",
         },
         github: {
-          displayName: user.github.displayName || "",
-          image: user.github.image || "",
-          bio: user.github.bio || "",
+          displayName: req.user.github.displayName || "",
+          image: req.user.github.image || "",
+          bio: req.user.github.bio || "",
         },
-        lastLoggedInWith: user.lastLoggedInWith,
-        Permissions: user.Permissions,
+        lastLoggedInWith: req.user.lastLoggedInWith,
+        Permissions: req.user.Permissions,
       },
       process.env.TOKEN_SECRET
     );
-    const rememberMe = req.query.rememberMe === "true";
-    const maxAge = rememberMe
-      ? 15 * 24 * 60 * 60 * 1000
-      : 2 * 24 * 60 * 60 * 1000;
+
+    // Send the token back to the client
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: maxAge,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
     });
-    console.log(maxAge);
-    if (rememberMe) {
-      const rememberMeToken = jwt.sign(
-        {
-          id: user.id,
-          issuedAt: Date.now(),
-        },
-        process.env.REMEMBER_ME_TOKEN_SECRET,
-        {
-          expiresIn: "15d",
-        }
-      );
-      res.cookie("rememberMeToken", rememberMeToken, {
-        httpOnly: true,
-        maxAge: 15 * 24 * 60 * 60 * 1000,
-        sameSite: "none",
-        //  secure: true,
-      });
-    }
-    res
-      .status(200)
-      .json({ message: "user login", user: token, rememberMe: rememberMe });
-  } else {
-    res.status(400).json({ message: "user not login" });
+
+    // Redirect user to the desired page
+    res.redirect("http://localhost:5173/home");
   }
-});
+);
+
+
+
+// app.get("/login/sucess", async (req, res) => {
+// const token = req.cookies.token;
+// if(!token){
+//     if (req.user) {
+//       const user = req.user;
+//       const token = jwt.sign(
+//         {
+//           email: user.email,
+//           google: {
+//             displayName: user.google.displayName || "",
+//             image: user.google.image || "",
+//             bio: user.google.bio || "",
+//           },
+//           github: {
+//             displayName: user.github.displayName || "",
+//             image: user.github.image || "",
+//             bio: user.github.bio || "",
+//           },
+//           lastLoggedInWith: user.lastLoggedInWith,
+//           Permissions: user.Permissions,
+//         },
+//         process.env.TOKEN_SECRET
+//       );
+//       res.cookie("token", token, {
+//         httpOnly: true,
+//         maxAge: 2 * 24 * 60 * 60 * 1000,
+//         sameSite: "none",
+//         secure: true,
+//       });
+//       res
+//         .status(200)
+//         .json({ message: "user login", user: token});
+//     } else {
+//       res.status(400).json({ message: "user not login" });
+//     }
+// }
+// });
+// app.get("/login/sucess", async (req, res) => {
+//   if (req.user) {
+//     const user = req.user;
+//     // const token = generateAccessToken();
+//     const token = jwt.sign(
+//       {
+//         email: user.email,
+//         google: {
+//           displayName: user.google.displayName || "",
+//           image: user.google.image || "",
+//           bio: user.google.bio || "",
+//         },
+//         github: {
+//           displayName: user.github.displayName || "",
+//           image: user.github.image || "",
+//           bio: user.github.bio || "",
+//         },
+//         lastLoggedInWith: user.lastLoggedInWith,
+//         Permissions: user.Permissions,
+//       },
+//       process.env.TOKEN_SECRET
+//     );
+//     let data = req.session.remember;
+//     console.log("session storage dtata test")
+//     console.log(req.session.remember);
+//     const rememberMe = data === "true";
+//     const maxAge = rememberMe
+//       ? 15 * 24 * 60 * 60 * 1000
+//       : 2 * 24 * 60 * 60 * 1000;
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       maxAge: maxAge,
+//       sameSite: "none",
+//       secure: true,
+//     });
+//     // console.log(maxAge);
+//     if (rememberMe) {
+//       const rememberMeToken = jwt.sign(
+//         {
+//           id: user.id,
+//           issuedAt: Date.now(),
+//         },
+//         process.env.REMEMBER_ME_TOKEN_SECRET,
+//         {
+//           expiresIn: "15d",
+//         }
+//       );
+//       res.cookie("rememberMeToken", rememberMeToken, {
+//         httpOnly: true,
+//         maxAge: 15 * 24 * 60 * 60 * 1000,
+//         sameSite: "none",
+//         //  secure: true,
+//       });
+//     }
+//     res
+//       .status(200)
+//       .json({ message: "user login", user: token, rememberMe: rememberMe });
+//   } else {
+//     res.status(400).json({ message: "user not login" });
+//   }
+// });
 
 //!SECTION Github Auth
 
@@ -275,14 +346,45 @@ app.get(
   passport.authenticate("github", { scope: ["user", "repo"] })
 );
 
+
 app.get(
   "/auth/github/callback",
   passport.authenticate("github", {
-    successRedirect: "http://localhost:5173/home",
     failureRedirect: "http://localhost:5173/login",
-  })
-);
+  }),
+  function (req, res) {
+    // Successful authentication, create JWT.
+    const token = jwt.sign(
+      {
+        email: req.user.email,
+        google: {
+          displayName: req.user.google.displayName || "",
+          image: req.user.google.image || "",
+          bio: req.user.google.bio || "",
+        },
+        github: {
+          displayName: req.user.github.displayName || "",
+          image: req.user.github.image || "",
+          bio: req.user.github.bio || "",
+        },
+        lastLoggedInWith: req.user.lastLoggedInWith,
+        Permissions: req.user.Permissions,
+      },
+      process.env.TOKEN_SECRET
+    );
 
+    // Send the token back to the client
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+    });
+
+    // Redirect user to the desired page
+    res.redirect("http://localhost:5173/home");
+  }
+);
 app.post("/login", async (req, res) => {
   const { email, password, remember } = req.body;
   const token = req.cookies.token;
@@ -311,6 +413,8 @@ app.post("/login", async (req, res) => {
     }
   }
 });
+
+
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
     if (err) {
@@ -410,6 +514,37 @@ app.post("/csschallengesget", async (req, res) => {
   }
 });
 
+// app.post("/editor/create/:id", async (req, res) => {
+//   const { id } = req.params;
+
+//   if (!req.body.login) {
+//     console.log("not login");
+//     res.json({ message: "You are not logged in. Login First" }).status(400);
+//     return;
+//   }
+//   let csselements;
+//   try {
+//     if (req.body.login || (req.body.html && req.body.css)) {
+//       const user = await userdb.findOne({ email: req.body.email });
+//       csselements = new CssElementdb({
+//         id: id,
+//         html: req.body.html,
+//         css: req.body.css,
+//         elementtype: req.body.Category,
+//         user: user._id,
+//       });
+
+//       user.cssElements.push(csselements._id);
+//       await user.save();
+//       await csselements.save();
+//     }
+//     res.json({ message: "Code saved successfully." }).status(200);
+//   } catch (err) {
+//     res.json({ message: "Code not saved,something went wrong" }).status(400);
+//     console.log(err);
+//   }
+//   // CssElementdb.save();
+// });
 app.post("/editor/create/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -428,29 +563,61 @@ app.post("/editor/create/:id", async (req, res) => {
         css: req.body.css,
         elementtype: req.body.Category,
         user: user._id,
+        approvalStatus: "inReview", // set approvalStatus to 'inReview' when a new post is created
       });
 
-      user.cssElements.push(csselements._id);
+      user.cssElementsInReview.push(csselements._id); // add the post to cssElementsInReview array of the user
       await user.save();
       await csselements.save();
     }
-    res.json({ message: "Code saved successfully." }).status(200);
+    res.json({ message: "Code Sent For Approval" }).status(200);
   } catch (err) {
-    res.json({ message: "Code not saved,something went wrong" }).status(400);
+    res.json({ message: "Code not saved, something went wrong" }).status(400);
     console.log(err);
   }
-  // CssElementdb.save();
 });
 
+
+// app.post("/editor/create/:id", async (req, res) => {
+//   const { id } = req.params;
+
+//   if (!req.body.login) {
+//     console.log("not login");
+//     res.json({ message: "You are not logged in. Login First" }).status(400);
+//     return;
+//   }
+//   let cssElementsInReview;
+//   try {
+//     if (req.body.login || (req.body.html && req.body.css)) {
+//       const user = await userdb.findOne({ email: req.body.email });
+//       cssElementsInReview = new NeedApproaldb({
+//         elementtype: req.body.Category,
+//       });
+
+//       user.cssElementsInReview.push(cssElementsInReview._id);
+      
+//       await user.save();
+//       await cssElementsInReview.save();
+//     }
+//     res.json({ message: "Code Sent For Approval" }).status(200);
+//   } catch (err) {
+//     res.json({ message: "Code not saved,something went wrong" }).status(400);
+//     console.log(err);
+//   }
+//   // CssElementdb.save();
+// });
 app.get("/allcsselements", async (req, res) => {
   try {
-    const CssElements = await CssElementdb.find({}).populate("user");
+    const CssElements = await CssElementdb.find({
+      approvalStatus: "approved",
+    }).populate("user");
     res.status(200).json(CssElements);
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while fetching CSS elements.");
   }
 });
+
 
 app.get("/editor/:id", async (req, res) => {
   try {
@@ -665,7 +832,20 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ message: "error has occured during registration" });
   }
 });
+app.post("/login/save", async (req, res) => {
+  try {
+    const { email, password, remember } = req.body;
 
+    // Set the 'remember' value in a cookie instead of the session
+    res.cookie("remember", remember, { maxAge: 900000, httpOnly: true });
+
+    console.log("Cookie set");
+    // You can redirect to another route here
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred during registration" });
+  }
+});
 app.post("/login", async (req, res) => {
   try {
     const { email, password, remember } = req.body;
@@ -714,16 +894,52 @@ app.get("/validate-token", (req, res) => {
   }
 });
 
-app.get("/Csselements/:category", async (req, res) => {
+app.get("/CssElements/getallforApproval", async (req, res) => {
   try {
-    const category = req.params.category;
-    const elements = await CssElementdb.find({ elementtype: category });
-    console.log(elements);
+    const elements = await CssElementdb.find({}).populate("user");
+    // console.log(elements);
     res.json(elements);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 });
+
+app.post("/Cssinapproval/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  const{email} =req.body;
+
+  try {
+   const user =  await userdb.updateOne({ email : email }, { $pull: { csselement: id } });
+await CssElementdb.findOneAndDelete({ _id: id },{new:true});
+    const element = await CssElementdb.find({}).populate("user");
+    res.json({element:element ,message:"Request Rejected, and Element Deleted SuccessFully!"});
+    console.log(element);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+  app.get("/Csselements/:category", async (req, res) => {
+    try {
+      const category = req.params.category;
+      const elements = await CssElementdb.find({
+        elementtype: category,
+        approvalStatus: "approved",
+      });
+      console.log(elements);
+      res.json(elements);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+
+
+
+
+
+
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
