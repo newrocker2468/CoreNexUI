@@ -89,40 +89,85 @@ export default function NavTest() {
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
  const [token, setToken] = useState(null);
-
 useEffect(() => {
   const fetchUser = async () => {
-    const response = await axios("http://localhost:3000/validate-token", {
-      withCredentials: true,
-    });
-  
-  const user = await response.data.user;
-  if (user) {
-      const platform = user.lastLoggedInWith; 
-      const profile = user[platform];
-      let highres_img = profile.image;
-      if (profile.image.includes("s96-c")) {
-        highres_img = profile.image.replace("s96-c", "s500-c");
-      } else if (profile.image.includes("sz=50")) {
-        highres_img = profile.image.replace("sz=50", "sz=240");
-      }
+    try {
+      const response = await axios("http://localhost:3000/validate-token", {
+        withCredentials: true,
+      });
 
-      setUser((prevState) => ({
-        ...prevState,
-        userName: profile.displayName,
-        avatarProps: profile.image,
-        highres_img: highres_img,
-        isLoggedIn: true,
-        email: user.email!,
-        bio: profile.bio,
-        Permissions: user.Permissions,
-      }));
+      const user = await response.data.user;
+      if (user) {
+        const platform = user.lastLoggedInWith;
+        const profile = user[platform];
+        let highres_img = profile.image;
+        if (profile.image.includes("s96-c")) {
+          highres_img = profile.image.replace("s96-c", "s500-c");
+        } else if (profile.image.includes("sz=50")) {
+          highres_img = profile.image.replace("sz=50", "sz=240");
+        }
+
+        setUser((prevState) => ({
+          ...prevState,
+          userName: profile.displayName,
+          avatarProps: profile.image,
+          highres_img: highres_img,
+          isLoggedIn: true,
+          email: user.email!,
+          bio: profile.bio,
+          Permissions: user.Permissions,
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+
+      // If the error is due to an expired token, refresh the token
+      if (error.response.status === 401) {
+        try {
+          // Request a new token
+          const tokenRes = await axios.post(
+            "http://localhost:3000/refresh_token",
+            {},
+            { withCredentials: true }
+          );
+
+          // Retry the original request
+          const retryRes = await axios("http://localhost:3000/validate-token", {
+            withCredentials: true,
+          });
+
+          const user = await retryRes.data.user;
+          if (user) {
+            const platform = user.lastLoggedInWith;
+            const profile = user[platform];
+            let highres_img = profile.image;
+            if (profile.image.includes("s96-c")) {
+              highres_img = profile.image.replace("s96-c", "s500-c");
+            } else if (profile.image.includes("sz=50")) {
+              highres_img = profile.image.replace("sz=50", "sz=240");
+            }
+            console.log("dddddddddddddddddddddddddddddddddd");
+              console.log(user);
+            setUser((prevState) => ({
+              ...prevState,
+              userName: profile.displayName,
+              avatarProps: profile.image,
+              highres_img: highres_img,
+              isLoggedIn: true,
+              email: user.email!,
+              bio: profile.bio,
+              Permissions: user.Permissions,
+            }));
+          }
+        } catch (refreshError) {
+          console.log(refreshError);
+        }
+      }
     }
-    // console.log(user);
   };
 
   // Call the function when the component mounts
-fetchUser();
+  fetchUser();
 }, []);
 
 

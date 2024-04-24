@@ -33,24 +33,53 @@ const getElementsforApproval = async () => {
 
 }
 
-const deleteElement = async (id: string,email:string) => {
-    console.log(email);
-    console.log(id);
-    try {
-        const res = await axios.post(
-          `http://localhost:3000/Cssinapproval/delete/${id}`,
-            {email :email}
-        );
-        console.log(res.data);
-        setElementsforApproval(res.data.element);
-        toast(res.data.message,{
-            position:"top-center",
-        })
-    } catch (error) {
-        console.log(error);
-}
+const deleteElement = async (id: string, email: string) => {
+  console.log(email);
+  console.log(id);
+  try {
+    const res = await axios.post(
+      `http://localhost:3000/Cssinapproval/delete/${id}`,
+      { email: email },
+      { withCredentials: true }
+    );
 
-}
+    console.log(res.data);
+    setElementsforApproval(res.data.element);
+    toast(res.data.message, {
+      position: "top-center",
+    });
+  } catch (error) {
+    console.log(error);
+
+    // If the error is due to an expired token, refresh the token
+    if (error.response.status === 401) {
+      try {
+        // Request a new token
+        const tokenRes = await axios.post(
+          "http://localhost:3000/refresh_token",
+          {},
+          { withCredentials: true }
+        );
+
+        // Retry the original request
+        const retryRes = await axios.post(
+          `http://localhost:3000/Cssinapproval/delete/${id}`,
+          { email: email },
+          { withCredentials: true }
+        );
+
+        console.log(retryRes.data);
+        setElementsforApproval(retryRes.data.element);
+        toast(retryRes.data.message, {
+          position: "top-center",
+        });
+      } catch (refreshError) {
+        console.log(refreshError);
+      }
+    }
+  }
+};
+
 useEffect(() => {
     getElementsforApproval();
 }, []);

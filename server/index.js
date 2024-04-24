@@ -147,13 +147,30 @@ app.get(
         lastLoggedInWith: req.user.lastLoggedInWith,
         Permissions: req.user.Permissions,
       },
-      process.env.TOKEN_SECRET
+      process.env.TOKEN_SECRET,
+      { expiresIn: "1h" } // Set the access token to expire in 1 hour
     );
 
-    // Send the token back to the client
+    // Create a refresh token
+    const refreshToken = jwt.sign(
+      {
+        email: req.user.email,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" } // Set the refresh token to expire in 7 days
+    );
+
+    // Send the tokens back to the client
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: "none",
+      secure: true,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       sameSite: "none",
       secure: true,
     });
@@ -162,6 +179,8 @@ app.get(
     res.redirect("http://localhost:5173/home");
   }
 );
+
+
 
 
 
@@ -893,6 +912,48 @@ app.get("/validate-token", (req, res) => {
     res.status(401).json({ message: "No token provided" });
   }
 });
+app.post("/refresh_token", (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.sendStatus(401); // No token provided
+
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET,async (err, decoded) => {
+    if (err) return res.sendStatus(403); // Invalid token
+    console.log(decoded);
+    const user = await userdb.findOne({ email: decoded.email });
+    console.log(user);
+    // Create new JWT
+    const token = jwt.sign(
+      {
+        email: user.email,
+        google: {
+          displayName: user.google.displayName || "",
+          image: user.google.image || "",
+          bio: user.google.bio || "",
+        },
+        github: {
+          displayName: user.github.displayName || "",
+          image: user.github.image || "",
+          bio: user.github.bio || "",
+        },
+        lastLoggedInWith: user.lastLoggedInWith,
+        Permissions: user.Permissions,
+      },
+      process.env.TOKEN_SECRET
+    );
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+    });
+
+    // Decode the JWT
+    const decodedtoken = jwt.decode(token);
+    // Send the decoded JWT to the client
+    res.json({ token: decodedtoken });
+  });
+});
+
 
 app.get("/CssElements/getallforApproval", async (req, res) => {
   try {
@@ -910,7 +971,10 @@ app.post("/Cssinapproval/delete/:id", async (req, res) => {
   const{email} =req.body;
 
   try {
-   const user =  await userdb.updateOne({ email : email }, { $pull: { csselement: id } });
+   const user = await userdb.updateOne(
+     { email: email },
+     { $pull: { cssElementsInReview: id } }
+   );
 await CssElementdb.findOneAndDelete({ _id: id },{new:true});
     const element = await CssElementdb.find({}).populate("user");
     res.json({element:element ,message:"Request Rejected, and Element Deleted SuccessFully!"});

@@ -220,10 +220,7 @@ if (Remember) {
 }
   const loginwithgithub = async () => {
     
-try {
-  const res = await axios.get("http://localhost:3000/validate-token", {
-    withCredentials: true,
-  })
+try { 
   const response = await axios.get("http://localhost:3000/validate-token", {
     withCredentials: true,
   });
