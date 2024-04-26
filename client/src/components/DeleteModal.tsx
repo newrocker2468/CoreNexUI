@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import "@/Styles/CssChallengeDescription.css";
-import { useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -9,41 +8,45 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Input,
 } from "@nextui-org/react";
-
+import axios from "axios"
 import { FC } from "react";
 import Btn from "./Btn";
 
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 interface Challenge {
   id: string | undefined;
 }
-type Variant = "opaque"| "blur" |"transparent";
 
-const DeleteModal:FC <Challenge>=({id}) =>{
+const DeleteModal:FC <Challenge>=() =>{
      const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [backdrop, setBackdrop] = useState <Variant>("opaque");
   const params = useParams();
 
 
-const CreateChallenge = async (id: string | undefined) => {
-  await fetch(`http://localhost:3000/csschallengesdelete`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: id }),
-  }).then(async (response) => {
-    if (response) {
-      navigate("/Csschallenges?Delete=true", {
-        state: {
-          message: "Challenge Deleted Successfully",
+const DeleteChallenge = async (id: string | undefined) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/csschallengesdelete`,
+      { id: id },
+      {
+        headers: {
+          "Content-Type": "application/json",
         },
-      });
+        withCredentials: true,
+      }
+    );
+
+    if (response) {
+      toast.success(response.data.message,{
+        position: "top-center",
+      })
+      navigate(-1);
     }
-  });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 
@@ -80,9 +83,9 @@ const CreateChallenge = async (id: string | undefined) => {
                   Text='Delete'
                   color='danger'
                   onPress={onClose}
-                  onClick={(e) => {
+                  onClick={(e: { preventDefault: () => void; }) => {
                     e.preventDefault();
-                    CreateChallenge(params.id);
+                    DeleteChallenge(params.id);
                   }}
                 />
               </ModalFooter>

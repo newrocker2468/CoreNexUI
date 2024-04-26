@@ -100,85 +100,65 @@ const uploadToFirebase = (
   };
 
 
-  const CreateChallenge = async (id: string, displayImage: string) => {
-    fetch(`http://localhost:3000/csschallengesupdate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(createFormData(id, displayImage)),
-    }).then((response) => {
-      console.log("responseeeeeeeeeeeeeeeeeeeeeeeeee");
-      toast.success("Css Challenge Updated Successfully !", {
-        duration: 2500,
-        position: "top-center",
-        action: {
-          label: "X",
-          onClick: () => console.log("Action"),
+
+
+const CreateChallenge = async (id: string, displayImage: string) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/csschallengesupdate`,
+      createFormData(id, displayImage),
+      {
+        headers: {
+          "Content-Type": "application/json",
         },
+        withCredentials: true,
+      }
+    );
+    if(response.data.message){
+      toast(response.data.message, {
+        position: "top-center",
       });
-      console.log(response);
-    });
-    // setFlag(!flag);
-  };
-
-// const CreateChallenge = async (id: string, displayImage: string) => {
-//   try {
-//     const response = await axios.post(
-//       `http://localhost:3000/csschallengesupdate`,
-//       createFormData(id, displayImage),
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         withCredentials: true,
-//       }
-//     );
-//     if(response.data.message){
-//       toast(response.data.message, {
-//         position: "top-center",
-//       });
     
-//     }
+    }
 
 
-//     if (response.data.message) {
-//       toast(response.data.message, {
-//         position: "top-center",
-//       });
-//     }
+    if (response.data.message) {
+      toast(response.data.message, {
+        position: "top-center",
+      });
+    }
 
-//     toast.success("Css Challenge Updated Successfully !", {
-//       duration: 2500,
-//       position: "top-center",
-//       action: {
-//         label: "X",
-//         onClick: () => console.log("Action"),
-//       },
-//     });
-//     // setCssdata(response.data);
-//   } catch (error) {
+    toast.success("Css Challenge Updated Successfully !", {
+      duration: 2500,
+      position: "top-center",
+      action: {
+        label: "X",
+        onClick: () => console.log("Action"),
+      },
+    });
+    // setCssdata(response.data);
+  } catch (error) {
 
-//     console.error("Error:", error);
-//   }
-// };
-// const fetchuserdata = async () => {
-//   console.log("fetchuserdata");
-//   axios.get("http://localhost:3000/validate-token", {
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     withCredentials: true,
-//   }).then((response) => {
-//     console.log(response.data);
-//         if(response.data.user){
-//          setUser(response.data.user)
-//         }
-//   })
-// }
-// useEffect(() => {
-//   fetchuserdata()
-// }, [])
+    console.error("Error:", error);
+  }
+};
+const fetchuserdata = async () => {
+  console.log("fetchuserdata");
+  axios.get("http://localhost:3000/validate-token", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  }).then((response) => {
+    console.log(response.data);
+        if(response.data.user){
+         setUser(response.data.user)
+        }
+  })
+}
+useEffect(() => {
+  fetchuserdata()
+}, [])
   const SubmitHandler = async () => {
 
   if (files && files.length > 0) {

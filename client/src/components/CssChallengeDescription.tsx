@@ -9,6 +9,7 @@ import DeleteModal from "./DeleteModal";
 import EditChallengeModal from "./EditChallengeModal";
 import Btn from "./Btn";
 import { v4 as uuidv4 } from "uuid";
+
 interface Challenge1 {
   id: string | undefined;
   title: string | undefined;
@@ -26,40 +27,43 @@ const CssChallengeDescription = () => {
   const params = useParams();
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true); // Add this line
 
-
-const fetchuserdata = async() => {
-  axios.get("http://localhost:3000/getuserdata/csschallenges",{
-    withCredentials:true
-  })
-  .then((response) => {
+  const fetchuserdata = async () => {
+    const response = await axios.get(
+      "http://localhost:3000/getuserdata/csschallenges",
+      {
+        withCredentials: true,
+      }
+    );
     console.log(response.data.user);
-    setUser(response.data.user);
-  })
-}
-
+    setUser(() => response.data.user);
+    setIsLoading(false); // Add this line
+  };
 
   useEffect(() => {
-fetchuserdata()
-  },[])
-// console.log(Cssdata)
-  //!SECTION to fetch data from the server
+    fetchuserdata();
+  }, []);
+
   useEffect(() => {
     const id = params.id;
     axios
       .post("http://localhost:3000/csschallengesget/", {
         id: id,
-      })
+      }
+      )
       .then((res) => {
-        // console.log("res.data");
-        // console.log(res.data);
-        setCssdata(res.data);
+        setCssdata(() => res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
+  if (isLoading) {
+    // Add this condition
+    return <div>Loading...</div>; // Replace this with your actual loading indicator
+  }
 
   if (!Cssdata) {
     return (
@@ -69,19 +73,18 @@ fetchuserdata()
     );
   }
 
-
   return (
     <>
-      {user.Permissions.includes("admin") ||
-      user.Permissions.includes("editchallenges") ? (
+      {user?.Permissions.includes("admin") ||
+      user?.Permissions.includes("editchallenges") ? (
         <div className='flex justify-center align-center m-5'>
           <EditChallengeModal Cssdata={Cssdata} setCssdata={setCssdata} />
         </div>
       ) : (
         ""
       )}
-      {user.Permissions.includes("admin") ||
-      user.Permissions.includes("deletechallenges") ? (
+      {user?.Permissions.includes("admin") ||
+      user?.Permissions.includes("deletechallenges") ? (
         <div className='flex justify-center align-center m-5'>
           <DeleteModal id={Cssdata.id} />
         </div>

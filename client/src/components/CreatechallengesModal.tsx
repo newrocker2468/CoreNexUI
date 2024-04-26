@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
 import InputFile from "./FileInput";
-import { addDays, set } from "date-fns";
+import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
 import DatePickerrange from "./DatePickerrange";
 import { FC } from "react";
@@ -22,7 +22,7 @@ import { Textarea } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import axios from "axios"
 interface Challenge {
   id: string;
@@ -43,7 +43,7 @@ interface CreatechallengesModalProps {
 const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
   Cssdata,
   Setdata,
-  showToast,
+  // showToast,
   setShowToast,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -58,7 +58,7 @@ const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
     // from: new Date(2022, 0, 20),
     // to: addDays(new Date(2022, 0, 20), 20),
   });
-  const [image, setImg] = useState("");
+  // const [image, setImg] = useState("");
   const firebaseConfig = {
     apiKey: import.meta.env.VITE_API_KEY,
     authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -69,8 +69,8 @@ const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
     measurementId: import.meta.env.VITE_MEASUREMENTID,
   };
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const storage = getStorage(app);
+  // const analytics = getAnalytics(app);
+  // const storage = getStorage(app);
   
 const uploadToFirebase = (
   file: Blob | Uint8Array | ArrayBuffer,
@@ -124,7 +124,7 @@ const uploadToFirebase = (
     if (files && files.length > 0) {
       const reader = new FileReader();
  reader.onloadend = async () => {
-   const displayImage = reader.result as string;
+  //  const displayImage = reader.result as string;
    const file = files[0];
    const name = file.name 
    const imageUrl = await uploadToFirebase(file, name); 
@@ -255,7 +255,5 @@ const uploadToFirebase = (
   );
 };
 export default CreatechallengesModal;
-function uploadToFirebase(file: any) {
-  throw new Error("Function not implemented.");
-}
+
 

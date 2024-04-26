@@ -478,7 +478,7 @@ app.post("/csschallenges/:id", async (req, res) => {
             .status(500)
             .json({ message: "Failed to authenticate token" });
         }
-          if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("editcsselement")){
+          if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("createchallenges")){
             let Csschallenges = await Csschallengesdb.findOne({
               id: req.params.id,
             });
@@ -511,43 +511,89 @@ app.post("/csschallenges/:id", async (req, res) => {
   }
 });
 app.post("/csschallengesupdate", async (req, res) => {
-  const { id, title, sdesc, description, img, status, date } = req.body;
-  try {
-    const challenges = await Csschallengesdb.findOneAndUpdate(
-      { id: id },
-      {
-        $set: {
-          title: title,
-          sdesc: sdesc,
-          description: description,
-          img: img,
-          status: status,
-          date: date,
-        },
-      },
-      { new: true }
-    );
-    console.log(challenges);
-    res.status(200).json(challenges);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred while updating CSS challenges.");
-  }
+  console.log(req.cookies.token);
+const token = req.cookies.token;
+if(token){
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("editchallenges")){
+      try {
+        let Csschallenges = await Csschallengesdb.findOne({
+          id: req.body.id,
+        });
+        if (!Csschallenges) {
+          return res.status(404).json({ message: "CSS challenges not found." });
+        }
+        Csschallenges = await Csschallengesdb.findOneAndUpdate(
+          { id: req.body.id },
+          {
+            $set: {
+              title: req.body.title,
+              sdesc: req.body.sdesc,
+              description: req.body.description,
+              img: req.body.img,
+              status: req.body.status,
+              date: req.body.date,
+            },
+          },
+          { new: true }
+        );
+        res.status(200).json({
+          Csschallenges: Csschallenges,
+          message: "CSS challenges updated successfully.",
+        });
+      } catch (error) {
+        console.error(error);
+        res
+          .status(500)
+          .json({ message: "An error occurred while updating CSS challenges." });
+      }
+    }
+    else{
+      return res.status(401).json({ message: "You are not authorized to update CSS challenges." });
+    }
+  })
+}
+else{
+  return res.status(401).json({ message: "No token provided" });
+}
 });
-app.post("/csschallengesdelete", async (req, res) => {
-  const { id } = req.body;
-  console.log("id " + id);
 
-  try {
-    const challenges = await Csschallengesdb.findOneAndDelete({ id: id });
-    console.log(challenges);
-    res.status(200).json({ message: "CSS challenges deleted successfully." });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while deleting CSS challenges." });
-  }
+app.post("/csschallengesdelete", async (req, res) => {
+if(req.cookies.token){
+  jwt.verify(req.cookies.token, process.env.TOKEN_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("deletechallenges")){
+       const { id } = req.body;
+       console.log("id " + id);
+       try {
+         const challenges = await Csschallengesdb.findOneAndDelete({ id: id });
+         console.log(challenges);
+         res
+           .status(200)
+           .json({ message: "CSS challenges deleted successfully." });
+       } catch (error) {
+         console.error(error);
+         res
+           .status(500)
+           .json({
+             message: "An error occurred while deleting CSS challenges.",
+           });
+       }
+    }
+    else{
+      return res.status(401).json({ message: "You are not authorized to delete CSS challenges." });
+    }
+  })
+}
+else{
+  return res.status(401).json({ message: "No token provided" });
+}
+ 
 });
 app.post("/csschallengesget", async (req, res) => {
   const { id } = req.body;
