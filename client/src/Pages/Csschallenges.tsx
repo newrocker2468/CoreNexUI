@@ -4,14 +4,18 @@ import CreatechallengesModal from "@/components/CreatechallengesModal";
 import { useState } from "react";
 import Csschallengesdata from "@/middlewares/Seeder";
 import { Link } from "react-router-dom";
-
+import axios from "axios"
 
 import { toast } from "sonner";
 import { set } from "date-fns";
+interface user{
+  Permissions:string[]
+  email:string,
 
+}
 const Csschallenges = () => {
   const [Cssdata, setCssdata] = useState(Csschallengesdata);
-
+  const[user,setUser]=useState<user>();
 const [showToast, setShowToast] = useState(false);
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -40,9 +44,7 @@ useEffect(() => {
       },
     });
     setShowToast(false);
-    // Remove the showToast query parameter after showing the toast
-    // urlParams.delete("Create");
-    // window.history.replaceState({}, "", `${window.location.pathname}`);
+
   }
 }, [showToast]);
 
@@ -66,17 +68,41 @@ useEffect(() => {
       .catch((error) => console.error("Error:", error));
   };
 
-  // console.log(Cssdata);
+
+
+  const fetchuserdata = async () => {
+    console.log("fetchuserdata");
+    try {
+      axios
+        .get("http://localhost:3000/getuserdata/csschallenges",{
+          withCredentials:true
+        })
+        .then((response) => {
+          console.log(response.data.user);
+          setUser(response.data.user);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+ useEffect(() => {
+ fetchuserdata()
+ },[])
   return (
     <>
       <section className='flex align-center justify-center'>
         <div className='grid items-center w-[20dvw]'>
-          <CreatechallengesModal
-            Cssdata={Cssdata}
-            Setdata={setCssdata}
-            showToast={showToast}
-            setShowToast={setShowToast}
-          />
+          {user?.Permissions.includes("admin") ||
+          user?.Permissions.includes("createcsschallenges") ? (
+            <CreatechallengesModal
+              Cssdata={Cssdata}
+              Setdata={setCssdata}
+              showToast={showToast}
+              setShowToast={setShowToast}
+            />
+          ) : (
+            ""
+          )}
         </div>
       </section>
       {Cssdata?.map((data, index) => {

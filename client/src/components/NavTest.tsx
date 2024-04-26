@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Link as NextUILink } from "@nextui-org/react";
-import Link from "@/components/Link";
 import { ModeToggle } from "@/components/mode-toggle.jsx";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo.tsx";
@@ -19,7 +18,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
 import UserContext from "./UserContext";
 import { Link as RouterLink} from "react-router-dom";
@@ -27,62 +26,72 @@ import { JwtPayload, jwtDecode } from "jwt-decode";
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
+    title: "All Elements",
+    href: "/Csselements",
     description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+      "Explore a comprehensive collection of diverse and interactive CSS elements.",
   },
   {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
+    title: "Buttons",
+    href: "/Csselements/button",
     description:
-      "For sighted users to preview content available behind a link.",
+      "Discover buttons with various styles and animations to make your user interactions more engaging.",
   },
   {
-    title: "Progress",
-    href: "/docs/primitives/progress",
+    title: "CheckBoxes",
+    href: "/Csselements/checkbox",
     description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+      "Check out checkboxes that provide users with intuitive selection options.",
   },
   {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
+    title: "Toggle Switches",
+    href: "/Csselements/switches",
+    description:
+      "Switch between options smoothly with our aesthetically pleasing toggle switches.",
   },
   {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
+    title: "Cards",
+    href: "/Csselements/cards",
     description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+      "Browse through card designs that elegantly present grouped information.",
   },
   {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
+    title: "Loaders",
+    href: "/Csselements/loaders",
     description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+      "Keep users engaged during loading times with our captivating loader designs.",
+  },
+  {
+    title: "Input Fields",
+    href: "/Csselements/Input",
+    description:
+      "Enhance user input with our collection of user-friendly and visually appealing input fields.",
+  },
+  {
+    title: "Radio Buttons",
+    href: "/Csselements/radiobuttons",
+    description:
+      "Explore radio buttons that offer users clear and concise multiple-choice options.",
+  },
+  {
+    title: "Forms",
+    href: "/Csselements/Forms",
+    description:
+      "Create effective user interactions with our well-designed and easy-to-use forms.",
+  },
+  {
+    title: "Patterns",
+    href: "/Csselements/patterns",
+    description:
+      "Add visual interest to your designs with our collection of unique and eye-catching patterns.",
+  },
+  {
+    title: "ToolTips",
+    href: "/Csselements/tooltips",
+    description:
+      "Provide helpful hints and additional information with our informative and easy-to-integrate tooltips.",
   },
 ];
-interface MyJwtPayload extends JwtPayload {
-  [key: string]: any; 
-  google?: {
-    displayName?: string;
-    image?: string;
-    bio?: string;
-
-    // include other properties of 'google' here
-  };
-  github?: {
-    displayName?: string;
-    image?: string;
-    bio?: string;
-
-    // include other properties of 'github' here
-  };
-  email?: string ;
-  lastLoggedInWith?: string;
-
-  // include other properties of your JWT payload here
-}
 
 export default function NavTest() {
   const navigate = useNavigate();
@@ -218,9 +227,9 @@ useEffect(() => {
                   <ul className='grid gap-3 p-6 md:w-[400px] lg:w-[600px] lg:grid-cols-[0.75fr_1.2fr] z-40'>
                     <li className='row-span-3'>
                       <NavigationMenuLink asChild>
-                        <a
+                        <Link
                           className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
-                          href='/'
+                          to='/'
                         >
                           <div className='flex justify-center align-center'>
                             <Logo
@@ -238,15 +247,14 @@ useEffect(() => {
                             and paste into your apps. Accessible. Customizable.
                             Open Source.
                           </p>
-                        </a>
+                        </Link>
                       </NavigationMenuLink>
                     </li>
                     <ListItem to='/home' title='Introduction'>
                       Re-usable components built using Radix UI and Tailwind
                       CSS.
                     </ListItem>
-             
-             
+
                     {/* <li data-radix-collection-item>
                       <RouterLink
                         to={"/home"}
@@ -274,6 +282,12 @@ useEffect(() => {
                         edit your personal information.
                       </ListItem>
                     )}
+                    <ListItem to='/Csschallenges' title='Css Challenges'>
+                      Dive into CSS challenges to test and enhance your styling
+                      skills. Perfect for learning new techniques and getting
+                      creative with CSS.
+                    </ListItem>
+
                     {!user.isLoggedIn ? (
                       <ListItem to='/signup' title='Sign Up'>
                         Easy and quick user registration. Sign up to join our
@@ -287,7 +301,7 @@ useEffect(() => {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className='font-bold'>
-                  Components
+                  Css Elements
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]'>

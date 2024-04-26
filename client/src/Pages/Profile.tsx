@@ -3,7 +3,7 @@ import UserContext from "@/components/UserContext";
 import { useContext, useEffect } from "react";
 import SideBar from "@/components/SideBar";
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-
+import axios from "axios";
 const Profile = () => {
 
   const { user } = useContext(UserContext);
@@ -17,7 +17,24 @@ const Profile = () => {
     }
     return arr.join("");
   }
+useEffect(()=>{
+  try{
+    axios.get("http://localhost:3000/user/getposts",{
+ withCredentials:true
+ 
+  },
+  )
+  .then((res)=>{
+    console.log(res.data);
+  })
+}
+catch(err){
+    console.log(err);
+  }
 
+}
+
+,[])
 
   const emailname = printUntilAt(user.email);
   // console.log(user);

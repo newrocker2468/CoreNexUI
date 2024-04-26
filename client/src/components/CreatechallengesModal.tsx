@@ -121,7 +121,7 @@ const uploadToFirebase = (
    const displayImage = reader.result as string;
    const file = files[0];
    const name = file.name 
-   const imageUrl = await uploadToFirebase(file, name); // assuming this returns a Promise that resolves with the image URL
+   const imageUrl = await uploadToFirebase(file, name); 
    const formdata = createFormData(id, imageUrl);
    console.log(imageUrl);
    Setdata([...Cssdata, formdata]);

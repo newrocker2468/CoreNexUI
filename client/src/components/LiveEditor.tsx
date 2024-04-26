@@ -31,7 +31,9 @@ const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [html, setHtml] = useState( "<!--Code Here -->");   
   const divRef = useRef<HTMLDivElement>(null);
- const [isSelected, setIsSelected] = useState(false);
+  const [isSelected, setIsSelected] = useState(
+    theme === "light" ? false : true
+  );
   const [css, setCss] = useState("");
   console.log(id);
   
@@ -703,7 +705,7 @@ useEffect(() => {
               {() => (
                 <>
                   <ModalHeader className='flex flex-col gap-1'>
-               Select Category
+                    Select Category
                   </ModalHeader>
                   <ModalBody>
                     <div className='flex align-center justify-center'>
@@ -747,9 +749,9 @@ useEffect(() => {
                 className='z-10'
               >
                 {!isSelected ? (
-                  <span className='text-black font-bold'>#e8e8e8</span>
-                ) : (
                   <span className='font-bold text-white'>#212121</span>
+                ) : (
+                  <span className='text-black font-bold'>#e8e8e8</span>
                 )}
               </Switch>
             </div>
@@ -760,7 +762,7 @@ useEffect(() => {
                 borderRadius: "1rem",
                 zIndex: 1,
                 position: "relative",
-                backgroundColor: `${!isSelected ? "#e8e8e8" : "#212121"}`,
+                backgroundColor: `${!isSelected ? "#212121" : "#e8e8e8"}`,
                 width: "auto",
                 minWidth: "100%",
                 maxWidth: "100%",
@@ -798,7 +800,6 @@ useEffect(() => {
                           "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                         fontSize: 18,
                         wordWrap: "on",
-                        
                       }}
                       height='100vh'
                       defaultLanguage='html'

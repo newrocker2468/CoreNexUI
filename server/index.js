@@ -587,10 +587,11 @@ app.post("/editor/create/:id", async (req, res) => {
         css: req.body.css,
         elementtype: req.body.Category,
         user: user._id,
-        approvalStatus: "inReview", // set approvalStatus to 'inReview' when a new post is created
+        approvalStatus: "inReview",
+        isSelected: req.body.isSelected,
       });
 
-      user.cssElementsInReview.push(csselements._id); // add the post to cssElementsInReview array of the user
+      user.cssElementsInReview.push(csselements._id); 
       await user.save();
       await csselements.save();
     }
@@ -662,6 +663,29 @@ app.get("/getalluserdata",async(req,res) =>{
     res.json({ message: "Some Error Occured", error: true });
   }
 })
+
+app.get("/getuserdata/csschallenges", async (req, res) => {
+  console.log("getuserdata");
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+      }
+      try {
+        const user = await userdb.findOne({ email: decoded.email });
+        res.status(200).json({ user });
+        console.log(user);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  } else {
+    res.status(401).json({ message: "No token provided" });
+  }
+});
 app.get("/getuserdata/:email",async(req,res)=>{
  try{
    const {email} = req.params
@@ -740,10 +764,15 @@ app.post("/editor/:id/update", async (req, res) => {
           decoded.email === CssElements.user.email
         ) {
           try {
-            const approvalStatus = decoded.Permissions.includes("admin")
-              ? "approved"
-              : "inReview";
-            let CssElements = await CssElementdb.findOneAndUpdate(
+ let CssElements = await CssElementdb.findOne({
+   _id: req.params.id,
+ }).populate("user");
+            const approvalStatus =
+              decoded.Permissions.includes("admin") ||
+              decoded.Permissions.includes("editcsselement")
+                ? CssElements.approvalStatus
+                : "inReview";
+           CssElements = await CssElementdb.findOneAndUpdate(
               { _id: req.params.id },
               {
                 $set: {
@@ -759,6 +788,7 @@ app.post("/editor/:id/update", async (req, res) => {
             res.status(200).json({
               CssElements: CssElements,
               message: "CSS elements updated successfully.",
+              user:decoded,
             });
           } catch (error) {
             console.error(error);
@@ -1267,6 +1297,7 @@ app.post("/Cssinapproval/approve/:id", async (req, res) => {
         elementtype: category,
         approvalStatus: "approved",
       });
+      if(!elements){res.json({message:`No  elements found`,error:true})}
       console.log(elements);
       res.json(elements);
     } catch (err) {
@@ -1277,23 +1308,61 @@ app.post("/Cssinapproval/approve/:id", async (req, res) => {
 
 
 app.post("/assignpermissions/:email", async (req, res) => {
-  try {
-    const { email } = req.params;
-    const { selected } = req.body;
+   if (req.cookies.token) {
+     jwt.verify(
+       req.cookies.token,
+       process.env.TOKEN_SECRET,
+       async function (err, decoded) {
+         if (err) {
+           res.status(401).json({
+             message: "Unauthorized Cannot perform this action",
+             error: true,
+           });
+         } else {
+           const requiredPermissions = ["admin"];
+           if (
+             decoded.Permissions.some((permission) =>
+               requiredPermissions.includes(permission)
+             )
+           ) {
+            try {
+       if (decoded.email !== req.params.email) {
+         const { email } = req.params;
+         const { selected } = req.body;
 
-    const user = await userdb.findOne({ email: email });
-    if (!user) return res.status(404).send("User not found");
+         const user = await userdb.findOne({ email: email });
+         if (!user) return res.status(404).send("User not found");
 
-    const updatedPermissions = [...new Set([...user.Permissions, ...selected])];
+         const updatedPermissions = [
+           ...new Set([...user.Permissions, ...selected]),
+         ];
 
-    user.Permissions = updatedPermissions;
-    await user.save();
-
-    res.send(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
+         user.Permissions = updatedPermissions;
+         await user.save();
+         res.json({
+           user: user,
+           message: "Permissions updated successfully",
+         });
+       } else {
+         res.json({ message: "You cannot change your own permissions" });
+       }
+            } catch (err) {
+              console.error(err);
+              res.status(500).send("Server error");
+            }
+           } else {
+             res.json({
+               message: "You Dont Have permissions to perform this action",
+               error: true,
+             });
+           }
+         }
+       }
+     );
+   } else {
+     res.status(401).json({ message: "No token provided", error: true });
+   }
+ 
 });
 
 app.get("/data", async (req, res) => {

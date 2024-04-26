@@ -6,8 +6,28 @@ import { v4 as uuidv4 } from "uuid";
 import { Button, Link, User, divider } from "@nextui-org/react";
 import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
 import { toast } from "sonner";
+interface MyObject {
+  _id: string;
+  css: string;
+  html: string;
+  id: string;
+  user: {
+    Permissions: [];
+    email: string;
+    google: {
+      image: string;
+    };
+    github: {
+      image: string;
+    };
+  };
+  isSelected: boolean;
+}
+
 export default function PostAdpprovalReject() {
-  const [ElementsforApproval, setElementsforApproval] = useState<any[]>([]);
+  const [ElementsforApproval, setElementsforApproval] = useState<MyObject[]>(
+    []
+  );
   const [isSidebarVisible, setIsSidebarVisible] = useState(
     window.innerWidth > 800
   );
@@ -31,6 +51,7 @@ if(res.data.error){
     position:"top-center"
   })
 }else{
+  console.log(res.data);
         setElementsforApproval(res.data);
         console.log(res.data);
 }
@@ -136,10 +157,21 @@ else{
               {ElementsforApproval && ElementsforApproval.length > 0 ? (
                 ElementsforApproval.map(
                   (pair: {
-                    id: string;
-                    html: string;
+                    _id: string;
                     css: string;
-                    user: object;
+                    html: string;
+                    id: string;
+                    user: {
+                      Permissions: [];
+                      email: string;
+                      google: {
+                        image: string;
+                      };
+                      github: {
+                        image: string;
+                      };
+                    };
+                    isSelected: boolean;
                   }) => (
                     <div className='m-3' key={uuidv4()}>
                       <div key={uuidv4()} className='font-bold m-3'>

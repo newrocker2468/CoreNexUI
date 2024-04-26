@@ -21,6 +21,10 @@ const CssElementSchema = new mongoose.Schema({
     enum: ["approved", "inReview", "rejected"],
     default: "inReview",
   },
+  isSelected: {
+    type: Boolean,
+    default: false,
+  },
 });
 const CssElement = mongoose.model("csselements", CssElementSchema);
 module.exports = CssElement;

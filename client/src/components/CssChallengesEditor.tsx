@@ -52,11 +52,9 @@ const LiveEditor = () => {
       colors: {
         "editor.foreground": "#F8F8F8",
         "editor.background": "#232323",
-        // Add more color settings as needed
       },
     });
 
-    // Set your custom theme
     monaco.editor.setTheme("myTheme");
     if (!monaco) {
       console.error("Monaco is not initialized!");

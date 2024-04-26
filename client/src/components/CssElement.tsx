@@ -1,15 +1,19 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FC } from "react";
 import "@/Styles/Csselements.css";
 import { useParams } from "react-router-dom";
-
+import { useTheme } from "./theme-provider";
 interface CssElementProps {
-  htmlcssPairs: { html: string; css: string; id: string ,_id?:string};
+  htmlcssPairs: { html: string; css: string; id: string ,_id?:string,isSelected?:boolean};
 }
 
 const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
-  console.log(htmlcssPairs);
+    const { theme } = useTheme();
+   const [isSelected, setIsSelected] = useState(
+htmlcssPairs.isSelected
+   );
+
   const divRef = useRef<HTMLDivElement>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -68,6 +72,7 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
         margin: auto;
       }
       .main {
+        all:initial;
         display:flex;
         align-items: center;
         justify-content: center;
@@ -86,38 +91,7 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
       background-color: black;
       text-align: center;
     }
-    .container::before {
-      content: "\\1F5CE"; /* Unicode for code sign */
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7); /* Black background with 70% opacity */
-      backdrop-filter: blur(5px); /* Blur effect */
-      color: white;
-      font-size: 5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease; /* Smooth transition */
-    }   .get-code {
-        display: none;
-        position: absolute;
-        bottom: 1rem;
-        right: 1rem;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        color: white;
-        text-decoration: none;
-        width: 100px;
-        background-color: black;
-        text-align: center;
-      }
-      div:hover .get-code {
-        display: block;
-      }
+   
     </style>
     <div class='main'>
       ${htmlcssPairs.html}
@@ -127,9 +101,9 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
     div.addEventListener("click", handleClick);
   div.addEventListener("click", (event) => {
     console.log("clicked");
-    // if(htmlcssPairs._id){
-    //  navigate(`/editor/${htmlcssPairs._id}`);
-    // }
+    if(htmlcssPairs._id){
+     navigate(`/editor/${htmlcssPairs._id}`);
+    }
       if (event.target === div) {
         if (window.location.pathname === `/Csselements`) {
           navigate(`/editor/${htmlcssPairs.id}`);
@@ -139,7 +113,7 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
       event.stopPropagation();
     });
     
-  }, [htmlcssPairs.html, htmlcssPairs.css, navigate, htmlcssPairs.id]);
+  }, [htmlcssPairs.html, htmlcssPairs.css, navigate, htmlcssPairs.id, htmlcssPairs._id, handleClick]);
 
   return (
     <>
@@ -151,7 +125,7 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
           zIndex: 1,
           position: "relative",
           cursor: "pointer",
-          backgroundColor: "#e8e8e8",
+          backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
           width: "auto",
           minWidth: "100%",
           maxWidth: "100%",

@@ -27,6 +27,7 @@ const ViewCsselement = () => {
           .then((response) => {
             setHtml(response.data.html);
             setCss(response.data.css);
+            setIsSelected(response.data.isSelected);
           })
           .catch((error) => {
             console.log(
@@ -545,7 +546,10 @@ const deleteelement = () => {
     )
     .then((response) => {
       // console.log(response);
-      toast.success("Element Deleted Successfully");
+      toast.success("Element Deleted Successfully",{
+        position: "top-center"
+      
+      });
       navigate(-1);
     })
     .catch((error) => console.error(error));
@@ -558,12 +562,11 @@ const updateelement = () => {
       { withCredentials: true }
     )
     .then((response) => {
-      console.log(response.data);
       setHtml(response.data.CssElements.html);
       setCss(response.data.CssElements.css);
       toast.success(
-        response.data.CssElements.user.Permissions.includes("admin") ||
-          response.data.CssElements.user.Permissions.includes("editcsselement")
+        response.data.user.Permissions.includes("admin") ||
+          response.data.user.Permissions.includes("editcsselement")
           ? "Element Updated Successfully"
           : "Element Updated Successfully, Awaiting Admin Approval",
         {
@@ -597,6 +600,7 @@ const updateelement = () => {
         padding: 0;
         margin: 0;
         box-sizing: border-box;
+      
       }
         body {
               all: initial;

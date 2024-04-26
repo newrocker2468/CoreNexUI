@@ -4,6 +4,7 @@ import { Key, useEffect, useState } from "react";
 import { CheckboxGroup, Checkbox } from "@nextui-org/react";
 import { Image } from "@nextui-org/react";
 import { Button, ButtonGroup } from "@nextui-org/react";
+import { toast } from "sonner";
 type User = {
   email: string;
   google: {
@@ -36,7 +37,6 @@ export default function AssignPermissions() {
           withCredentials: true,
         })
         .then((res) => {
-          // Iterate over each user in the response
           const usersWithHighResImages = res.data.user.map((user: User) => {
             let highres_img = user.google.image;
             if (user.google.image.includes("s96-c")) {
@@ -44,7 +44,6 @@ export default function AssignPermissions() {
             } else if (user.google.image.includes("sz=50")) {
               highres_img = user.google.image.replace("sz=50", "sz=240");
             }
-            // Return a new user object with the highres_img
             return { ...user, google: { ...user.google, image: highres_img } };
           });
           setuser(usersWithHighResImages);
@@ -66,7 +65,12 @@ export default function AssignPermissions() {
             withCredentials: true,
           }
         )
-        .then((res) => {});
+        .then((res) => {
+          toast.success(res.data.message,{
+            position: "top-center",
+            duration: 5000,
+          })
+        });
     } catch (err) {
       console.log(err);
     }
@@ -120,8 +124,9 @@ export default function AssignPermissions() {
           </div>
 
           <div className='flex justify-center '>
+            Users Current Permissions :
             {selectedUser.Permissions.map((per, index) => {
-              return <div key={index}>Users Current Permissions : {per}</div>;
+              return <div key={index} className="mx-2"> {per}</div>;
             })}
           </div>
           <div className='flex items-center justify-center m-[4rem]'>
@@ -148,9 +153,7 @@ export default function AssignPermissions() {
                 Approve Css Element Posts
               </Checkbox>
               <Checkbox value='rejectposts'>Reject Css Element Posts</Checkbox>
-              <Checkbox value='editcsselement'>
-                Edit Css Element Posts
-              </Checkbox>
+              <Checkbox value='editcsselement'>Edit Css Element Posts</Checkbox>
               <Checkbox value='deletecsselement'>
                 Delete Css Element Posts
               </Checkbox>

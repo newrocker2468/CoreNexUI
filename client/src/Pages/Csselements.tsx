@@ -23,6 +23,7 @@ interface MyObject {
       image: string;
     };
   };
+  isSelected: boolean;
 }
 
 
@@ -55,13 +56,13 @@ useEffect(() => {
           css: string;
           _id: string;
           user: object;
-        
+          isSelected: boolean;
         }) => ({
           html: item.html,
           css: item.css,
           id: item._id,
           user: item.user,
-       
+          isSelected: item.isSelected,
         })
       );
       setHtmlCssPairs([...htmlCssPairs, ...pairs]);
@@ -107,6 +108,7 @@ useEffect(() => {
                     html: string;
                     css: string;
                     user: object;
+                    isSelected:boolean;
                   }) => (
                     <div className='m-3' key={uuidv4()}>
                       <CssElement htmlcssPairs={pair} key={uuidv4()} />
@@ -118,7 +120,9 @@ useEffect(() => {
                           name={`By ${pair.user.email}`}
                           // description='Product Designer'
                           avatarProps={{
-                            src: `${pair.user.github.image || pair.user.google.image}`,
+                            src: `${
+                              pair.user.github.image || pair.user.google.image
+                            }`,
                           }}
                         />
                       </div>

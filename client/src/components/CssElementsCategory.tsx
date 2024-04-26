@@ -4,6 +4,7 @@ import CssElement from "./CssElement";
 import { v4 as uuidv4 } from "uuid";
 import { Button, Link } from "@nextui-org/react";
 import SideBar from "./SideBar";
+import { toast } from "sonner";
 // Route definition
 
 // CategoryPage component
@@ -26,8 +27,17 @@ const [data, setData] = useState([]);
     fetch(`http://localhost:3000/Csselements/${category}`)
       .then((response) => response.json())
       .then((fetchedData) => {
-        console.log(fetchedData);
+        if(fetchedData.error){
+          toast("error",{
+            position:"top-center"
+          })
+        }
         setData(fetchedData);
+        if(fetchedData.length===0){
+          toast.error("No Css Elements Available to display",{
+            position:"top-center"
+          })
+        }
       })
       .catch((error) => console.error(error));
   }, [category]);
