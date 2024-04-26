@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import axios from "axios"
 interface Challenge {
   id: string;
   title: string;
@@ -94,13 +95,17 @@ const uploadToFirebase = (
   
 
   const CreateChallenge = async (id: string, displayImage: string) => {
-    fetch(`http://localhost:3000/csschallenges/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(createFormData(id,displayImage)),
-    }).then((response) => {
+    try {
+      const response = await axios({
+        method: "post",
+        url: `http://localhost:3000/csschallenges/${id}`,
+        data: JSON.stringify(createFormData(id, displayImage)),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
       if (response) {
         setShowToast(true);
         navigate("/Csschallenges", {
@@ -109,8 +114,9 @@ const uploadToFirebase = (
           },
         });
       }
-    });
-    // setFlag(!flag);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const SubmitHandler = async() => {

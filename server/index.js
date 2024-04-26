@@ -468,22 +468,46 @@ app.get("/csschallenges/:id", async (req, res) => {
   res.json({ csschallenges });
 });
 app.post("/csschallenges/:id", async (req, res) => {
-  let Csschallenges = await Csschallengesdb.findOne({ id: req.params.id });
-  if (!Csschallenges) {
-    // console.log(req.body);
-    Csschallenges = new Csschallengesdb({
-      id: req.params.id,
-      title: req.body.title,
-      sdesc: req.body.sdesc,
-      description: req.body.description,
-      img: req.body.img,
-      status: req.body.status,
-      date: req.body.date,
-    });
-    Csschallenges.save();
-    res.json({ message: "CSS challenges added successfully." });
+  if (req.cookies.token) {
+    jwt.verify(
+      req.cookies.token,
+      process.env.TOKEN_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ message: "Failed to authenticate token" });
+        }
+          if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("editcsselement")){
+            let Csschallenges = await Csschallengesdb.findOne({
+              id: req.params.id,
+            });
+            if (!Csschallenges) {
+              // console.log(req.body);
+              Csschallenges = new Csschallengesdb({
+                id: req.params.id,
+                title: req.body.title,
+                sdesc: req.body.sdesc,
+                description: req.body.description,
+                img: req.body.img,
+                status: req.body.status,
+                date: req.body.date,
+              });
+              Csschallenges.save();
+              res.json({ message: "CSS challenges added successfully." });
+            } else {
+              res.json({ message: "CSS challenges already exists." });
+            }
+          }
+          else{
+            res.json({ message: "You are not authorized to add CSS challenges." });
+          }
+        console.log(decoded);
+      }
+    );
   } else {
-    res.json({ message: "CSS challenges already exists." });
+    console.log("no token provided");
+    res.status(401).json({ message: "No token provided" });
   }
 });
 app.post("/csschallengesupdate", async (req, res) => {
