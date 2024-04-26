@@ -11,6 +11,9 @@ import UserContext from "@/components/UserContext";
 import { useTheme } from "./theme-provider";
 const ViewCsselement = () => {
   const {theme} = useTheme();
+    const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 800
+  );
     const { user } = useContext(UserContext);
     const[sameUser,setSameUser] = useState(false)
   const navigate = useNavigate();
@@ -19,13 +22,26 @@ const ViewCsselement = () => {
   const [css, setCss] = useState( "");
   const [isSelected, setIsSelected] = useState(theme === "light" ? false : true);
     useEffect(() => {
-        axios.get(`http://localhost:3000/editor/${id}`)
-        .then((response) => {
+        axios
+          .get(`http://localhost:3000/editor/${id}`)
+          .then((response) => {
             setHtml(response.data.html);
             setCss(response.data.css);
-        
-        })
-        .catch((error) => console.error(error));
+          })
+          .catch((error) => {
+            console.log(
+              "Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg"
+            );
+             console.log("error.response:", error.response);
+             console.log(
+               "error.response.status:",
+               error.response && error.response.status
+             );
+     
+              // toast.error("Error 404 ! Element Not Found");
+              // navigate("/Csselements");
+            
+          });
     },[])
 
 function handleEditorDidMount(editor, monaco) {
@@ -528,11 +544,40 @@ const deleteelement = () => {
       { withCredentials: true }
     )
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       toast.success("Element Deleted Successfully");
-      navigate("/Csselements");
+      navigate(-1);
     })
     .catch((error) => console.error(error));
+};
+const updateelement = () => {
+  axios
+    .post(
+      `http://localhost:3000/editor/${id}/update`,
+      { html, css, sameUser },
+      { withCredentials: true }
+    )
+    .then((response) => {
+      console.log(response.data);
+      setHtml(response.data.CssElements.html);
+      setCss(response.data.CssElements.css);
+      toast.success(
+        response.data.CssElements.user.Permissions.includes("admin") ||
+          response.data.CssElements.user.Permissions.includes("editcsselement")
+          ? "Element Updated Successfully"
+          : "Element Updated Successfully, Awaiting Admin Approval",
+        {
+          position: "top-center",
+        }
+      );
+      navigate(-1);
+    })
+    .catch((error) => {
+      console.error("Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg");
+      if (error.response && error.response.status === 404) {
+        toast.error("Error 404 ! Element Not Found");
+      }
+    });
 };
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -602,24 +647,35 @@ const deleteelement = () => {
 
 
 useEffect(() => {
-  const response = axios.get(`http://localhost:3000/getuserdata`,{
+  const response = axios.get(`http://localhost:3000/getuserdata/match/${id}`,{
     withCredentials: true
   })
   .then((response) => {
 setSameUser(response.data.sameUser)
   })
 })
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSidebarVisible(window.innerWidth > 1200);
+    };
 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 return (
   <>
     <div style={{ display: "flex" }}>
-      <SideBar />
+      {isSidebarVisible && (
+        <div className='flex-shrink-0 overflow-auto h-screen'>
+          <SideBar />
+        </div>
+      )}
 
       <div className='flex flex-wrap justify-center w-full'>
         <div
           style={{ height: "max-content" }}
           className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
-          >
+        >
           <h3>Output</h3>
           <div className='relative'>
             <div className='absolute top-3 right-4 '>
@@ -661,6 +717,19 @@ return (
         <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
           <div className='flex justify-end absolute right-0'>
             <div className='mr-[4rem]'>
+              {((user.Permissions &&
+                (user.Permissions.includes("admin") ||
+                  user.Permissions.includes("editcsselement"))) ||
+                sameUser) && (
+                <Button
+                  color='primary'
+                  size='sm'
+                  className='m-2'
+                  onClick={() => updateelement()}
+                >
+                  Update
+                </Button>
+              )}
               {((user.Permissions &&
                 (user.Permissions.includes("admin") ||
                   user.Permissions.includes("deletecsselement"))) ||

@@ -1,6 +1,6 @@
 import Home from "./Pages/Home";
 import "./App.css";
-import { Routes, Route, useNavigate,useLocation} from "react-router-dom";
+import { Routes, Route, useNavigate,useLocation, Outlet} from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
@@ -11,7 +11,6 @@ import ChallengeDescription from "./Pages/ChallengeDescription";
 import UserContext from "./components/UserContext";
 import Profile from "./Pages/Profile";
 import { useEffect, useState } from "react";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import Csselements from "./Pages/Csselements";
 import Editor from "./Pages/Editor";
 import ViewCsselement from "./components/ViewCsselement";
@@ -19,10 +18,16 @@ import CssChallengecreate from "./Pages/CssChallengecreate";
 import RootLayout from "./components/Alert";
 import CssElementsCategory from "./components/CssElementsCategory";
 import AdminPanel from "./Pages/AdminPanel";
+import PostApprovalReject from "./components/PostApprovalReject";
+import { toast } from "sonner";
+import NoPermissions from "./components/NoPermissions";
+import axios from "axios";
+import PermissionManager from "./Pages/PermissionManager";
+import UploadData from "./components/UploadData";
 function App() {
   const location = useLocation();
     const navigate = useNavigate();
-
+const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     userName: "",
     data: {},
@@ -36,7 +41,27 @@ function App() {
     bio: "",
     Permissions: ["newuser"],
   });
+
+const [permission,setpermission] = useState(["newuser"]);
+const fetchUserData = async () => {
+  try {
+    const response = await axios("http://localhost:3000/validate-token", {
+      withCredentials: true,
+    });
+ setpermission(response.data.user.Permissions)
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setLoading(false);
+  }
+};
+  useEffect(()=>{
+fetchUserData();
+  },[])
 useEffect(() => {
+
+
+
   if (
     user.isLoggedIn &&
     (location.pathname === "/login" || location.pathname === "/signup")
@@ -44,7 +69,11 @@ useEffect(() => {
     navigate("/home");
   }
 }, [user.isLoggedIn, location.pathname]);
-
+const checkPermissions = (userPermissions, requiredPermissions) => {
+  return requiredPermissions.some((permission) =>
+    userPermissions.includes(permission)
+  );
+};
   return (
     <>
       <UserContext.Provider value={{ user, setUser }}>
@@ -75,7 +104,58 @@ useEffect(() => {
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />
-              <Route path='/admin' element={<AdminPanel />} />
+              <Route
+                path='/admin'
+                element={
+                  loading ? (
+                    <div>Loading</div>
+                  ) : checkPermissions(user.Permissions, ["admin"]) ? (
+                    <AdminPanel />
+                  ) : (
+                    <NoPermissions />
+                  )
+                }
+              />{" "}
+              <Route
+                path='/admin/uploadattendance'
+                element={
+                  loading ? (
+                    <div>Loading</div>
+                  ) : checkPermissions(user.Permissions, ["admin"]) ? (
+                    <UploadData />
+                  ) : (
+                    <NoPermissions />
+                  )
+                }
+              />
+              <Route
+                path='/admin/managepermissions'
+                element={
+                  loading ? (
+                    <div>Loading</div>
+                  ) : checkPermissions(user.Permissions, ["admin"]) ? (
+                    <PermissionManager />
+                  ) : (
+                    <NoPermissions />
+                  )
+                }
+              />
+              <Route
+                path='/admin/csselements/status'
+                element={
+                  loading ? (
+                    <div>Loading</div>
+                  ) : checkPermissions(user.Permissions, [
+                      "admin",
+                      "approveposts",
+                      "rejectposts",
+                    ]) ? (
+                    <PostApprovalReject />
+                  ) : (
+                    <NoPermissions />
+                  )
+                }
+              />
             </Routes>
           </ThemeProvider>
         </NextUIProvider>

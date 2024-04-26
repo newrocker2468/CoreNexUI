@@ -101,9 +101,9 @@ useEffect(() => {
         const platform = user.lastLoggedInWith;
         const profile = user[platform];
         let highres_img = profile.image;
-        if (profile.image.includes("s96-c")) {
+       if (profile.image.includes("s96-c")) {
           highres_img = profile.image.replace("s96-c", "s500-c");
-        } else if (profile.image.includes("sz=50")) {
+         } else if (profile.image.includes("sz=50")) {
           highres_img = profile.image.replace("sz=50", "sz=240");
         }
 

@@ -66,10 +66,6 @@ useEffect(() => {
       );
       setHtmlCssPairs([...htmlCssPairs, ...pairs]);
 
-
-
-      setHtmlCssPairs([...htmlCssPairs, ...pairs]);
-
     })
     .catch((error) => console.error(error));
    

@@ -1,6 +1,7 @@
 import React, { Key, useEffect } from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { FC } from "react";
+import { set } from "date-fns";
 
 interface ModalRadioCreateCssProps {
   Category: string;
@@ -140,7 +141,7 @@ const ModalRadioCreateCss: FC<ModalRadioCreateCssProps> = ({
     },
     tooltips: {
       html: `<div class="tooltip-container">
-  <span class="tooltip">Uiverse.io</span>
+  <span class="tooltip">CoreNexUI</span>
   <span class="text">Tooltip</span>
 </div>`,
       css: `/* This is an example, feel free to delete this code */
@@ -187,18 +188,27 @@ const ModalRadioCreateCss: FC<ModalRadioCreateCssProps> = ({
   };
 
 const handleCategoryChange = (value: Key) => {
-  const strValue = value.toString();
-  setCategory(strValue);
-  if (categoryDefaults[strValue]) {
-    setHtml(categoryDefaults[strValue].html);
-    setCss(categoryDefaults[strValue].css);
+  if (value) {
+    const strValue = value.toString();
+    setCategory(strValue);
+    if (categoryDefaults[strValue]) {
+      setHtml(categoryDefaults[strValue].html);
+      setCss(categoryDefaults[strValue].css);
+    }
   }
+
 };
-
 useEffect(() => {
-  if (!Category) handleCategoryChange("button");
-}, [Category]);
+if(!Category) {
+    setCategory("button");
+      if (categoryDefaults["button"]) {
+        setHtml(categoryDefaults["button"].html);
+        setCss(categoryDefaults["button"].css);
+      }
+  }
+},[])
 
+console.log(Category);
   return (
     <div className='flex w-full flex-wrap md:flex-nowrap gap-4 align-center justify-center'>
       <Autocomplete

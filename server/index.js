@@ -14,16 +14,19 @@ const CssElementdb = require("./models/CssElementSchema");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const cookieParser = require("cookie-parser");
-
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const uuidv4 = require("uuid").v4;
+const fsPromises = require("fs").promises;
+const fs = require("fs");
+const axios = require("axios");
+const Table =require("./models/TableSchema")
+const FormData = require("form-data");
 
 //git fetch origin
 //git checkout master
 //git merge origin/master
 //npm i
-function generateAccessToken(user) {
-  return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: "1800s" });
-}
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -84,6 +87,7 @@ passport.use(
             email: profile.emails[0].value,
             lastLoggedInWith: "google",
             password: uuidv4(),
+            Permissions:["newuser"]
           });
 
           await user.save();
@@ -145,7 +149,7 @@ app.get(
           bio: req.user.github.bio || "",
         },
         lastLoggedInWith: req.user.lastLoggedInWith,
-        Permissions: req.user.Permissions,
+        Permissions: req.user.Permissions || ["newuser"],
       },
       process.env.TOKEN_SECRET,
       { expiresIn: "1h" } // Set the access token to expire in 1 hour
@@ -317,6 +321,7 @@ passport.use(
             email: profile._json.blog,
             password: uuidv4(),
             lastLoggedInWith: "github",
+            Permissions: ["newuser"],
           });
 
           await user.save();
@@ -566,7 +571,7 @@ app.post("/csschallengesget", async (req, res) => {
 // });
 app.post("/editor/create/:id", async (req, res) => {
   const { id } = req.params;
-
+  console.log(req.body);
   if (!req.body.login) {
     console.log("not login");
     res.json({ message: "You are not logged in. Login First" }).status(400);
@@ -643,10 +648,34 @@ app.get("/editor/:id", async (req, res) => {
     const CssElements = await CssElementdb.findOne({ _id: req.params.id });
     res.status(200).json(CssElements);
   } catch (error) {
-    delete console.error(error);
-    res.status(500).send("An error occurred while fetching CSS elements.");
+    console.error(error);
+    res.status(404).send("An error occurred while fetching CSS elements.");
   }
 });
+
+app.get("/getalluserdata",async(req,res) =>{
+  try{
+    const user =await userdb.find({});
+    res.json({user:user})
+  }
+  catch(err){
+    res.json({ message: "Some Error Occured", error: true });
+  }
+})
+app.get("/getuserdata/:email",async(req,res)=>{
+ try{
+   const {email} = req.params
+   const user = await userdb.findOne({ email: email }).populate("cssElements");
+  res.json({user:user})}
+  catch(err){
+    console.log(err)
+  }
+
+});
+
+
+
+
 
 app.post("/editor/:id/delete", async (req, res) => {
   // console.log(req.cookies.token);
@@ -687,7 +716,70 @@ app.post("/editor/:id/delete", async (req, res) => {
   }
 });
 
-app.get("/getuserdata", async (req, res) => {
+app.post("/editor/:id/update", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+        }
+      try {
+        const CssElements = await CssElementdb.findOne({
+          _id: req.params.id,
+        }).populate("user");
+        if (!CssElements) {
+          return res.status(404).json({ message: "CSS elements not found." });
+        }
+
+        console.log(CssElements.user.email, decoded.email);
+        if (
+          decoded.Permissions.includes("admin") ||
+          decoded.Permissions.includes("editcsselement") ||
+          decoded.email === CssElements.user.email
+        ) {
+          try {
+            const approvalStatus = decoded.Permissions.includes("admin")
+              ? "approved"
+              : "inReview";
+            let CssElements = await CssElementdb.findOneAndUpdate(
+              { _id: req.params.id },
+              {
+                $set: {
+                  html: req.body.html,
+                  css: req.body.css,
+                  elementtype: req.body.Category,
+                  approvalStatus: approvalStatus,
+                },
+              },
+              { new: true }
+            );
+            CssElements = await CssElements.populate("user");
+            res.status(200).json({
+              CssElements: CssElements,
+              message: "CSS elements updated successfully.",
+            });
+          } catch (error) {
+            console.error(error);
+            res.status(500).json({
+              message: "An error occurred while updating CSS elements.",
+            });
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  } else {
+    res.status(401).json({ message: "No token provided" });
+  }
+});
+
+
+
+app.get("/getuserdata/match/:id", async (req, res) => {
+
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
@@ -696,11 +788,14 @@ app.get("/getuserdata", async (req, res) => {
           .status(500)
           .json({ message: "Failed to authenticate token" });
       }
+        const { id } = req.params;
       const user = await userdb.findOne({ email: decoded.email });
-      const CssElements = await CssElementdb.findOne({ user: user._id });
+      const CssElements = await CssElementdb.findOne({ _id: id }).populate("user");
       if (user && CssElements) {
-        if (user._id.toString() === CssElements.user.toString()) {
+        if (user.email=== CssElements.user.email) {
           res.status(200).json({ sameUser: true });
+        } else {
+          res.status(200).json({ sameUser: false });
         }
       }
       // res.status(200).json({ user: decoded });
@@ -922,67 +1017,248 @@ app.post("/refresh_token", (req, res) => {
     const user = await userdb.findOne({ email: decoded.email });
     console.log(user);
     // Create new JWT
-    const token = jwt.sign(
-      {
-        email: user.email,
-        google: {
-          displayName: user.google.displayName || "",
-          image: user.google.image || "",
-          bio: user.google.bio || "",
-        },
-        github: {
-          displayName: user.github.displayName || "",
-          image: user.github.image || "",
-          bio: user.github.bio || "",
-        },
-        lastLoggedInWith: user.lastLoggedInWith,
-        Permissions: user.Permissions,
-      },
-      process.env.TOKEN_SECRET
-    );
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
-    });
+   if(user){
+     const token = jwt.sign(
+       {
+         email: user.email,
+         google: {
+           displayName: user.google.displayName || "",
+           image: user.google.image || "",
+           bio: user.google.bio || "",
+         },
+         github: {
+           displayName: user.github.displayName || "",
+           image: user.github.image || "",
+           bio: user.github.bio || "",
+         },
+         lastLoggedInWith: user.lastLoggedInWith,
+         Permissions: user.Permissions,
+       },
+       process.env.TOKEN_SECRET
+     );
+     res.cookie("token", token, {
+       httpOnly: true,
+       maxAge: 7 * 24 * 60 * 60 * 1000,
+       sameSite: "none",
+       secure: true,
+     });
 
-    // Decode the JWT
-    const decodedtoken = jwt.decode(token);
-    // Send the decoded JWT to the client
-    res.json({ token: decodedtoken });
+     // Decode the JWT
+     const decodedtoken = jwt.decode(token);
+     // Send the decoded JWT to the client
+     res.json({ token: decodedtoken });
+   }
+   else{
+    res.json({message:"user doesnt exist"})
+   }
   });
 });
 
 
 app.get("/CssElements/getallforApproval", async (req, res) => {
-  try {
-    const elements = await CssElementdb.find({}).populate("user");
-    // console.log(elements);
-    res.json(elements);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err.message });
+  if (req.cookies.token) {
+    jwt.verify(
+      req.cookies.token,
+      process.env.TOKEN_SECRET,
+      async function (err, decoded) {
+        if (err) {
+          res
+            .status(401)
+            .json({
+              message: "Unauthorized Cannot perform this action",
+              error: true,
+            });
+        } else {
+          const requiredPermissions = ["admin", "rejectposts", "approveposts"];
+    if (
+      decoded.Permissions.some((permission) =>
+        requiredPermissions.includes(permission)
+      )
+    ) {
+      try {
+        const elements = await CssElementdb.find({
+          approvalStatus: "inReview",
+        }).populate("user");
+        res.json(elements);
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message, error: true });
+      }
+    } else {
+      res.json({
+        message: "You Dont Have permissions to perform this action",
+        error: true,
+      });
+    }
+        }
+      }
+    );
+  } else {
+    res.status(401).json({ message: "No token provided", error: true });
   }
 });
+
+
 
 app.post("/Cssinapproval/delete/:id", async (req, res) => {
-  const { id } = req.params;
-  const{email} =req.body;
+   if (req.cookies.token) {
+     jwt.verify(
+       req.cookies.token,
+       process.env.TOKEN_SECRET,
+       async function (err, decoded) {
+         if (err) {
+           res
+             .status(401)
+             .json({ message: "Unauthorized Cannot perform this action",error:true });
+         } else {
+           const requiredPermissions = ["admin", "rejectposts"];
+           if (
+             decoded.Permissions.some((permission) =>
+               requiredPermissions.includes(permission)
+             )
+           ) {
+             try {
+                const { id } = req.params;
+                const { email } = req.body;
+              const user = await userdb.updateOne(
+                { email: email },
+                { $pull: { cssElementsInReview: id } }
+              );
+              await CssElementdb.findOneAndDelete({ _id: id }, { new: true });
+              const element = await CssElementdb.find({
+                approvalStatus: "inReview",
+              }).populate("user");
+              res.json({
+                element: element,
+                message: "Request Rejected, and Element Deleted SuccessFully!",
+              });
+              console.log(element);
+             } catch (err) {
+               console.log(err);
+               res.status(500).json({ message: err.message });
+             }
+           } else {
+             res.json({
+               message: "You Dont Have permissions to perform this action",
+               error:true 
+             });
+           }
+         }
+       }
+     );
+   } else {
+     res.status(401).json({ message: "No token provided", error: true });
+   }
 
-  try {
-   const user = await userdb.updateOne(
-     { email: email },
-     { $pull: { cssElementsInReview: id } }
-   );
-await CssElementdb.findOneAndDelete({ _id: id },{new:true});
-    const element = await CssElementdb.find({}).populate("user");
-    res.json({element:element ,message:"Request Rejected, and Element Deleted SuccessFully!"});
-    console.log(element);
-  } catch (err) {
-    console.log(err);
-  }
+  
 });
+
+
+// app.post("/Cssinapproval/approve/:id",async (req,res)=>{
+  
+//     const { id } = req.params;
+//     const { email } = req.body;
+// console.log(id,email)
+
+// const csselements = await CssElementdb.findOneAndUpdate(
+//   { _id: id },
+//   { approvalStatus :"approved"},
+//   {new:true}
+// );
+//      const user = await userdb.updateOne(
+//        { email: email },
+//        { $pull: { cssElementsInReview: id } },
+//        { new: true, useFindAndModify: false }
+//      );
+//      const updatedUser = await userdb.findOneAndUpdate(
+//        { email: email },
+//        { $push: { cssElements: req.params.id } },
+//        { new: true, useFindAndModify: false }
+//      );
+
+
+// const elements = await CssElementdb.find({
+//   approvalStatus: "inReview",
+// }).populate("user");
+// console.log(elements)
+//      res.json({elements : elements , message:"Csselement Approved Successfully"});
+// });
+
+
+app.post("/Cssinapproval/approve/:id", async (req, res) => {
+     if (req.cookies.token) {
+       jwt.verify(
+         req.cookies.token,
+         process.env.TOKEN_SECRET,
+         async function (err, decoded) {
+           if (err) {
+             res
+               .status(401)
+               .json({
+                 message: "Unauthorized Cannot perform this action",
+                 error: true,
+               });
+           } else {
+             const requiredPermissions = [
+               "admin",
+               "approveposts",
+             ];
+             if (
+               decoded.Permissions.some((permission) =>
+                 requiredPermissions.includes(permission)
+               )
+             ) {
+               try {
+               const { id } = req.params;
+               const { email } = req.body;
+               console.log(id, email);
+
+               const csselements = await CssElementdb.findOneAndUpdate(
+                 { _id: id },
+                 { approvalStatus: "approved" },
+                 { new: true }
+               );
+               const user = await userdb.updateOne(
+                 { email: email },
+                 { $pull: { cssElementsInReview: id } },
+                 { new: true, useFindAndModify: false }
+               );
+               const updatedUser = await userdb.findOneAndUpdate(
+                 { email: email },
+                 { $push: { cssElements: req.params.id } },
+                 { new: true, useFindAndModify: false }
+               );
+
+               const elements = await CssElementdb.find({
+                 approvalStatus: "inReview",
+               }).populate("user");
+               console.log(elements);
+               res.json({
+                 elements: elements,
+                 message: "Csselement Approved Successfully",
+               });
+               } catch (err) {
+                 console.log(err);
+                 res.status(500).json({ message: err.message });
+               }
+             } else {
+               res.json({
+                 message: "You Dont Have permissions to perform this action",
+                 error: true,
+               });
+             }
+           }
+         }
+       );
+     } else {
+       res.status(401).json({ message: "No token provided", error: true });
+     }
+ 
+});
+
+
+
+
 
   app.get("/Csselements/:category", async (req, res) => {
     try {
@@ -1000,9 +1276,81 @@ await CssElementdb.findOneAndDelete({ _id: id },{new:true});
 
 
 
+app.post("/assignpermissions/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { selected } = req.body;
+
+    const user = await userdb.findOne({ email: email });
+    if (!user) return res.status(404).send("User not found");
+
+    const updatedPermissions = [...new Set([...user.Permissions, ...selected])];
+
+    user.Permissions = updatedPermissions;
+    await user.save();
+
+    res.send(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/data", async (req, res) => {
+  try {
+    const tables = await Table.find();
+    tables.forEach((table) => {
+      console.log(JSON.stringify(table.Lines, null, 2)); // Print Lines data
+      table.Tables.forEach((tableObj) => {
+        console.log(JSON.stringify(tableObj.TableJson, null, 2)); // Print TableJson data
+      });
+    });
+    res.json(tables);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
 
 
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    const file = req.file; // This is the uploaded file
 
+    // Read the file and encode it to base64
+    const fileBuffer = await fsPromises.readFile(file.path);
+    const base64File = fileBuffer.toString("base64");
+
+    // Prepare the form-data
+    const formData = new FormData();
+
+
+formData.append("input", fileBuffer, {
+  filename: file.originalname,
+  contentType: file.mimetype,
+});
+    // Send the file to the ExtractTable API
+    const response = await axios.post(
+      "https://trigger.extracttable.com/",
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          "x-api-key": process.env.EXTRACT_API_KEY,
+        },
+      }
+    );
+
+    // Save the ExtractTable API response to MongoDB
+    const table = new Table(response.data);
+    await table.save();
+
+    res.json({ message: "File uploaded and data saved successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
 
 
 app.listen(3000, () => {

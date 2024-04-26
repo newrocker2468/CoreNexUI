@@ -11,7 +11,7 @@ import Editor from "@monaco-editor/react";
 import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "./UserContext";
 import { usePrompt } from "react-router-dom";
-
+import { useTheme } from "./theme-provider";
 import {
   Modal,
   ModalContent,
@@ -23,6 +23,7 @@ import RadioCreateCss from "./ModalRadioCreateCss";
 import { toast } from "sonner";
 
 const LiveEditor=()=> {
+  const { theme } = useTheme();
   const [isModalVisible, setIsModalVisible] = useState(true);
 const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -41,25 +42,40 @@ const navigate = useNavigate();
   };
 
   function handleEditorDidMount(editor, monaco) {
-    monaco.editor.defineTheme("myTheme", {
-      base: "vs-dark",
-      inherit: true,
-      rules: [
-        { token: "tag", foreground: "569cd6" },
-        { token: "attribute.name", foreground: "9cdcfe" },
-        { token: "attribute.value", foreground: "ce9178" },
-        { token: "delimiter.html", foreground: "808080" },
-        { token: "delimiter.xml", foreground: "808080" },
-      ],
-      colors: {
-        "editor.foreground": "#F8F8F8",
-        "editor.background": "#232323",
-        // Add more color settings as needed
-      },
-    });
+ 
+       monaco.editor.defineTheme("dark", {
+         base: "vs-dark",
+         inherit: true,
+         rules: [
+           { token: "tag", foreground: "569cd6" },
+           { token: "attribute.name", foreground: "9cdcfe" },
+           { token: "attribute.value", foreground: "ce9178" },
+           { token: "delimiter.html", foreground: "808080" },
+           { token: "delimiter.xml", foreground: "808080" },
+         ],
+         colors: {
+           "editor.foreground": "#F8F8F8",
+           "editor.background": "#232323",
+         },
+       });
+monaco.editor.defineTheme("light", {
+  base: "vs",
+  inherit: true,
+  rules: [
+    { token: "tag", foreground: "000080" },
+    { token: "attribute.name", foreground: "FF0000" },
+    { token: "attribute.value", foreground: "038100" },
+    { token: "delimiter.html", foreground: "818181" },
+    { token: "delimiter.xml", foreground: "818181" },
+  ],
+  colors: {
+    "editor.foreground": "#000000",
+    "editor.background": "#FFFFFF",
+  },
+});
 
-    // Set your custom theme
-    monaco.editor.setTheme("myTheme");
+  monaco.editor.setTheme("light");
+    monaco.editor.setTheme("dark");
     if (!monaco) {
       console.error("Monaco is not initialized!");
       return;
@@ -68,7 +84,6 @@ const navigate = useNavigate();
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "b"],
       provideCompletionItems: function (model, position) {
-        // your logic to generate suggestions
         return {
           suggestions: [
             {
@@ -92,7 +107,6 @@ const navigate = useNavigate();
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
       provideCompletionItems: function (model, position) {
-        // your logic to generate suggestions
         return {
           suggestions: [
             {
@@ -689,7 +703,7 @@ useEffect(() => {
               {() => (
                 <>
                   <ModalHeader className='flex flex-col gap-1'>
-                    Modal Title
+               Select Category
                   </ModalHeader>
                   <ModalBody>
                     <div className='flex align-center justify-center'>
@@ -784,6 +798,7 @@ useEffect(() => {
                           "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                         fontSize: 18,
                         wordWrap: "on",
+                        
                       }}
                       height='100vh'
                       defaultLanguage='html'
@@ -791,6 +806,7 @@ useEffect(() => {
                       onChange={(newValue) => setHtml(newValue)}
                       defaultValue='<!--Enter Your Html Code Here-->'
                       onMount={handleEditorDidMount}
+                      theme={theme === "dark" ? "vs-dark" : "vs-light"}
                       className='border-2 border-black rounded overflow-hidden'
                     />
                   </div>
