@@ -9,6 +9,7 @@ const csschallengesSchema = mongoose.Schema({
   img: String,
   status: String,
   date: { from: String, to: String },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
 }, { timestamps: true });
 
 

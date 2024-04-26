@@ -25,8 +25,23 @@ interface Challenge1 {
 const CssChallengeDescription = () => {
   const params = useParams();
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
+  const [user, setUser] = useState<any>(null);
 
-  
+
+const fetchuserdata = async() => {
+  axios.get("http://localhost:3000/getuserdata/csschallenges",{
+    withCredentials:true
+  })
+  .then((response) => {
+    console.log(response.data.user);
+    setUser(response.data.user);
+  })
+}
+
+
+  useEffect(() => {
+fetchuserdata()
+  },[])
 // console.log(Cssdata)
   //!SECTION to fetch data from the server
   useEffect(() => {
@@ -57,15 +72,23 @@ const CssChallengeDescription = () => {
 
   return (
     <>
-      <div className='flex justify-center align-center m-5'>
-        <EditChallengeModal
-          Cssdata={Cssdata}
-          setCssdata={setCssdata}
-        />
-      </div>
-      <div className='flex justify-center align-center m-5'>
-        <DeleteModal id={Cssdata.id} />
-      </div>
+      {user.Permissions.includes("admin") ||
+      user.Permissions.includes("editchallenges") ? (
+        <div className='flex justify-center align-center m-5'>
+          <EditChallengeModal Cssdata={Cssdata} setCssdata={setCssdata} />
+        </div>
+      ) : (
+        ""
+      )}
+      {user.Permissions.includes("admin") ||
+      user.Permissions.includes("deletechallenges") ? (
+        <div className='flex justify-center align-center m-5'>
+          <DeleteModal id={Cssdata.id} />
+        </div>
+      ) : (
+        ""
+      )}
+
       <div className='flex justify-center align-center'>
         <Csschallengecard
           id={Cssdata.id}

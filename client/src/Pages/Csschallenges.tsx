@@ -71,7 +71,6 @@ useEffect(() => {
 
 
   const fetchuserdata = async () => {
-    console.log("fetchuserdata");
     try {
       axios
         .get("http://localhost:3000/getuserdata/csschallenges",{
@@ -93,7 +92,7 @@ useEffect(() => {
       <section className='flex align-center justify-center'>
         <div className='grid items-center w-[20dvw]'>
           {user?.Permissions.includes("admin") ||
-          user?.Permissions.includes("createcsschallenges") ? (
+          user?.Permissions.includes("createchallenges") ? (
             <CreatechallengesModal
               Cssdata={Cssdata}
               Setdata={setCssdata}
