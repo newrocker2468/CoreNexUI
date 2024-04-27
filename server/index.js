@@ -58,6 +58,52 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
+
+function validateUser(req, res, next) {
+  const { email, password } = req.body;
+  if(!email){
+    return res.json({ message: "Email is required" });
+  }
+  if(!password){
+    return res.json({ message: "Password is required" });
+  }
+
+  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,4}$/;
+  if (!emailRegex.test(email)) {
+    return res.json({ message: "Invalid email format" });
+  }
+
+
+  if (!password) {
+    return res.json({ message: "Password is required" });
+  } else if (password.length < 8) {
+    return res
+  
+      .json({ message: "Password must be at least 8 characters long" });
+  } else if (!/(?=.*[0-9])/.test(password)) {
+    return res.status(400).json({ message: "Password must contain a number" });
+  } else if (!/(?=.*[a-z])/.test(password)) {
+    return res
+ 
+      .json({ message: "Password must contain a lowercase letter" });
+  } else if (!/(?=.*[A-Z])/.test(password)) {
+    return res
+    
+      .json({ message: "Password must contain an uppercase letter" });
+  } else if (!/(?=.*[!@#$%^&*])/.test(password)) {
+    return res
+
+      .json({ message: "Password must contain a special character" });
+  }
+
+
+  next();
+}
+
+
+
+
+
 //!SECTION Google Auth
 passport.use(
   new GoogleStrategy(
@@ -149,6 +195,11 @@ app.get(
           bio: req.user.github.bio || "",
         },
         lastLoggedInWith: req.user.lastLoggedInWith,
+        default:{
+          displayName: req.user.default.displayName || "",
+          image: req.user.default.image || "",
+          bio: req.user.default.bio || "",
+        },
         Permissions: req.user.Permissions || ["newuser"],
       },
       process.env.TOKEN_SECRET,
@@ -409,34 +460,66 @@ app.get(
     res.redirect("http://localhost:5173/home");
   }
 );
-app.post("/login", async (req, res) => {
-  const { email, password, remember } = req.body;
-  const token = req.cookies.token;
-  if (token) {
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-      if (err) {
-        return res
-          .status(500)
-          .json({ message: "Failed to authenticate token" });
-      }
-      res.status(200).json({ user: decoded });
-    });
-  } else {
+
+
+  app.post("/login",validateUser, async (req, res) => {
+    console.log("ddddddddd");
+    const { email, password, remember } = req.body;
+    console.log(email, password, remember);
+  try{
     const user = await userdb.findOne({ email: email });
     if (!user) {
-      console.log("User not found");
-      // return res.status(400).json({ message: "User not found" });
+      console.log("User not found.");
+      return res.json({ message: "User not found.",signup:true  });
     }
+    else{
+    if(user){
 
-    if (user.password !== password) {
-      console.log("Password is incorrect");
-      // return res.status(400).json({ message: "Password is incorrect" });
-    }
-    if (user.password === password) {
-      console.log("password is correct");
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+          return res.status(400).json({ message: "Invalid password." });
+        }
+      const token = jwt.sign(
+        {
+          email: user.email,
+          google: {
+            displayName: user.google.displayName || "",
+            image: user.google.image || "",
+            bio: user.google.bio || "",
+          },
+          github: {
+            displayName: user.github.displayName || "",
+            image: user.github.image || "",
+            bio: user.github.bio || "",
+          },
+          default:{
+              displayName: user.default.displayName || "",
+              image: user.default.image || "",
+              bio: user.default.bio || "",
+          },
+          lastLoggedInWith: "default",
+          Permissions: user.Permissions,
+        },
+        process.env.TOKEN_SECRET
+      );
+      const maxage = remember ? 7 * 24 * 60 * 60 * 1000 : 2 * 24 * 60 * 60 * 1000;
+      res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: maxage,
+        sameSite: "none",
+        secure: true,
+      });
+    
+      const decodedtoken = jwt.decode(token);
+      res.json({ user: decodedtoken,message:"login success" });
     }
   }
-});
+  }
+  catch(err){
+    res.status(500).json({ message: "An error occurred while logging in." });
+  }
+
+  });
 
 
 app.get("/logout", function (req, res) {
@@ -446,6 +529,7 @@ app.get("/logout", function (req, res) {
       res.status(500).send("Could not log out.");
     } else {
       res.clearCookie("token");
+           res.clearCookie("refreshToken");
       // // Clear the 'rememberMeToken' cookie
       // res.clearCookie("rememberMeToken");
       res.status(200).send("Logged out.");
@@ -1018,9 +1102,20 @@ app.post("/notesupload/:id/delete", async (req, res) => {
   }
 });
 
-app.post("/register", async (req, res) => {
+app.post("/register", validateUser,async (req, res) => {
+  const { email, password, repassword ,terms } = req.body;
+    if (!repassword) {
+      return res.status(400).json({ message: "Re-enter password is required" });
+    }
+  console.log(req.body); 
+const user = await userdb.findOne({ email: email });
+if(!user){
+
   try {
-    const { password, email } = req.body;
+    if (password !== repassword) {
+      console.log("password not match");
+      res.json({ message: "Registration done successfully" });
+    }
     const hash = await bcrypt.hash(password, 12);
     const user = new userdb({
       google: {
@@ -1035,17 +1130,51 @@ app.post("/register", async (req, res) => {
         image: "",
         bio: "",
       },
+      default: {
+        displayName: "",
+        image: "",
+        bio: "",
+      },
       email: email,
       password: hash,
       lastLoggedInWith: "default",
     });
     await user.save();
-    res.status(200).json({ message: "registration done successfully" });
+    const token = jwt.sign(
+      {
+        email: user.email,
+        google: {
+          displayName: user.google.displayName || "",
+          image: user.google.image || "",
+          bio: user.google.bio || "",
+        },
+        github: {
+          displayName: user.github.displayName || "",
+          image: user.github.image || "",
+          bio: user.github.bio || "",
+        },
+        lastLoggedInWith: user.lastLoggedInWith || "default",
+        Permissions: user.Permissions || ["newuser"],
+      },
+      process.env.TOKEN_SECRET
+    );
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+    });
+    res.status(200).json({ message: "registration done successfully"});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "error has occured during registration" });
   }
+}else{
+  res.json({ message: "User already exists , Please Login!" });
+}
 });
+
+
 app.post("/login/save", async (req, res) => {
   try {
     const { email, password, remember } = req.body;
@@ -1060,18 +1189,7 @@ app.post("/login/save", async (req, res) => {
     res.status(500).json({ message: "An error occurred during registration" });
   }
 });
-app.post("/login", async (req, res) => {
-  try {
-    const { email, password, remember } = req.body;
-    const user = await userdb.findOne({ email: email });
-    const validPassword = bcrypt.compare(password, user.password);
-    if (validPassword) {
-      res.status(200).json({ message: "Logged in successfully" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Invalid try Again" });
-  }
-});
+
 
 app.post("/CssChallengecreate/:id/create", async (req, res) => {
   const { id } = req.params;

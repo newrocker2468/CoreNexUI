@@ -117,11 +117,11 @@ useEffect(() => {
                       <div key={uuidv4()} className='font-bold m-3'>
                         {/* By {(pair.user as { email: string }).email} */}
                         <User
-                          name={`By ${pair.user.email}`}
+                          name={`By ${pair.user.email ? pair.user.email : "Anonymous"}`}
                           // description='Product Designer'
                           avatarProps={{
                             src: `${
-                              pair.user.github.image || pair.user.google.image
+                              pair.user.github.image || pair.user.google.image || `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
                             }`,
                           }}
                         />

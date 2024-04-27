@@ -13,6 +13,12 @@ const userSchema = mongoose.Schema(
       image: String,
       bio: String,
     },
+    default: {
+      displayName: String,
+      image: String,
+      bio: String,
+    },
+
     email: {
       type: String,
       unique: true,
