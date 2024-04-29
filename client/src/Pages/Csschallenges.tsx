@@ -49,7 +49,7 @@ useEffect(() => {
 }, [showToast]);
 
 
-  useEffect(() => {
+ /*  useEffect(() => {
 
     fetchCsschallengesdata();
   }, []);
@@ -66,7 +66,7 @@ useEffect(() => {
         setCssdata(data);
       })
       .catch((error) => console.error("Error:", error));
-  };
+  }; */
 
 
 
@@ -96,8 +96,7 @@ useEffect(() => {
             <CreatechallengesModal
               Cssdata={Cssdata}
               Setdata={setCssdata}
-              showToast={showToast}
-              setShowToast={setShowToast}
+       
             />
           ) : (
             ""

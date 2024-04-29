@@ -176,8 +176,15 @@ export default function Cardcomp() {
               <p className='text-tiny /60'>Get a good night's sleep.</p>
             </div>
           </div>
-          <Button radius='full' size='sm'>
-            Get App
+          <Button
+            className='text-tiny font-bold p-0 min-w-0 min-h-0'
+            color='primary'
+            radius='full'
+            size='sm'
+          >
+            <Link to='/event' className='p-5'>
+              Event-Section
+            </Link>
           </Button>
         </CardFooter>
       </Card>

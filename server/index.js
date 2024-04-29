@@ -22,6 +22,9 @@ const fs = require("fs");
 const axios = require("axios");
 const Table =require("./models/TableSchema")
 const FormData = require("form-data");
+
+const Eventsdb = require("./models/EventsSchema")
+
 const nodemailer = require("nodemailer");
 const uuid = require("uuid");
 
@@ -1036,10 +1039,12 @@ app.get("/getuserdata/match/:id", async (req, res) => {
   }
 });
 
-app.post("/event/:id", async (req, res) => {
+app.get("/events", async (req, res) => {
   try {
-    const Event = await Eventsdb.findOne({ _id: req.params.id });
-    res.status(200).json({ Event });
+    console.log("route hit ")
+    const Event = await Eventsdb.find({});
+    console.log(Event)
+    res.json(Event);
   } catch (error) {
     console.error(error);
     res
@@ -1047,26 +1052,38 @@ app.post("/event/:id", async (req, res) => {
       .json({ message: "An error has occured while fetching event " });
   }
 });
-
-app.post("/event/:id/create", async (req, res) => {
-  let Event;
+app.get("/event/:id", async (req, res) => {
   try {
-    Event = new Eventsdb({
-      id: req.param.id,
-      eventName: req.body.Name,
-      description: req.body.description,
-      img: req.body.img,
-      status: req.body.status,
-      date: req.body.date,
-    });
-    Event.save();
-    res.status(200).json({ message: "event successfully added" });
+    let Event = await Eventsdb.findOne({ id: req.params.id });
+    res.json({Event});
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "an error has occured while fetching event" });
+      .json({ message: "An error has occured while fetching event " });
   }
+});
+app.post("/event/:id/create", async (req, res) => {
+
+            let Event = await Eventsdb.findOne({
+              id: req.params.id,
+            });
+            if (!Event) {
+              console.log(req.body);
+              Event = new Eventsdb({
+                id: req.params.id,
+                eventName: req.body.eventName,
+                description: req.body.description,
+                img: req.body.img,
+                status: req.body.status,
+                date: req.body.date,
+              });
+              Event.save();
+              res.json({ message: "Event added successfully." });
+            } else {
+              res.json({ message: "Event already is Going on..." });
+            }
+      
 });
 
 app.post("/event/:id/update", async (req, res) => {
@@ -1092,6 +1109,21 @@ app.post("/event/:id/delete", async (req, res) => {
       .json({ message: "an error has occured while deleting event" });
   }
 });
+
+
+app.post("/eventsget", async (req, res) => {
+  const { id } = req.body;
+  console.log("id " + id);
+  try {
+    const Event = await Eventsdb.findOne({ id: id });
+    console.log(Event);
+    res.status(200).json(Event);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching Event.");
+  }
+});
+
 
 //route for notes upload
 app.post("/notesUpload/:id", async (req, res) => {

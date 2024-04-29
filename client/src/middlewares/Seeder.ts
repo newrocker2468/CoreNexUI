@@ -36,7 +36,7 @@ const fetchCsschallengesdata = async () => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
+
       Csschallengesdata.push(...data);
       console.log(Csschallengesdata);
     })
