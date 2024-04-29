@@ -32,8 +32,8 @@ const uuid = require("uuid");
 //npm i
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  host: "smtp.gmail.com",
-  port: 465,
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
   secure: true,
   auth: {
     user: "corenexui1@gmail.com",
@@ -1252,7 +1252,7 @@ if(!user){
     from: "corenexui1@gmail.com",
     to: email,
     subject: "Email Verification",
-    html: `<a href="http://localhost:3000/verify-email?token=${user.emailVerificationToken}">Click here to verify your email</a>`,
+    html: `<a href="http://localhost:5173/verify-email/${user.emailVerificationToken}">Click here to verify your email</a>`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -1321,12 +1321,21 @@ app.get("/verify/:email/getotp", async (req, res) => {
  
   await user.save();
 
-  let mailOptions = {
-    from: "corenexui1@gmail.com",
-    to: email,
-    subject: "OTP for Email Verification",
-    text: `Your OTP is ${otp}`,
-  };
+let html = fs.readFileSync("template.html", "utf8"); 
+html = html.replace("%OTP%", otp);
+
+let mailOptions = {
+  from: "corenexui1@gmail.com",
+  to: email,
+  subject: "Email Verification",
+  html: html, 
+};
+  // let mailOptions = {
+  //   from: "corenexui1@gmail.com",
+  //   to: email,
+  //   subject: "OTP for Email Verification",
+  //   text: `Your OTP is ${otp}`,
+  // };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       return console.log(error);
@@ -1363,12 +1372,12 @@ if(!user.emailVerified){
 
 
 
-app.get("/verify-email", async (req, res) => {
-  const { token } = req.query;
+app.get("/verify-email/:token", async (req, res) => {
+  const { token } = req.params;
   const user = await userdb.findOne({ emailVerificationToken: token });
 
   if (!user) {
-    return res.status(400).json({ message: "Invalid verification link" });
+    return res.json({ message: "Invalid verification link" });
   }
   user.emailVerified = true;
   user.emailVerificationToken = undefined;
