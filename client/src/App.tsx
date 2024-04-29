@@ -25,6 +25,7 @@ import PermissionManager from "./Pages/PermissionManager";
 import UploadData from "./components/UploadData";
 import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
+import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
 function App() {
   const location = useLocation();
     const navigate = useNavigate();
@@ -106,6 +107,10 @@ const checkPermissions = (userPermissions: string | any[], requiredPermissions: 
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />
               <Route path='/verify/:email' element={<VerifyEmail />} />
+              <Route
+                path='/verify-email/:emailVerificationToken'
+                element={<EmailVerificationStatus />}
+              />
               <Route path='/forgotpass' element={<ForgotPassword />} />
               <Route
                 path='/admin'
