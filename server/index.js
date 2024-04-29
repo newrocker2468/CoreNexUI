@@ -22,13 +22,10 @@ const fs = require("fs");
 const axios = require("axios");
 const Table =require("./models/TableSchema")
 const FormData = require("form-data");
-<<<<<<< HEAD
 const Eventsdb = require("./models/EventsSchema")
-=======
 const nodemailer = require("nodemailer");
 const uuid = require("uuid");
 
->>>>>>> 62292265319756bc52fbda2f735c3ee5c04d8c8f
 //git fetch origin
 //git checkout master
 //git merge origin/master

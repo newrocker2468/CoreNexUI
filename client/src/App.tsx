@@ -23,14 +23,14 @@ import NoPermissions from "./components/NoPermissions";
 import axios from "axios";
 import PermissionManager from "./Pages/PermissionManager";
 import UploadData from "./components/UploadData";
-<<<<<<< HEAD
+
 import EventManagement from "./Pages/EventManagement";
 import EditEventModal from "./components/EditEventModal";
 import EventDescription from "./components/EventDescription";
-=======
+
 import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
->>>>>>> 62292265319756bc52fbda2f735c3ee5c04d8c8f
+
 function App() {
   const location = useLocation();
     const navigate = useNavigate();
@@ -76,11 +76,11 @@ useEffect(() => {
     navigate("/home");
   }
 }, [user.isLoggedIn, location.pathname]);
-<<<<<<< HEAD
-const checkPermissions = (userPermissions = [], requiredPermissions = []) => {
-=======
-const checkPermissions = (userPermissions: string | any[], requiredPermissions: any[]) => {
->>>>>>> 62292265319756bc52fbda2f735c3ee5c04d8c8f
+
+const checkPermissions = (
+  userPermissions: string | any[],
+  requiredPermissions: any[]
+) => {
   return requiredPermissions.some((permission) =>
     userPermissions.includes(permission)
   );
