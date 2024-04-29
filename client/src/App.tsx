@@ -24,6 +24,9 @@ import NoPermissions from "./components/NoPermissions";
 import axios from "axios";
 import PermissionManager from "./Pages/PermissionManager";
 import UploadData from "./components/UploadData";
+import EventManagement from "./Pages/EventManagement";
+import EditEventModal from "./components/EditEventModal";
+import EventDescription from "./components/EventDescription";
 function App() {
   const location = useLocation();
     const navigate = useNavigate();
@@ -69,11 +72,12 @@ useEffect(() => {
     navigate("/home");
   }
 }, [user.isLoggedIn, location.pathname]);
-const checkPermissions = (userPermissions, requiredPermissions) => {
+const checkPermissions = (userPermissions = [], requiredPermissions = []) => {
   return requiredPermissions.some((permission) =>
     userPermissions.includes(permission)
   );
 };
+
   return (
     <>
       <UserContext.Provider value={{ user, setUser }}>
@@ -88,6 +92,7 @@ const checkPermissions = (userPermissions, requiredPermissions) => {
               <Route path='/home' element={<Home />} />
               <Route path='/Csschallenges' element={<Csschallenges />} />
               <Route path='/Profile' element={<Profile />} />
+              <Route path='/event' element={<EventManagement />} />
               <Route
                 path='/Csselements/:category'
                 element={<CssElementsCategory />}
@@ -100,6 +105,10 @@ const checkPermissions = (userPermissions, requiredPermissions) => {
               <Route
                 path='/CssChallengecreate/:id'
                 element={<CssChallengecreate />}
+              />
+              <Route
+                path='/event/:id'
+                element={<EventDescription />}
               />
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />

@@ -36,15 +36,15 @@ interface Challenge {
 interface CreatechallengesModalProps {
   Cssdata: Challenge[];
   Setdata: Dispatch<SetStateAction<Challenge[]>>;
-  showToast: boolean;
-  setShowToast: Dispatch<SetStateAction<boolean>>;
+/*   showToast: boolean;
+  setShowToast: Dispatch<SetStateAction<boolean>>; */
 }
 
 const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
   Cssdata,
   Setdata,
   // showToast,
-  setShowToast,
+/*   setShowToast, */
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
@@ -107,7 +107,7 @@ const uploadToFirebase = (
       });
 
       if (response) {
-        setShowToast(true);
+        /* setShowToast(true); */
         navigate("/Csschallenges", {
           state: {
             message: "Challenge Created Successfully",
