@@ -1,6 +1,6 @@
 import Home from "./Pages/Home";
 import "./App.css";
-import { Routes, Route, useNavigate,useLocation} from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
@@ -23,16 +23,18 @@ import NoPermissions from "./components/NoPermissions";
 import axios from "axios";
 import PermissionManager from "./Pages/PermissionManager";
 import UploadData from "./components/UploadData";
+
 import EventManagement from "./Pages/EventManagement";
 import EditEventModal from "./components/EditEventModal";
 import EventDescription from "./components/EventDescription";
+
 import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
-import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
+
 function App() {
   const location = useLocation();
-    const navigate = useNavigate();
-const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     userName: "",
     data: {},
@@ -47,40 +49,39 @@ const [loading, setLoading] = useState(true);
     Permissions: ["newuser"],
   });
 
-const [permission,setpermission] = useState(["newuser"]);
-const fetchUserData = async () => {
-  try {
-    const response = await axios("http://localhost:3000/validate-token", {
-      withCredentials: true,
-    });
- setpermission(response.data.user.Permissions)
-  } catch (err) {
-    console.log(err);
-  } finally {
-    setLoading(false);
-  }
-};
-  useEffect(()=>{
-fetchUserData();
-  },[])
-useEffect(() => {
+  const [permission, setpermission] = useState(["newuser"]);
+  const fetchUserData = async () => {
+    try {
+      const response = await axios("http://localhost:3000/validate-token", {
+        withCredentials: true,
+      });
+      setpermission(response.data.user.Permissions);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  useEffect(() => {
+    if (
+      user.isLoggedIn &&
+      (location.pathname === "/login" || location.pathname === "/signup")
+    ) {
+      navigate("/home");
+    }
+  }, [user.isLoggedIn, location.pathname]);
 
-
-
-  if (
-    user.isLoggedIn &&
-    (location.pathname === "/login" || location.pathname === "/signup")
-  ) {
-    navigate("/home");
-  }
-}, [user.isLoggedIn, location.pathname]);
-const checkPermissions = (
-  userPermissions: string | any[],
-  requiredPermissions: any[]
-) => {
-  return requiredPermissions.some((permission) =>
-    userPermissions.includes(permission)
-  );
+  const checkPermissions = (
+    userPermissions: string | any[],
+    requiredPermissions: any[]
+  ) => {
+    return requiredPermissions.some((permission) =>
+      userPermissions.includes(permission)
+    );
+  };
 
   return (
     <>
@@ -115,10 +116,6 @@ const checkPermissions = (
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />
               <Route path='/verify/:email' element={<VerifyEmail />} />
-              <Route
-                path='/verify-email/:emailVerificationToken'
-                element={<EmailVerificationStatus />}
-              />
               <Route path='/forgotpass' element={<ForgotPassword />} />
               <Route
                 path='/admin'
@@ -178,6 +175,6 @@ const checkPermissions = (
       </UserContext.Provider>
     </>
   );
-};
 }
+
 export default App;
