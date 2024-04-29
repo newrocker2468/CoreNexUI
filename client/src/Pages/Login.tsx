@@ -16,6 +16,8 @@ import { useFormik } from "formik";
 import AnimatedCode from "@/components/AnimatedCode";
 import UserContext from "@/components/UserContext";
 import axios from "axios";
+import { toast } from "sonner";
+
 
 type FormikValues = {
   email: string;
@@ -73,6 +75,7 @@ export default function Login() {
    },
    onSubmit: (values) => {
  try {
+   setLoading(true);
    axios
      .post(
        "http://localhost:3000/login",
@@ -84,12 +87,43 @@ export default function Login() {
        { withCredentials: true }
      )
      .then((response) => {
-       console.log(response.data);
+if (response.data.error) {
+  toast.error(response.data.message, {
+    position: "top-center",
+  });
+}
+       if (response.data.signup){
+      toast.error(response.data.message, {
+        position: "top-center",
+      });
+          navigate("/signup");
+       }
+       if (response.data.user){
+  console.log(response.data.user.email);
+        setUser((prevState) => ({
+          ...prevState,
+          isLoggedIn: true,
+          email: response.data.user.email,
+          Permissions: response.data.user.Permissions,
+        }));
+        console.log(response.data.newUser);
+          toast.success(response.data.message, {
+            position: "top-center",
+          });
+          navigate("/home");
+       } 
+       
      });
  } catch (err) {
-   console.log(err);
+          console.log(err);
+
+ }finally{
+setTimeout(() => {
+  setLoading(false);
+}, 1000);
  }
-  setLoading(true);
+   
+ 
     //  alert(JSON.stringify(values, null, 2));
     //  console.log(values);
      

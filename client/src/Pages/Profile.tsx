@@ -63,7 +63,7 @@ catch(err){
               reiciendis modi illum soluta.
             </section>
             <div className='flex w-full flex-col m-5'>
-              <Tabs aria-label='Options'>
+              <Tabs aria-label='Options' variant='bordered'>
                 <Tab key='Posts' title='Posts'>
                   <Card>
                     <CardBody>

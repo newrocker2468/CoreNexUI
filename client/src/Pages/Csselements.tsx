@@ -108,24 +108,26 @@ useEffect(() => {
                     html: string;
                     css: string;
                     user: object;
-                    isSelected:boolean;
+                    isSelected: boolean;
                   }) => (
                     <div className='m-3' key={uuidv4()}>
                       <CssElement htmlcssPairs={pair} key={uuidv4()} />
 
                       {/* <div key={uuidv4()}>{user.google.image}</div> */}
-                      <div key={uuidv4()} className='font-bold m-3'>
-                        {/* By {(pair.user as { email: string }).email} */}
-                        <User
-                          name={`By ${pair.user.email}`}
-                          // description='Product Designer'
-                          avatarProps={{
-                            src: `${
-                              pair.user.github.image || pair.user.google.image
-                            }`,
-                          }}
-                        />
-                      </div>
+                      {pair.user.email && (
+                        <div key={uuidv4()} className='font-bold m-3'>
+                          <User
+                            name={`By ${pair.user.email}`}
+                            avatarProps={{
+                              src: `${
+                                pair.user.github.image ||
+                                pair.user.google.image ||
+                                `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
+                              }`,
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   )
                 )}

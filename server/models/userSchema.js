@@ -13,6 +13,12 @@ const userSchema = mongoose.Schema(
       image: String,
       bio: String,
     },
+    default: {
+      displayName: String,
+      image: String,
+      bio: String,
+    },
+
     email: {
       type: String,
       unique: true,
@@ -43,6 +49,9 @@ const userSchema = mongoose.Schema(
         default: "Newuser",
       },
     ],
+    emailVerified: Boolean,
+    emailVerificationToken: String,
+    otp: String,
   },
   { timestamps: true }
 );

@@ -8,15 +8,17 @@ import CheckBox from "@/components/CheckBox";
 // import ShadBtn from "../Components/ShadBtn";
 // import GithubIcon from "../Icons/github-mark-white.svg";
 // import GoogleIcon from "../Icons/GoogleIcon.svg";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../components/theme-provider";
 import { useFormik } from "formik";
-import { set } from "date-fns";
+import axios from "axios";
+import { toast } from "sonner";
 
 type FormikValues = {
   email: string;
   password: string;
   repassword: string;
-  terms:false;
+  terms: false;
 };
 
 function validateEmail(value: FormikValues["email"]) {
@@ -38,19 +40,15 @@ function validatePassword(value: FormikValues["password"]) {
     error = "Required";
   } else if (value.length < 8) {
     error = "Password must be atleast 8 characters long";
+  } else if (!/(?=.*[0-9])/.test(value)) {
+    error = "Password must contain a number";
+  } else if (!/(?=.*[a-z])/.test(value)) {
+    error = "Password must contain a lowercase letter";
+  } else if (!/(?=.*[A-Z])/.test(value)) {
+    error = "Password must contain an uppercase letter";
+  } else if (!/(?=.*[!@#$%^&*])/.test(value)) {
+    error = "Password must contain a special character";
   }
-  //  else if (!/(?=.*[0-9])/.test(value)) {
-  //    error = "Password must contain a number";
-  //  }
-  //   else if (!/(?=.*[a-z])/.test(value)) {
-  //     error = "Password must contain a lowercase letter";
-  //   }
-  //   else if (!/(?=.*[A-Z])/.test(value)) {
-  //     error = "Password must contain an uppercase letter";
-  //   }
-  //   else if (!/(?=.*[!@#$%^&*])/.test(value)) {
-  //     error = "Password must contain a special character";
-  //   }
 
   return error;
 }
@@ -59,7 +57,7 @@ function validateRePassword(repassword: FormikValues["repassword"]) {
   let error;
   if (!repassword) {
     error = "Required";
-  } 
+  }
   //  else if (!/(?=.*[0-9])/.test(value)) {
   //    error = "Password must contain a number";
   //  }
@@ -80,29 +78,60 @@ export default function Signup() {
   const [EmailisInvalid, setEmailisInvalid] = useState(false);
   const [PassisInvalid, setPassisInvalid] = useState(false);
   const [RePassisInvalid, setRePassisInvalid] = useState(false);
-  const[CheckBoxisInvalid,setCheckBoxisInvalid]=useState(false);
+  const [CheckBoxisInvalid, setCheckBoxisInvalid] = useState(false);
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const bgColor = theme === "dark" ? "bg-grey" : "bg-white";
-  // console.log(theme);
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
       repassword: "",
-      terms:false,
+      terms: false,
     },
     onSubmit: (values) => {
-
-      console.log(values);
+      try {
+        axios
+          .post("http://localhost:3000/register", {
+            email: values.email,
+            password: values.password,
+            repassword: values.repassword,
+          })
+          .then((res) => {
+            console.log(res);
+            toast.info(res.data.message, {
+              position: "top-center",
+            });
+            if (
+              res.data.message ===
+                "Registration done successfully. Please verify your email." ||
+              res.data.message ===
+                "User already exists, Please verify your email!"
+            ) {
+              navigate(`/verify/${values.email}`,{replace:true});
+            }
+            if (res.data.message === "User already exists , Please Login!") {
+              navigate("/login");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.error(error);
+      }
     },
     validate: (values) => {
-      const errors: { email?: string; password?: string; repassword?: string;terms?:string; } =
-        {};
+      const errors: {
+        email?: string;
+        password?: string;
+        repassword?: string;
+        terms?: string;
+      } = {};
 
       const emailError = validateEmail(values.email);
       const passwordError = validatePassword(values.password);
       const repasswordError = validateRePassword(values.repassword);
-    
 
       if (emailError) {
         errors.email = emailError;
@@ -123,16 +152,15 @@ export default function Signup() {
       } else {
         setRePassisInvalid(false);
       }
-    if (values.password !== values.repassword) {
-      errors.password = "Passwords do not match";
-      setRePassisInvalid(true);
-      setPassisInvalid(true);
-    }
+      if (values.password !== values.repassword) {
+        errors.password = "Passwords do not match";
+        setRePassisInvalid(true);
+        setPassisInvalid(true);
+      }
       if (!values.terms) {
         errors.terms = "You must agree to the Terms and Privacy Policy";
-setCheckBoxisInvalid(true) ;
-      }
-      else{
+        setCheckBoxisInvalid(true);
+      } else {
         setCheckBoxisInvalid(false);
       }
       return errors;
