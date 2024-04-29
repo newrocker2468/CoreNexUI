@@ -40,7 +40,7 @@ const userSchema = mongoose.Schema(
     cssElementsInReview: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "needapproval",
+        ref: "csselements",
       },
     ],
     Permissions: [

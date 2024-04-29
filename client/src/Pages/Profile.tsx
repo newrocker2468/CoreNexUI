@@ -1,11 +1,32 @@
 import AnimatedLoading from "@/components/AnimatedLoading";
 import UserContext from "@/components/UserContext";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import SideBar from "@/components/SideBar";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody, User } from "@nextui-org/react";
 import axios from "axios";
-const Profile = () => {
+import CssElement from "@/components/CssElement";
 
+import { v4 as uuidv4 } from "uuid";
+interface MyObject {
+  css: string;
+  html: string;
+  id: string;
+  user: {
+    Permissions: [];
+    email: string;
+    google: {
+      image: string;
+    };
+    github: {
+      image: string;
+    };
+  };
+  isSelected: boolean;
+}
+
+const Profile = () => {
+  const [approvedposts, setapprovedposts] = useState<MyObject[]>([]);
+    const [inreviewposts, setinreviewposts] = useState<MyObject[]>([]);
   const { user } = useContext(UserContext);
 
   function printUntilAt(s: string) {
@@ -17,87 +38,149 @@ const Profile = () => {
     }
     return arr.join("");
   }
+// useEffect(()=>{
+//   try{
+//     axios.get("http://localhost:3000/user/getposts",{
+//  withCredentials:true
+ 
+//   },
+//   )
+//   .then((res)=>{
+//     console.log(res.data);
+//   })
+// }
+// catch(err){
+//     console.log(err);
+//   }
+
+// }
+
+// ,[])
 useEffect(()=>{
   try{
-    axios.get("http://localhost:3000/user/getposts",{
+    axios.get("http://localhost:3000/getuserdata",{
  withCredentials:true
  
   },
   )
   .then((res)=>{
-    console.log(res.data);
+    console.log(res.data.user);
+  setapprovedposts(res.data.user.cssElements);
+  setinreviewposts(res.data.user.cssElementsInReview);
   })
 }
 catch(err){
     console.log(err);
   }
+},[])
 
-}
-
-,[])
-
+useEffect(() => {
+  console.log(setapprovedposts);
+}, [approvedposts]);
   const emailname = printUntilAt(user.email);
   // console.log(user);
   
-    return (
-      <>
-        <div className='flex'>
-          <SideBar />
-          <div className='flex flex-col w-[70%] p-5 '>
-            <div className='flex justify-flex-start  '>
-              <AnimatedLoading
-                img={`${user.highres_img}`}
-                width={250}
-                height={200}
-              />
-              <div className='ml-5'>
-                <p>{user.userName}</p>
-                <p>{emailname}</p>
-                <p>{user.bio}</p>
-              </div>
-            </div>
-            <section>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
-              qui obcaecati unde quas dicta quisquam, sint quod quia minima
-              error eligendi molestias voluptatum cumque est recusandae
-              reiciendis modi illum soluta.
-            </section>
-            <div className='flex w-full flex-col m-5'>
-              <Tabs aria-label='Options' variant='bordered'>
-                <Tab key='Posts' title='Posts'>
-                  <Card>
-                    <CardBody>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </CardBody>
-                  </Card>
-                </Tab>
-                <Tab key='music' title='Music'>
-                  <Card>
-                    <CardBody>
-                      Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                      laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                      irure dolor in reprehenderit in voluptate velit esse
-                      cillum dolore eu fugiat nulla pariatur.
-                    </CardBody>
-                  </Card>
-                </Tab>
-                <Tab key='videos' title='Videos'>
-                  <Card>
-                    <CardBody>
-                      Excepteur sint occaecat cupidatat non proident, sunt in
-                      culpa qui officia deserunt mollit anim id est laborum.
-                    </CardBody>
-                  </Card>
-                </Tab>
-              </Tabs>
-            </div>
-          </div>
-        </div>
-      </>
-    );
+   return (
+     <>
+       <div className='flex'>
+         <SideBar />
+         <div className='flex flex-col w-[70%] p-5 '>
+           <div className='flex justify-flex-start  '>
+             <AnimatedLoading
+               img={`${user.highres_img}`}
+               width={250}
+               height={200}
+             />
+             <div className='ml-5'>
+               <p>{user.userName}</p>
+               <p>{emailname}</p>
+               <p>{user.bio}</p>
+             </div>
+           </div>
+           <section>
+             Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
+             qui obcaecati unde quas dicta quisquam, sint quod quia minima error
+             eligendi molestias voluptatum cumque est recusandae reiciendis modi
+             illum soluta.
+           </section>
+           <div className='flex w-full flex-col m-5'>
+             <Tabs aria-label='Options' variant='bordered'>
+               <Tab key='Posts' title='Posts'>
+                 <Card>
+                   <CardBody>
+                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4'>
+                       {approvedposts
+                         .filter((pair) => pair.approvalStatus === "approved")
+                         .map((pair) => (
+                           <div className='m-3' key={uuidv4()}>
+                             <CssElement htmlcssPairs={pair} key={uuidv4()} />
+                             {pair.user && pair.user.email ? (
+                               <div key={uuidv4()} className='font-bold m-3'>
+                                 <User
+                                   name={`By ${pair.user.email}`}
+                                   avatarProps={{
+                                     src: `${
+                                       pair.user.github.image ||
+                                       pair.user.google.image ||
+                                       `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
+                                     }`,
+                                   }}
+                                 />
+                               </div>
+                             ) : (
+                               "Deleted User"
+                             )}
+                           </div>
+                         ))}
+                     </div>
+                   </CardBody>
+                 </Card>
+               </Tab>
+               <Tab key='InReview' title='InReview'>
+                 <Card>
+                   <CardBody>
+                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4'>
+                       {inreviewposts
+                         .filter((pair) => pair.approvalStatus === "inReview")
+                         .map((pair) => (
+                           <div className='m-3' key={uuidv4()}>
+                             <CssElement htmlcssPairs={pair} key={uuidv4()} />
+                             {pair.user && pair.user.email ? (
+                               <div key={uuidv4()} className='font-bold m-3'>
+                                 <User
+                                   name={`By ${pair.user.email}`}
+                                   avatarProps={{
+                                     src: `${
+                                       pair.user.github.image ||
+                                       pair.user.google.image ||
+                                       `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
+                                     }`,
+                                   }}
+                                 />
+                               </div>
+                             ) : (
+                               "Deleted User"
+                             )}
+                           </div>
+                         ))}
+                     </div>
+                   </CardBody>
+                 </Card>
+               </Tab>
+               <Tab key='videos' title='Videos'>
+                 <Card>
+                   <CardBody>
+                     Excepteur sint occaecat cupidatat non proident, sunt in
+                     culpa qui officia deserunt mollit anim id est laborum.
+                   </CardBody>
+                 </Card>
+               </Tab>
+             </Tabs>
+           </div>
+         </div>
+       </div>
+     </>
+   );
   }
 
 export default Profile;

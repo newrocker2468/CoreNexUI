@@ -544,13 +544,15 @@ app.post("/verify/:email/resendotp", async (req, res) => {
   }
   user.otp = otp;
 
-  const mailOptions = {
+  let html = fs.readFileSync("template.html", "utf8");
+  html = html.replace("%OTP%", otp);
+
+  let mailOptions = {
     from: "corenexui1@gmail.com",
     to: email,
-    subject: "OTP for email verification",
-    text: `Your OTP is ${otp}`,
+    subject: "Email Verification",
+    html: html,
   };
-
   await new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -867,7 +869,26 @@ app.get("/getalluserdata",async(req,res) =>{
     res.json({ message: "Some Error Occured", error: true });
   }
 })
-
+app.get("/getuserdata", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+      }
+      try {
+        const user = await userdb.findOne({ email: decoded.email }).populate("cssElements").populate("cssElementsInReview");
+        res.status(200).json({ user });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  } else {
+    res.status(401).json({ message: "No token provided" });
+  }
+});
 app.get("/getuserdata/csschallenges", async (req, res) => {
   console.log("getuserdata");
   const token = req.cookies.token;
@@ -1013,7 +1034,6 @@ app.post("/editor/:id/update", async (req, res) => {
 
 
 app.get("/getuserdata/match/:id", async (req, res) => {
-
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
@@ -1022,11 +1042,13 @@ app.get("/getuserdata/match/:id", async (req, res) => {
           .status(500)
           .json({ message: "Failed to authenticate token" });
       }
-        const { id } = req.params;
+      const { id } = req.params;
       const user = await userdb.findOne({ email: decoded.email });
-      const CssElements = await CssElementdb.findOne({ _id: id }).populate("user");
-      if (user && CssElements) {
-        if (user.email=== CssElements.user.email) {
+      const CssElements = await CssElementdb.findOne({ _id: id }).populate(
+        "user"
+      );
+      if (user && CssElements && CssElements.user) {
+        if (user.email === CssElements.user.email) {
           res.status(200).json({ sameUser: true });
         } else {
           res.status(200).json({ sameUser: false });
@@ -1038,6 +1060,7 @@ app.get("/getuserdata/match/:id", async (req, res) => {
     res.status(401).json({ message: "No token provided" });
   }
 });
+
 
 app.get("/events", async (req, res) => {
   try {

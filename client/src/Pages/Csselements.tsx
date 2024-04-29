@@ -1,14 +1,11 @@
-
-import { User, user } from "@nextui-org/react";
+import { User } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
-import { Link } from 'react-router-dom';
-import Btn from '@/components/Btn';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import CssElement from '@/components/CssElement';
-import "normalize.css";
-import SideBar from '@/components/SideBar';
 import { Link as nLink, Button } from "@nextui-org/react";
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import CssElement from "@/components/CssElement";
+import SideBar from "@/components/SideBar";
+
 interface MyObject {
   css: string;
   html: string;
@@ -26,115 +23,92 @@ interface MyObject {
   isSelected: boolean;
 }
 
-
-
-
 export default function Csselements() {
-const [htmlCssPairs, setHtmlCssPairs] = useState<MyObject[]>([]);
-const[userdata,setUserData]=useState([]);
+  const [htmlCssPairs, setHtmlCssPairs] = useState<MyObject[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(
-    window.innerWidth > 800
+    window.innerWidth > 1200
   );
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleResize = useCallback(() => {
+    setIsSidebarVisible(window.innerWidth > 1200);
+  }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsSidebarVisible(window.innerWidth > 1200);
-    };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-useEffect(() => {
-  // Replace with your own server URL and endpoints
-  axios
-    .get("http://localhost:3000/allcsselements")
-    .then((response) => {
-      setUserData(response.data.user);
-      const pairs = response.data.map(
-        (item: {
-          html: string;
-          css: string;
-          _id: string;
-          user: object;
-          isSelected: boolean;
-        }) => ({
+  }, [handleResize]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/allcsselements")
+      .then((response) => {
+        const pairs = response.data.map((item: any) => ({
           html: item.html,
           css: item.css,
           id: item._id,
           user: item.user,
           isSelected: item.isSelected,
-        })
-      );
-      setHtmlCssPairs([...htmlCssPairs, ...pairs]);
+        }));
+        setHtmlCssPairs(pairs);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
+  }, []);
 
-    })
-    .catch((error) => console.error(error));
-   
-}, []);
-useEffect(() => {
-  console.log(htmlCssPairs);
-}, [htmlCssPairs]);
   const id = uuidv4();
-    return (
-      <>
-        <div className='flex'>
-          {isSidebarVisible && (
-            <div className='flex-shrink-0 overflow-auto h-screen'>
-              <SideBar />
-            </div>
-          )}
-          <div className='flex-grow'>
-            <div className='grid'>
-              {/* <Link
-                to={`/editor/create/${id}`}
-                className='self-center relative top-[-1rem]'
-              >
-                Create
-              </Link> */}
-              <div className='flex justify-center'>
-                <Button
-                  href={`/editor/create/${id}`}
-                  as={nLink}
-                  color='primary'
-                  variant='solid'
-                >
-                  Create CssElement
-                </Button>
-              </div>
-              <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
-                {htmlCssPairs.map(
-                  (pair: {
-                    id: string;
-                    html: string;
-                    css: string;
-                    user: object;
-                    isSelected: boolean;
-                  }) => (
-                    <div className='m-3' key={uuidv4()}>
-                      <CssElement htmlcssPairs={pair} key={uuidv4()} />
 
-                      {/* <div key={uuidv4()}>{user.google.image}</div> */}
-                      {pair.user.email && (
-                        <div key={uuidv4()} className='font-bold m-3'>
-                          <User
-                            name={`By ${pair.user.email}`}
-                            avatarProps={{
-                              src: `${
-                                pair.user.github.image ||
-                                pair.user.google.image ||
-                                `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
-                              }`,
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className='flex'>
+      {isSidebarVisible && (
+        <div className='flex-shrink-0 overflow-auto h-screen'>
+          <SideBar />
+        </div>
+      )}
+      <div className='flex-grow'>
+        <div className='grid'>
+          <div className='flex justify-center'>
+            <Button
+              href={`/editor/create/${id}`}
+              as={nLink}
+              color='primary'
+              variant='solid'
+            >
+              Create CssElement
+            </Button>
+          </div>
+          <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
+            {htmlCssPairs.map((pair) => (
+              <div className='m-3' key={uuidv4()}>
+                <CssElement htmlcssPairs={pair} key={uuidv4()} />
+                {pair.user && pair.user.email ? (
+                  <div key={uuidv4()} className='font-bold m-3'>
+                    <User
+                      name={`By ${pair.user.email}`}
+                      avatarProps={{
+                        src: `${
+                          pair.user.github.image ||
+                          pair.user.google.image ||
+                          `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
+                        }`,
+                      }}
+                    />
+                  </div>
+                ) : (
+                  "Deleted User"
                 )}
               </div>
-            </div>
+            ))}
           </div>
         </div>
-      </>
-    );
+      </div>
+    </div>
+  );
 }
