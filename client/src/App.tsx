@@ -1,6 +1,6 @@
 import Home from "./Pages/Home";
 import "./App.css";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate,useLocation} from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
@@ -33,8 +33,8 @@ import ForgotPassword from "./Pages/ForgotPassword";
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     userName: "",
     data: {},
@@ -49,39 +49,42 @@ function App() {
     Permissions: ["newuser"],
   });
 
-  const [permission, setpermission] = useState(["newuser"]);
-  const fetchUserData = async () => {
-    try {
-      const response = await axios("http://localhost:3000/validate-token", {
-        withCredentials: true,
-      });
-      setpermission(response.data.user.Permissions);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-  useEffect(() => {
-    if (
-      user.isLoggedIn &&
-      (location.pathname === "/login" || location.pathname === "/signup")
-    ) {
-      navigate("/home");
-    }
-  }, [user.isLoggedIn, location.pathname]);
+const [permission,setpermission] = useState(["newuser"]);
+const fetchUserData = async () => {
+  try {
+    const response = await axios("http://localhost:3000/validate-token", {
+      withCredentials: true,
+    });
+ setpermission(response.data.user.Permissions)
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setLoading(false);
+  }
+};
+  useEffect(()=>{
+fetchUserData();
+  },[])
+useEffect(() => {
 
-  const checkPermissions = (
-    userPermissions: string | any[],
-    requiredPermissions: any[]
-  ) => {
-    return requiredPermissions.some((permission) =>
-      userPermissions.includes(permission)
-    );
-  };
+
+
+  if (
+    user.isLoggedIn &&
+    (location.pathname === "/login" || location.pathname === "/signup")
+  ) {
+    navigate("/home");
+  }
+}, [user.isLoggedIn, location.pathname]);
+
+const checkPermissions = (
+  userPermissions: string | any[],
+  requiredPermissions: any[]
+) => {
+  return requiredPermissions.some((permission) =>
+    userPermissions.includes(permission)
+  );
+};
 
   return (
     <>
@@ -111,7 +114,10 @@ function App() {
                 path='/CssChallengecreate/:id'
                 element={<CssChallengecreate />}
               />
-              <Route path='/event/:id' element={<EventDescription />} />
+              <Route
+                path='/event/:id'
+                element={<EventDescription />}
+              />
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />

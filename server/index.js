@@ -22,9 +22,7 @@ const fs = require("fs");
 const axios = require("axios");
 const Table =require("./models/TableSchema")
 const FormData = require("form-data");
-
 const Eventsdb = require("./models/EventsSchema")
-
 const nodemailer = require("nodemailer");
 const uuid = require("uuid");
 
