@@ -1,6 +1,6 @@
 import Home from "./Pages/Home";
 import "./App.css";
-import { Routes, Route, useNavigate,useLocation, Outlet} from "react-router-dom";
+import { Routes, Route, useNavigate,useLocation} from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
@@ -19,11 +19,12 @@ import RootLayout from "./components/Alert";
 import CssElementsCategory from "./components/CssElementsCategory";
 import AdminPanel from "./Pages/AdminPanel";
 import PostApprovalReject from "./components/PostApprovalReject";
-import { toast } from "sonner";
 import NoPermissions from "./components/NoPermissions";
 import axios from "axios";
 import PermissionManager from "./Pages/PermissionManager";
 import UploadData from "./components/UploadData";
+import VerifyEmail from "./Pages/VerifyEmail";
+import ForgotPassword from "./Pages/ForgotPassword";
 function App() {
   const location = useLocation();
     const navigate = useNavigate();
@@ -69,7 +70,7 @@ useEffect(() => {
     navigate("/home");
   }
 }, [user.isLoggedIn, location.pathname]);
-const checkPermissions = (userPermissions, requiredPermissions) => {
+const checkPermissions = (userPermissions: string | any[], requiredPermissions: any[]) => {
   return requiredPermissions.some((permission) =>
     userPermissions.includes(permission)
   );
@@ -104,6 +105,8 @@ const checkPermissions = (userPermissions, requiredPermissions) => {
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />
+              <Route path='/verify/:email' element={<VerifyEmail />} />
+              <Route path='/forgotpass' element={<ForgotPassword />} />
               <Route
                 path='/admin'
                 element={

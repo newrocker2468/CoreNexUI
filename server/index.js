@@ -22,11 +22,23 @@ const fs = require("fs");
 const axios = require("axios");
 const Table =require("./models/TableSchema")
 const FormData = require("form-data");
+const nodemailer = require("nodemailer");
+const uuid = require("uuid");
 
 //git fetch origin
 //git checkout master
 //git merge origin/master
 //npm i
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "corenexui1@gmail.com",
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -229,8 +241,7 @@ app.get(
       sameSite: "none",
       secure: true,
     });
-
-    // Redirect user to the desired page
+  
     res.redirect("http://localhost:5173/home");
   }
 );
@@ -462,7 +473,7 @@ app.get(
 );
 
 
-  app.post("/login",validateUser, async (req, res) => {
+  app.post("/login", async (req, res) => {
     console.log("ddddddddd");
     const { email, password, remember } = req.body;
     console.log(email, password, remember);
@@ -476,8 +487,9 @@ app.get(
     if(user){
 
         const validPassword = await bcrypt.compare(password, user.password);
+        console.log(validPassword);
         if (!validPassword) {
-          return res.status(400).json({ message: "Invalid password." });
+          return res.json({ message: "Invalid Credentials !",error:true });
         }
       const token = jwt.sign(
         {
@@ -520,8 +532,43 @@ app.get(
   }
 
   });
+app.post("/verify/:email/resendotp", async (req, res) => {
+  const { email } = req.params;
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const user = await userdb.findOne({ email: email });
+  if (!user) {
+    return res.json({ message: "User not found." });
+  }
+  user.otp = otp;
+
+  const mailOptions = {
+    from: "corenexui1@gmail.com",
+    to: email,
+    subject: "OTP for email verification",
+    text: `Your OTP is ${otp}`,
+  };
+
+  await new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        console.log("Email sent: " + info.response);
+        resolve(info);
+      }
+    });
+  });
+
+  await user.save();
+
+  res.json({ message: "OTP Re-sent successfully." });
+});
 
 
+
+
+ 
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
     if (err) {
@@ -1102,78 +1149,206 @@ app.post("/notesupload/:id/delete", async (req, res) => {
   }
 });
 
-app.post("/register", validateUser,async (req, res) => {
-  const { email, password, repassword ,terms } = req.body;
-    if (!repassword) {
-      return res.status(400).json({ message: "Re-enter password is required" });
-    }
-  console.log(req.body); 
-const user = await userdb.findOne({ email: email });
-if(!user){
 
-  try {
-    if (password !== repassword) {
-      console.log("password not match");
-      res.json({ message: "Registration done successfully" });
-    }
-    const hash = await bcrypt.hash(password, 12);
-    const user = new userdb({
-      google: {
-        Id: "",
-        displayName: "",
-        image: "",
-        bio: "",
-      },
-      github: {
-        Id: "",
-        displayName: "",
-        image: "",
-        bio: "",
-      },
-      default: {
-        displayName: "",
-        image: "",
-        bio: "",
-      },
-      email: email,
-      password: hash,
-      lastLoggedInWith: "default",
-    });
-    await user.save();
-    const token = jwt.sign(
-      {
-        email: user.email,
-        google: {
-          displayName: user.google.displayName || "",
-          image: user.google.image || "",
-          bio: user.google.bio || "",
-        },
-        github: {
-          displayName: user.github.displayName || "",
-          image: user.github.image || "",
-          bio: user.github.bio || "",
-        },
-        lastLoggedInWith: user.lastLoggedInWith || "default",
-        Permissions: user.Permissions || ["newuser"],
-      },
-      process.env.TOKEN_SECRET
-    );
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
-    });
-    res.status(200).json({ message: "registration done successfully"});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "error has occured during registration" });
+app.post("/register", validateUser, async (req, res) => {
+  const { email, password, repassword, terms } = req.body;
+  if (!repassword) {
+    return res.status(400).json({ message: "Re-enter password is required" });
   }
-}else{
-  res.json({ message: "User already exists , Please Login!" });
+  const user = await userdb.findOne({ email: email });
+  if (!user) {
+    try {
+      if (password !== repassword) {
+        console.log("password not match");
+        res.json({ message: "Passwords do not match" });
+      }
+      const hash = await bcrypt.hash(password, 12);
+   const user = new userdb({
+     google: {
+       Id: "",
+       displayName: "",
+       image: "",
+       bio: "",
+     },
+     github: {
+       Id: "",
+       displayName: "",
+       image: "",
+       bio: "",
+     },
+     default: {
+       displayName: "",
+       image: "",
+       bio: "",
+     },
+     email: email,
+     password: hash,
+     lastLoggedInWith: "default",
+     emailVerified: false,
+   });
+      await user.save();
+
+      res
+        .status(200)
+        .json({
+          message: "Registration done successfully. Please verify your email.",
+        });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "Error has occurred during registration" });
+    }
+  } else {
+    if (user.emailVerified) {
+      res.json({ message: "User already exists, Please Login!" });
+    } else {
+      res.json({ message: "User already exists, Please verify your email!" });
+    }
+  }
+});
+app.post("/send-verification-email", async (req, res) => {
+  const { email } = req.body;
+  const user = await userdb.findOne({ email: email });
+if(!user){
+  return res.json({message:"User Not Found Register your Email First"})
 }
+  if (user.emailVerified) {
+    return res.json({ message: "Email Already Verified" });
+  }
+  user.emailVerificationToken = uuid.v4();
+  await user.save();
+  let mailOptions = {
+    from: "corenexui1@gmail.com",
+    to: email,
+    subject: "Email Verification",
+    html: `<a href="http://localhost:3000/verify-email?token=${user.emailVerificationToken}">Click here to verify your email</a>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log("Email sent: " + info.response);
+  });
+
+  res.json({ message: "Verification email sent successfully." });
 });
 
+
+
+
+
+
+
+
+
+
+app.post("/forgotpassword", async (req, res) => {
+  const { email } = req.body;
+  const user = await userdb.findOne({email : email})
+  if (!user) {
+    return res.json({ message: "User not found" });
+  }
+if(user.emailVerified){
+    user.password = uuid.v4();
+   bcrypt.hash(user.password, 12).then((hash) => {
+      user.password = hash;
+      user.save();
+   })
+    let mailOptions = {
+      from: "corenexui19167@gmail.com",
+      to: email,
+      subject: "Password Reset",
+      text: `Your new password is ${user.password}`,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Email sent: " + info.response);
+    });
+    res.json({ message: "Password reset successfully. Please check your email." });
+}
+else{
+  return res.json({ message: "Email not verified" });
+}
+
+
+})
+app.get("/verify/:email/getotp", async (req, res) => {
+  const email = req.params.email;
+  const user = await userdb.findOne({ email: email });
+  if (!user) {
+    return res.json({ message: "User not found register first" });
+  }
+  if (user.emailVerified) {
+    return res.json({ message: "Email already verified" });
+  }
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  user.otp = otp;
+ 
+  await user.save();
+
+  let mailOptions = {
+    from: "corenexui1@gmail.com",
+    to: email,
+    subject: "OTP for Email Verification",
+    text: `Your OTP is ${otp}`,
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log("Email sent: " + info.response);
+  });
+
+  res
+    .status(200)
+    .json({ message: "OTP sent successfully. Please check your email." });
+});
+
+
+app.post("/verify/:email/verifyotp",async(req,res)=>{
+  const {email} = req.params;
+  const {otp} = req.body;
+  await userdb.findOne({email:email}).then(async user=>{
+if(!user.emailVerified){
+      if (user.otp === otp) {
+        user.emailVerified = true;
+        user.otp = undefined;
+        user.emailVerificationToken = undefined;
+        await user.save();
+        res.json({ message: "Email verified successfully" });
+      } else {
+        res.json({ message: "Invalid OTP" });
+      }
+}else{
+  res.json({ message: "Email already verified" });
+}
+  })
+});
+
+
+
+
+app.get("/verify-email", async (req, res) => {
+  const { token } = req.query;
+  const user = await userdb.findOne({ emailVerificationToken: token });
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid verification link" });
+  }
+  user.emailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.otp = undefined; 
+  await user.save();
+res.json({
+  message: "Email verified successfully",
+  redirect: "http://localhost:5173/login",
+});
+});
 
 app.post("/login/save", async (req, res) => {
   try {
@@ -1572,13 +1747,11 @@ app.get("/data", async (req, res) => {
 
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
-    const file = req.file; // This is the uploaded file
+    const file = req.file;
 
-    // Read the file and encode it to base64
     const fileBuffer = await fsPromises.readFile(file.path);
     const base64File = fileBuffer.toString("base64");
 
-    // Prepare the form-data
     const formData = new FormData();
 
 
@@ -1586,7 +1759,7 @@ formData.append("input", fileBuffer, {
   filename: file.originalname,
   contentType: file.mimetype,
 });
-    // Send the file to the ExtractTable API
+    
     const response = await axios.post(
       "https://trigger.extracttable.com/",
       formData,
@@ -1598,7 +1771,6 @@ formData.append("input", fileBuffer, {
       }
     );
 
-    // Save the ExtractTable API response to MongoDB
     const table = new Table(response.data);
     await table.save();
 

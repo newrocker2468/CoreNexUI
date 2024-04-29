@@ -102,7 +102,14 @@ export default function Signup() {
             toast.info(res.data.message, {
               position: "top-center",
             });
-
+            if (
+              res.data.message ===
+                "Registration done successfully. Please verify your email." ||
+              res.data.message ===
+                "User already exists, Please verify your email!"
+            ) {
+              navigate(`/verify/${values.email}`,{replace:true});
+            }
             if (res.data.message === "User already exists , Please Login!") {
               navigate("/login");
             }

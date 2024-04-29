@@ -40,6 +40,7 @@
     "firebase": "^10.11.0",
     "formik": "^2.4.5",
     "framer-motion": "^11.0.20",
+    "input-otp": "^1.2.4",
     "joi": "^17.12.2",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",

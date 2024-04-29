@@ -87,7 +87,11 @@ export default function Login() {
        { withCredentials: true }
      )
      .then((response) => {
-      toast.error(response.data.message, {});
+if (response.data.error) {
+  toast.error(response.data.message, {
+    position: "top-center",
+  });
+}
        if (response.data.signup){
       toast.error(response.data.message, {
         position: "top-center",

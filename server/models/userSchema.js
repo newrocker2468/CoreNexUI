@@ -49,6 +49,9 @@ const userSchema = mongoose.Schema(
         default: "Newuser",
       },
     ],
+    emailVerified: Boolean,
+    emailVerificationToken: String,
+    otp: String,
   },
   { timestamps: true }
 );
