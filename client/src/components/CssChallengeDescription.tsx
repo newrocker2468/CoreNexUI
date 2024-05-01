@@ -9,6 +9,10 @@ import DeleteModal from "./DeleteModal";
 import EditChallengeModal from "./EditChallengeModal";
 import Btn from "./Btn";
 import { v4 as uuidv4 } from "uuid";
+import CssElement from "./CssElement";
+import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
+import ChallengesPosts from "./ChallengesPosts";
 
 interface Challenge1 {
   id: string | undefined;
@@ -21,6 +25,7 @@ interface Challenge1 {
     from: string | undefined;
     to: string | undefined;
   };
+  submissions:[];
 }
 
 const CssChallengeDescription = () => {
@@ -28,6 +33,7 @@ const CssChallengeDescription = () => {
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line
+  const {urlid} = useParams<{id:string}>();
 
   const fetchuserdata = async () => {
     const response = await axios.get(
@@ -53,6 +59,16 @@ const CssChallengeDescription = () => {
       }
       )
       .then((res) => {
+    // if(message){
+    //       toast(message,{
+    //         position: "top-center",
+    //       });
+    //     }
+        if(res.data.message){
+          toast(res.data.message,{
+            position: "top-center",
+          });
+        }
         setCssdata(() => res.data);
       })
       .catch((err) => {
@@ -61,8 +77,7 @@ const CssChallengeDescription = () => {
   }, []);
 
   if (isLoading) {
-    // Add this condition
-    return <div>Loading...</div>; // Replace this with your actual loading indicator
+    return <div>Loading...</div>; 
   }
 
   if (!Cssdata) {
@@ -77,22 +92,23 @@ const CssChallengeDescription = () => {
     <>
       {user?.Permissions.includes("admin") ||
       user?.Permissions.includes("editchallenges") ? (
-        <div className='flex justify-center align-center m-5'>
+        <div className='flex justify-center items-center m-5 gap-[2rem]'>
           <EditChallengeModal Cssdata={Cssdata} setCssdata={setCssdata} />
-        </div>
-      ) : (
-        ""
-      )}
-      {user?.Permissions.includes("admin") ||
-      user?.Permissions.includes("deletechallenges") ? (
-        <div className='flex justify-center align-center m-5'>
           <DeleteModal id={Cssdata.id} />
         </div>
       ) : (
         ""
       )}
+      {/* {user?.Permissions.includes("admin") ||
+      user?.Permissions.includes("deletechallenges") ? (
+        <div className='flex justify-center items-center m-5'>
+          <DeleteModal id={Cssdata.id} />
+        </div>
+      ) : (
+        ""
+      )} */}
 
-      <div className='flex justify-center align-center'>
+      <div className='flex justify-center items-center'>
         <Csschallengecard
           id={Cssdata.id}
           title={Cssdata.title}
@@ -102,37 +118,28 @@ const CssChallengeDescription = () => {
           status={Cssdata.status}
           sdate={Cssdata.date.from}
           edate={Cssdata.date.to}
+          numSubmissions={Cssdata.submissions.length}
         />
       </div>
-      <Link to={`/CssChallengecreate/${uuidv4()}`}>
-        <Btn Text='Submit' color='primary' />
-      </Link>
+      <div className='flex justify-center items-center m-5'>
+        <Link to={`/CssChallengecreate/${Cssdata.id}`}>
+          <Btn Text='Create' color='primary' />
+        </Link>
+      </div>
       <section>
-        <div className='flex justify-center align-center'>
+        <div className='flex justify-center items-center'>
           <div className='w-[50%]'>
             <h1 className='text-4xl font-bold text-center'>Submissions</h1>
           </div>
         </div>
       </section>
-
-      <section className='csscards'>
-        <div className='css-card '>
-          <img src={`${uiverse}`} alt='' className='css-card-img' />{" "}
-          <p className='pl-3 text-left'>Name here </p>
-        </div>
-        <div className='css-card '>
-          <img src={`${uiverse}`} alt='' className='css-card-img' />{" "}
-          <p className='pl-3 text-left'>Name here </p>
-        </div>
-        <div className='css-card '>
-          <img src={`${uiverse}`} alt='' className='css-card-img' />{" "}
-          <p className='pl-3 text-left'>Name here </p>
-        </div>
-        <div className='css-card '>
-          <img src={`${uiverse}`} alt='' className='css-card-img' />{" "}
-          <p className='pl-3 text-left'>Name here </p>
-        </div>
-      </section>
+      <div className='mx-[10rem]'>
+        <section className='csscards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center items-center'>
+          {Cssdata.submissions?.map((sub: any, index) => {
+            return <ChallengesPosts htmlcssPairs={sub} key={index} id ={urlid}/>;
+          })}
+        </section>
+      </div>
     </>
   );
 };

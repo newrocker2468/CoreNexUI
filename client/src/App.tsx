@@ -30,6 +30,8 @@ import EventDescription from "./components/EventDescription";
 
 import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
+import ChallengesPosts from "./components/ChallengesPosts";
+import ViewChallengePostCode from "./Pages/ViewChallengePostsCode";
 
 function App() {
   const location = useLocation();
@@ -114,15 +116,16 @@ const checkPermissions = (
                 path='/CssChallengecreate/:id'
                 element={<CssChallengecreate />}
               />
-              <Route
-                path='/event/:id'
-                element={<EventDescription />}
-              />
+              <Route path='/event/:id' element={<EventDescription />} />
               <Route path='/Csselements' element={<Csselements />} />
               <Route path='/editor/create/:id' element={<Editor />} />
               <Route path='/editor/:id' element={<ViewCsselement />} />
               <Route path='/verify/:email' element={<VerifyEmail />} />
               <Route path='/forgotpass' element={<ForgotPassword />} />
+              <Route
+                path='/csschallenge/editor/:id'
+                element={<ViewChallengePostCode />}
+              />
               <Route
                 path='/admin'
                 element={

@@ -587,9 +587,19 @@ app.get("/logout", function (req, res) {
   });
 });
 
+
 app.get("/csschallenges", async (req, res) => {
   try {
-    const Csschallenges = await Csschallengesdb.find({});
+    let Csschallenges = await Csschallengesdb.find({});
+
+    Csschallenges = Csschallenges.map((challenge) => {
+      const status = challenge.getStatus();
+      const numSubmissions = challenge.submissions.length;
+
+      challenge.status = status;
+      challenge.numSubmissions = numSubmissions;
+      return challenge;
+    });
     res.status(200).json(Csschallenges);
   } catch (error) {
     console.error(error);
@@ -599,7 +609,14 @@ app.get("/csschallenges", async (req, res) => {
 
 app.get("/csschallenges/:id", async (req, res) => {
   let csschallenges = await Csschallengesdb.findOne({ id: req.params.id });
-  res.json({ csschallenges });
+  if (csschallenges) {
+    const status = csschallenges.getStatus();
+    csschallenges.status = status;
+   const numSubmissions = csschallenges.submissions.length;
+   res.json({ csschallenges, numSubmissions });
+  } else {
+    res.status(404).json({ message: "Challenge not found" });
+  }
 });
 app.post("/csschallenges/:id", async (req, res) => {
   if (req.cookies.token) {
@@ -855,6 +872,24 @@ app.get("/editor/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(404).send("An error occurred while fetching CSS elements.");
+  }
+});
+app.get("/csschallenge/editor/:id", async (req, res) => {
+  try {
+    const challenge = await Csschallengesdb.findOne({
+      submissions: { $elemMatch: { _id: req.params.id } },
+    });
+
+    if (!challenge) {
+      return res.status(404).send("Submission not found");
+    }
+
+    const submission = challenge.submissions.id(req.params.id);
+
+    res.status(200).json(submission);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching the submission.");
   }
 });
 
@@ -1790,15 +1825,70 @@ app.post("/assignpermissions/:email", async (req, res) => {
  
 });
 
+app.post("/challenge/:id/submission", async (req, res) => {
+  console.log("route hit");
+  const { id } = req.params;
+  const { html, css, login, email, Category, isSelected } = req.body;
+  if (!login) {
+    console.log("not login");
+    res.json({ message: "You are not logged in. Login First" }).status(400);
+    return;
+  }
+  let user = await userdb.findOne({ email: email });
+
+  let existingSubmission = await Csschallengesdb.findOne({
+    "submissions.user": user._id,
+  });
+  if (existingSubmission) {
+    res.json({ message: "You have already made a submission. One Submission per user only!" }).status(400);
+    return;
+  }
+
+  let submission = {
+    html: html,
+    css: css,
+    elementtype: Category,
+    user: user._id,
+    isSelected: isSelected,
+  };
+
+  try {
+    let challenge = await Csschallengesdb.findOne({ id: id });
+    if (!challenge) {
+      res.json({ message: "Challenge not found." }).status(404);
+      return;
+    }
+    challenge.submissions.push(submission);
+    await challenge.save();
+    res.json({ message: "Submission added successfully." }).status(200);
+  } catch (err) {
+    console.error(err);
+    res
+      .json({ message: "An error occurred while adding the submission." })
+      .status(500);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get("/data", async (req, res) => {
   try {
-    const tables = await Table.find();
-    tables.forEach((table) => {
-      console.log(JSON.stringify(table.Lines, null, 2)); // Print Lines data
-      table.Tables.forEach((tableObj) => {
-        console.log(JSON.stringify(tableObj.TableJson, null, 2)); // Print TableJson data
-      });
-    });
+    const tables = await Table.find({});
+
+   
+
+    console.log(tables);
     res.json(tables);
   } catch (err) {
     console.error(err);
@@ -1806,22 +1896,31 @@ app.get("/data", async (req, res) => {
   }
 });
 
-
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
     const file = req.file;
 
+    // Check if the file type is supported
+    if (
+      !["image/png", "image/jpeg", "image/jpg", "application/pdf"].includes(
+        file.mimetype
+      )
+    ) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Unsupported file type. Please upload a PNG, JPEG, JPG, or PDF file.",
+        });
+    }
+
     const fileBuffer = await fsPromises.readFile(file.path);
-    const base64File = fileBuffer.toString("base64");
-
     const formData = new FormData();
+    formData.append("input", fileBuffer, {
+      filename: file.originalname,
+      contentType: file.mimetype,
+    });
 
-
-formData.append("input", fileBuffer, {
-  filename: file.originalname,
-  contentType: file.mimetype,
-});
-    
     const response = await axios.post(
       "https://trigger.extracttable.com/",
       formData,
@@ -1833,16 +1932,15 @@ formData.append("input", fileBuffer, {
       }
     );
 
-    const table = new Table(response.data);
+    const tableJsons = response.data.Tables.map((table) => table.TableJson);
+    const table = new Table({ ...response.data, Tables: tableJsons });
     await table.save();
-
     res.json({ message: "File uploaded and data saved successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred" });
   }
 });
-
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");

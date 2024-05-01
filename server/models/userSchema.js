@@ -49,6 +49,18 @@ const userSchema = mongoose.Schema(
         default: "Newuser",
       },
     ],
+    weeklyAttendance:{
+   startDate: Date,
+    endDate: Date,
+    attendance: [
+      {
+        date: Date,
+        status: String,
+        time: String,
+      },
+    ],
+    },
+ 
     emailVerified: Boolean,
     emailVerificationToken: String,
     otp: String,

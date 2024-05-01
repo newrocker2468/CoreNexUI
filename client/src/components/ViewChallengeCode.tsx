@@ -1,42 +1,51 @@
-import { useState, useEffect, useRef, useContext } from "react";
-import { Tabs, Tab, Card, CardBody, useDisclosure } from "@nextui-org/react";
-import { Switch } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import { Link } from "@nextui-org/react";
-// import { useTheme } from "./theme-provider";
+import { css } from "@emotion/react";
+import { Editor } from "@monaco-editor/react";
+import { Button, Card, CardBody, Switch, Tab, Tabs } from "@nextui-org/react";
+import axios from "axios";
+import { FC, useContext, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import SideBar from "./SideBar";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import Editor from "@monaco-editor/react";
-import { useNavigate, useParams } from "react-router-dom";
-import UserContext from "./UserContext";
-import { usePrompt } from "react-router-dom";
-
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@nextui-org/react";
-import RadioCreateCss from "./ModalRadioCreateCss";
 import { toast } from "sonner";
-
-const LiveEditor = () => {
-  const [isModalVisible, setIsModalVisible] = useState(true);
+import { useNavigate } from "react-router-dom";
+import UserContext from "@/components/UserContext";
+import { useTheme } from "./theme-provider";
+const ViewChallengeCode = () => {
+  const { theme } = useTheme();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 800
+  );
+  const { user } = useContext(UserContext);
+  const [sameUser, setSameUser] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user, setUser } = useContext(UserContext);
+  const { id } = useParams();
   const [html, setHtml] = useState("<!--Code Here -->");
-  const divRef = useRef<HTMLDivElement>(null);
-  const [isSelected, setIsSelected] = useState(false);
   const [css, setCss] = useState("");
-  console.log(id);
+  const [isSelected, setIsSelected] = useState(
+    theme === "light" ? false : true
+  );
+  useEffect(() => {
+    axios
+      .get(
+        `http://localhost:3000/csschallenge/editor/${id}`
+      )
+      .then((response) => {
+        console.log(response.data);
+        setHtml(response.data.html);
+        setCss(response.data.css);
+        setIsSelected(response.data.isSelected);
+      })
+      .catch((error) => {
+        console.log("Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg");
+        console.log("error.response:", error.response);
+        console.log(
+          "error.response.status:",
+          error.response && error.response.status
+        );
 
-  const saveCode = () => {
-    localStorage.setItem("html", html);
-    localStorage.setItem("css", css);
-  };
+        // toast.error("Error 404 ! Element Not Found");
+        // navigate("/Csselements");
+      });
+  }, []);
 
   function handleEditorDidMount(editor, monaco) {
     monaco.editor.defineTheme("myTheme", {
@@ -52,9 +61,11 @@ const LiveEditor = () => {
       colors: {
         "editor.foreground": "#F8F8F8",
         "editor.background": "#232323",
+        // Add more color settings as needed
       },
     });
 
+    // Set your custom theme
     monaco.editor.setTheme("myTheme");
     if (!monaco) {
       console.error("Monaco is not initialized!");
@@ -539,49 +550,53 @@ const LiveEditor = () => {
       }
     });
   }
-  useEffect(() => {
-    setIsModalVisible(true);
-  }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(saveCode, 30000);
-    return () => clearTimeout(timer);
-  }, [html, css]);
-
-  const login = user.isLoggedIn;
-
-  const email = user.email;
-  const [Category, setCategory] = useState("");
-  const uploadToDatabase = () => {
-    fetch(`http://localhost:3000/challenge/${id}/submission`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        credentials: "include",
-      },
-      body: JSON.stringify({ html, css, login, email, Category, isSelected }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        
-        if (data.message) {
-  
-          toast.success(data.message, {
+  const deleteelement = () => {
+    axios
+      .post(
+        `http://localhost:3000/editor/${id}/delete`,
+        {},
+        { withCredentials: true }
+      )
+      .then((response) => {
+        // console.log(response);
+        toast.success("Element Deleted Successfully", {
+          position: "top-center",
+        });
+        navigate(-1);
+      })
+      .catch((error) => console.error(error));
+  };
+  const updateelement = () => {
+    axios
+      .post(
+        `http://localhost:3000/editor/${id}/update`,
+        { html, css, sameUser },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        setHtml(response.data.CssElements.html);
+        setCss(response.data.CssElements.css);
+        toast.success(
+          response.data.user.Permissions.includes("admin") ||
+            response.data.user.Permissions.includes("editcsselement")
+            ? "Element Updated Successfully"
+            : "Element Updated Successfully, Awaiting Admin Approval",
+          {
             position: "top-center",
-            action:
-              data.message === "You are not logged in. Login First" ? (
-                <Link isBlock showAnchorIcon href='/login' color='foreground'>
-                  Login
-                </Link>
-              ) : null,
-          });
-      navigate(`/Csschallenges/${id}` ,{ state: { message: data.message } });
+          }
+        );
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.error("Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg");
+        if (error.response && error.response.status === 404) {
+          toast.error("Error 404 ! Element Not Found");
         }
-
-        console.log(data);
       });
   };
 
+  const divRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const div = divRef.current;
     if (!div) return;
@@ -598,6 +613,7 @@ const LiveEditor = () => {
         padding: 0;
         margin: 0;
         box-sizing: border-box;
+      
       }
         body {
               all: initial;
@@ -645,17 +661,16 @@ const LiveEditor = () => {
     div.style.width = `40dvw`;
     div.style.height = `70dvh`;
   }, [html, css]);
-  const redirect = () => {
-    navigate(-1);
-  };
 
-  // const { theme } = useTheme();
-
-  const { onOpenChange } = useDisclosure();
-  const [isSidebarVisible, setIsSidebarVisible] = useState(
-    window.innerWidth > 800
-  );
-
+  useEffect(() => {
+    const response = axios
+      .get(`http://localhost:3000/getuserdata/match/${id}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setSameUser(response.data.sameUser);
+      });
+  });
   useEffect(() => {
     const handleResize = () => {
       setIsSidebarVisible(window.innerWidth > 1200);
@@ -665,162 +680,146 @@ const LiveEditor = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <div style={{ display: "flex" }}>
-      {isSidebarVisible && (
-        <div className='flex-shrink-0 overflow-auto h-screen'>
-          <SideBar />
-        </div>
-      )}
+    <>
+      <div style={{ display: "flex" }}>
+        {isSidebarVisible && (
+          <div className='flex-shrink-0 overflow-auto h-screen'>
+            <SideBar />
+          </div>
+        )}
 
-      <div className='flex flex-wrap justify-center w-full'>
-        <div
-          style={{ height: "max-content" }}
-          className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
-        >
-          <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
-            <ModalContent>
-              {() => (
-                <>
-                  <ModalHeader className='flex flex-col gap-1'>
-                    Modal Title
-                  </ModalHeader>
-                  <ModalBody>
-                    <div className='flex align-center justify-center'>
-                      <RadioCreateCss
-                        Category={Category}
-                        setCategory={setCategory}
-                        setHtml={setHtml}
-                        setCss={setCss}
+        <div className='flex flex-wrap justify-center w-full'>
+          <div
+            style={{ height: "max-content" }}
+            className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
+          >
+            <h3>Output</h3>
+            <div className='relative'>
+              <div className='absolute top-3 right-4 '>
+                <Switch
+                  isSelected={isSelected}
+                  onValueChange={setIsSelected}
+                  className='z-10'
+                >
+                  {isSelected ? (
+                    <span className='text-black font-bold'>#e8e8e8</span>
+                  ) : (
+                    <span className='font-bold text-white'>#212121</span>
+                  )}
+                </Switch>
+              </div>
+              <div
+                ref={divRef}
+                className='container'
+                style={{
+                  borderRadius: "1rem",
+                  zIndex: 1,
+                  position: "relative",
+                  backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+                  width: "auto",
+                  minWidth: "100%",
+                  maxWidth: "100%",
+                  height: "auto",
+                  minHeight: "20rem",
+                  maxHeight: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              />
+            </div>
+          </div>
+
+          <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
+            <div className='flex justify-end absolute right-0'>
+              <div className='mr-[4rem]'>
+                {((user.Permissions &&
+                  (user.Permissions.includes("admin") ||
+                    user.Permissions.includes("editcsselement"))) ||
+                  sameUser) && (
+                  <Button
+                    color='primary'
+                    size='sm'
+                    className='m-2'
+                    onClick={() => updateelement()}
+                  >
+                    Update
+                  </Button>
+                )}
+                {((user.Permissions &&
+                  (user.Permissions.includes("admin") ||
+                    user.Permissions.includes("deletecsselement"))) ||
+                  sameUser) && (
+                  <Button
+                    color='danger'
+                    size='sm'
+                    className='m-2'
+                    onClick={() => deleteelement()}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </div>
+            </div>
+            <Tabs aria-label='Options'>
+              <Tab key='Html' title='HTML'>
+                <Card>
+                  <CardBody>
+                    <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
+                      <Editor
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          fontFamily:
+                            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                          fontSize: 18,
+                          wordWrap: "on",
+                        }}
+                        height='100vh'
+                        defaultLanguage='html'
+                        value={html}
+                        onChange={(newValue) => setHtml(newValue)}
+                        defaultValue='<!--Enter Your Html Code Here-->'
+                        onMount={handleEditorDidMount}
+                        className='border-2 border-black rounded overflow-hidden'
                       />
                     </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color='danger'
-                      variant='light'
-                      onPress={() => {
-                        redirect();
-                      }}
-                    >
-                      Close
-                    </Button>
-                    <Button
-                      color='primary'
-                      onPress={() => {
-                        setIsModalVisible(false);
-                      }}
-                    >
-                      Start
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-          <h3>Output</h3>
-          <div className='relative'>
-            <div className='absolute top-3 right-4 '>
-              <Switch
-                isSelected={isSelected}
-                onValueChange={setIsSelected}
-                className='z-10'
-              >
-                {!isSelected ? (
-                  <span className='text-black font-bold'>#e8e8e8</span>
-                ) : (
-                  <span className='font-bold text-white'>#212121</span>
-                )}
-              </Switch>
-            </div>
-            <div
-              ref={divRef}
-              className='container'
-              style={{
-                borderRadius: "1rem",
-                zIndex: 1,
-                position: "relative",
-                backgroundColor: `${!isSelected ? "#e8e8e8" : "#212121"}`,
-                width: "auto",
-                minWidth: "100%",
-                maxWidth: "100%",
-                height: "auto",
-                minHeight: "20rem",
-                maxHeight: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-              }}
-            />
+                  </CardBody>
+                </Card>
+              </Tab>
+              <Tab key='Css' title='Css'>
+                <Card>
+                  <CardBody>
+                    <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
+                      <Editor
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          fontFamily:
+                            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                          fontSize: 18,
+                          wordWrap: "on",
+                        }}
+                        height='100vh'
+                        defaultLanguage='css'
+                        value={css}
+                        onChange={(newValue) => setCss(newValue)}
+                        defaultValue=''
+                        onMount={handleEditorDidMount}
+                        className='border-2 border-black rounded overflow-hidden'
+                      />
+                    </div>
+                  </CardBody>
+                </Card>
+              </Tab>
+            </Tabs>
           </div>
-        </div>
-
-        <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
-          <div className='flex justify-end absolute right-0'>
-            <div className='mr-[4rem]'>
-              <Button color='primary' onClick={uploadToDatabase}>
-                Submit
-              </Button>
-            </div>
-          </div>
-          <Tabs aria-label='Options'>
-            <Tab key='Html' title='HTML'>
-              <Card>
-                <CardBody>
-                  <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
-                    <Editor
-                      options={{
-                        minimap: {
-                          enabled: false,
-                        },
-                        fontFamily:
-                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                        fontSize: 18,
-                        wordWrap: "on",
-                      }}
-                      height='100vh'
-                      defaultLanguage='html'
-                      value={html}
-                      onChange={(newValue) => setHtml(newValue)}
-                      defaultValue='<!--Enter Your Html Code Here-->'
-                      onMount={handleEditorDidMount}
-                      className='border-2 border-black rounded overflow-hidden'
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-            </Tab>
-            <Tab key='Css' title='Css'>
-              <Card>
-                <CardBody>
-                  <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
-                    <Editor
-                      options={{
-                        minimap: {
-                          enabled: false,
-                        },
-                        fontFamily:
-                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                        fontSize: 18,
-                        wordWrap: "on",
-                      }}
-                      height='100vh'
-                      defaultLanguage='css'
-                      value={css}
-                      onChange={(newValue) => setCss(newValue)}
-                      defaultValue=''
-                      onMount={handleEditorDidMount}
-                      className='border-2 border-black rounded overflow-hidden'
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-            </Tab>
-          </Tabs>
         </div>
       </div>
-    </div>
+    </>
   );
 };
-
-export default LiveEditor;
+export default ViewChallengeCode;

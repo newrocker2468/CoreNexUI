@@ -4,25 +4,30 @@ import { FC } from "react";
 import "@/Styles/Csselements.css";
 import { useParams } from "react-router-dom";
 import { useTheme } from "./theme-provider";
-interface CssElementProps {
-  htmlcssPairs: { html: string; css: string; id: string ,_id?:string,isSelected?:boolean};
+interface ChallengesPosts {
+    id: string;
+  htmlcssPairs: {
+    html: string;
+    css: string;
+    id: string;
+    _id?: string;
+    isSelected?: boolean;
+  };
 }
 
-const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
+const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs }) => {
   console.log(htmlcssPairs);
-    const { theme } = useTheme();
-   const [isSelected, setIsSelected] = useState(
-htmlcssPairs.isSelected
-   );
+  const { theme } = useTheme();
+  const [isSelected, setIsSelected] = useState(htmlcssPairs.isSelected);
 
   const divRef = useRef<HTMLDivElement>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const handleClick = useCallback(
-    (event: { target: HTMLDivElement | null; }) => {
+    (event: { target: HTMLDivElement | null }) => {
       if (event.target === divRef.current) {
-        if (window.location.pathname === `/Csselements`) {
+        if (window.location.pathname === `/Csschallenges/${id}`) {
           navigate(`/editor/${htmlcssPairs.id}`);
         }
       }
@@ -42,13 +47,12 @@ htmlcssPairs.isSelected
 
     div.style.width = `${newWidth}px`;
     div.style.height = `${newHeight}px`;
+     div.addEventListener("click", handleClick);
 
-    div.addEventListener("click", handleClick);
-
-    return () => {
-      div.removeEventListener("click", handleClick);
-    };
-  }, [htmlcssPairs.html, htmlcssPairs.css, htmlcssPairs.id]);
+     return () => {
+       div.removeEventListener("click", handleClick);
+     };
+  }, [htmlcssPairs.html, htmlcssPairs.css, htmlcssPairs.id, id, handleClick]);
 
   useEffect(() => {
     const div = divRef.current;
@@ -99,22 +103,33 @@ htmlcssPairs.isSelected
     </div>
     
   `;
+  
     div.addEventListener("click", handleClick);
-  div.addEventListener("click", (event) => {
-    console.log("clicked");
-    if(htmlcssPairs._id){
-     navigate(`/editor/${htmlcssPairs._id}`);
-    }
+
+
+    // div.addEventListener("click", handleClick);
+    div.addEventListener("click", (event) => {
+      console.log("clicked");
+      if (htmlcssPairs._id) {
+        navigate(`/csschallenge/editor/${htmlcssPairs._id}`);
+      }
       if (event.target === div) {
-        if (window.location.pathname === `/Csselements`) {
-          navigate(`/editor/${htmlcssPairs.id}`);
-        
-      }}})
+        if (window.location.pathname === `/Csschallenges/${id}`) {
+          navigate(`/csschallenge/editor/${htmlcssPairs.id}`);
+        }
+      }
+    });
     shadowRoot.addEventListener("click", (event) => {
       event.stopPropagation();
     });
-    
-  }, [htmlcssPairs.html, htmlcssPairs.css, navigate, htmlcssPairs.id, htmlcssPairs._id, handleClick]);
+  }, [
+    htmlcssPairs.html,
+    htmlcssPairs.css,
+    navigate,
+    htmlcssPairs.id,
+    htmlcssPairs._id,
+    handleClick,
+  ]);
 
   return (
     <>
@@ -139,9 +154,9 @@ htmlcssPairs.isSelected
           overflow: "hidden",
         }}
       />
-      <h1></h1>
+
     </>
   );
 };
 
-export default CssElement;
+export default ChallengesPosts;

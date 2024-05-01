@@ -11,6 +11,7 @@ import { set } from "date-fns";
 interface user{
   Permissions:string[]
   email:string,
+  
 
 }
 const Csschallenges = () => {
@@ -121,6 +122,7 @@ useEffect(() => {
                 status={data?.status}
                 sdate={data?.date?.from}
                 edate={data?.date?.to}
+                numSubmissions={data?.submissions?.length}
               />
             </Link>
           </div>
