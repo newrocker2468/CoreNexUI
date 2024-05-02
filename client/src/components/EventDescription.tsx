@@ -96,7 +96,9 @@ const EventDescription = () => {                  //changed
       )}
       
           <h1>{Cssdata.eventName}</h1>
+          <p>{Cssdata.description}</p>
      <img src={Cssdata.img} alt="" />
+
        
     </>
   );

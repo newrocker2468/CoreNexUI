@@ -626,7 +626,7 @@ app.post("/csschallenges/:id", async (req, res) => {
       process.env.TOKEN_SECRET,
       async (err, decoded) => {
         if (err) {
-          return res
+          return res           
             .status(500)
             .json({ message: "Failed to authenticate token" });
         }
