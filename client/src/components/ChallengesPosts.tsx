@@ -4,8 +4,9 @@ import { FC } from "react";
 import "@/Styles/Csselements.css";
 import { useParams } from "react-router-dom";
 import { useTheme } from "./theme-provider";
+import axios from "axios";
 interface ChallengesPosts {
-    id: string;
+  cid: string | undefined;
   htmlcssPairs: {
     html: string;
     css: string;
@@ -15,7 +16,13 @@ interface ChallengesPosts {
   };
 }
 
-const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs }) => {
+
+
+
+
+
+
+const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs,cid }) => {
   console.log(htmlcssPairs);
   const { theme } = useTheme();
   const [isSelected, setIsSelected] = useState(htmlcssPairs.isSelected);
@@ -23,6 +30,16 @@ const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+const vote = async () => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/challenges/${cid}/submissions/${htmlcssPairs._id}/vote`
+    );
+    console.log(response.data);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const handleClick = useCallback(
     (event: { target: HTMLDivElement | null }) => {
@@ -133,28 +150,30 @@ const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs }) => {
 
   return (
     <>
-      <div
-        ref={divRef}
-        className='container'
-        style={{
-          borderRadius: "1rem",
-          zIndex: 1,
-          position: "relative",
-          cursor: "pointer",
-          backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
-          width: "auto",
-          minWidth: "100%",
-          maxWidth: "100%",
-          height: "auto",
-          minHeight: "20rem",
-          maxHeight: "100%",
-          display: "flex",
-          alignItems: "stretch",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}
-      />
-
+      <div className="m-5">
+        <div
+          ref={divRef}
+          className='container'
+          style={{
+            borderRadius: "1rem",
+            zIndex: 1,
+            position: "relative",
+            cursor: "pointer",
+            backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+            width: "auto",
+            minWidth: "100%",
+            maxWidth: "100%",
+            height: "auto",
+            minHeight: "20rem",
+            maxHeight: "100%",
+            display: "flex",
+            alignItems: "stretch",
+            justifyContent: "center",
+            overflow: "hidden",
+          }}
+        />
+        <button onClick={vote}>Vote</button>
+      </div>
     </>
   );
 };

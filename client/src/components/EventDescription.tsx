@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from "uuid";
 import EventCard from "./EventCard";
 import EditEventModal from "./EditEventModal";
 import "../Styles/EventDescription.css"
+import EventDeleteModal from "./EventDeleteModal";
+
 interface Challenge1 {
   id: string ;
   eventName: string ;
@@ -85,16 +87,27 @@ const EventDescription = () => {                  //changed
         ""
       )}
       {user?.Permissions.includes("admin") ||
+<<<<<<< HEAD
       user?.Permissions.includes("deletechallenges") ? (
+=======
+      user?.Permissions.includes("deleteevent") ? (
+>>>>>>> 1ce3ed31bdb9006ba60f187276a5b9f5ffe36c1a
         <div className='flex justify-center align-center m-5'>
-          <DeleteModal id={Cssdata.id} />
+          <EventDeleteModal id={Cssdata.id} />
         </div>
       ) : (
         ""
+<<<<<<< HEAD
       )} 
         <h1>{Cssdata.eventName}</h1>
   <h1>{Cssdata.description}</h1>
   <img src={Cssdata.img} alt="" width="450px"/>
+=======
+      )}
+      
+          <h1>{Cssdata.eventName}</h1>
+     <img src={Cssdata.img} alt="" />
+>>>>>>> 1ce3ed31bdb9006ba60f187276a5b9f5ffe36c1a
        
     </>
   );
