@@ -1919,6 +1919,8 @@ app.post("/assignpermissions/:email", async (req, res) => {
  
 });
 
+
+
 app.post("/challenge/:id/submission", async (req, res) => {
   console.log("route hit");
   const { id } = req.params;
@@ -1930,11 +1932,23 @@ app.post("/challenge/:id/submission", async (req, res) => {
   }
   let user = await userdb.findOne({ email: email });
 
-  let existingSubmission = await Csschallengesdb.findOne({
-    "submissions.user": user._id,
-  });
+  let challenge = await Csschallengesdb.findOne({ id: id });
+  if (!challenge) {
+    res.json({ message: "Challenge not found." }).status(404);
+    return;
+  }
+
+  let existingSubmission = challenge.submissions.find(
+    (submission) => submission.user.toString() === user._id.toString()
+  );
+
   if (existingSubmission) {
-    res.json({ message: "You have already made a submission. One Submission per user only!" }).status(400);
+    res
+      .json({
+        message:
+          "You have already made a submission for this challenge. One Submission per challenge only!",
+      })
+      .status(400);
     return;
   }
 
@@ -1947,11 +1961,6 @@ app.post("/challenge/:id/submission", async (req, res) => {
   };
 
   try {
-    let challenge = await Csschallengesdb.findOne({ id: id });
-    if (!challenge) {
-      res.json({ message: "Challenge not found." }).status(404);
-      return;
-    }
     challenge.submissions.push(submission);
     await challenge.save();
     res.json({ message: "Submission added successfully." }).status(200);

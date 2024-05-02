@@ -56,18 +56,27 @@ csschallengesSchema.methods.vote = function (userId, submissionId) {
       votingStartDate.getTime() - currentDate.getTime()
     );
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    return `Voting period will start in ${diffDays} day(s)`;
+    return {
+      message: `Voting period will start in ${diffDays} day(s)`,
+      remainingVotes: 3, // Assuming the user has all their votes remaining before the voting period starts
+    };
   }
 
   if (currentDate > votingEndDate) {
-    return "Voting period has ended";
+    return {
+      message: "Voting period has ended",
+      remainingVotes: 0, // Assuming the user has no votes remaining after the voting period ends
+    };
   }
 
   const submission = this.submissions.id(submissionId);
 
   if (submission.votes.includes(userId)) {
     submission.votes.pull(userId);
-    return "Vote removed";
+    return {
+      message: "Vote removed",
+      remainingVotes: submission.votes.length, // Update the remaining votes
+    };
   }
 
   const userVotes = [
