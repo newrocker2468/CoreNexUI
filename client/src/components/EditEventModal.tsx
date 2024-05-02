@@ -2,6 +2,7 @@
 import "@/Styles/CssChallengeDescription.css";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import React, { Dispatch, SetStateAction } from "react";
+import "@/Styles/EventDescription.css";
 
 import {
   Modal,
@@ -102,10 +103,10 @@ const uploadToFirebase = (
 
 
 
-const CreateChallenge = async (id: string, displayImage: string) => {
+const EditEvent = async (id: string, displayImage: string) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/csschallengesupdate`,
+      `http://localhost:3000/event/${id}/update`,
       createFormData(id, displayImage),
       {
         headers: {
@@ -128,7 +129,7 @@ const CreateChallenge = async (id: string, displayImage: string) => {
       });
     }
 
-    toast.success("Css Challenge Updated Successfully !", {
+    toast.success("Event has been Updated Successfully !", {
       duration: 2500,
       position: "top-center",
       action: {
@@ -171,14 +172,14 @@ useEffect(() => {
       const imageUrl = await uploadToFirebase(file, name); // assuming this returns a Promise that resolves with the image URL
       const formdata = createFormData(id, imageUrl);
       setCssdata({ ...Cssdata, ...formdata });
-      CreateChallenge(id, imageUrl);
+      EditEvent(id, imageUrl);
       setFiles([]);
     };
     reader.readAsDataURL(files[0]);
   } else {
     const formdata = createFormData(id, uiversecss);
     setCssdata({ ...Cssdata, ...formdata });
-    CreateChallenge(id, uiversecss);
+    EditEvent(id, uiversecss);
   }
 
 
@@ -218,7 +219,7 @@ useEffect(() => {
           {(onClose) => (
             <>
               <ModalHeader className='flex flex-col gap-1'>
-                Enter Challenge Details
+                Enter Event Details
               </ModalHeader>
               <ModalBody>
                 <div className='flex'>
@@ -256,7 +257,7 @@ useEffect(() => {
                 <div className='w-full m-[0.5rem]'>
                   <Textarea
                     label='Description'
-                    placeholder='Enter Challenge Description'
+                    placeholder='Enter Event Description'
                     className='max-w-3xl'
                     maxRows={3}
                     value={Cssdata.description}
