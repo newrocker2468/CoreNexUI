@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from "uuid";
 import EventCard from "./EventCard";
 import EditEventModal from "./EditEventModal";
 import "../Styles/EventDescription.css"
+import EventDeleteModal from "./EventDeleteModal";
+
 interface Challenge1 {
   id: string ;
   eventName: string ;
@@ -32,7 +34,7 @@ const EventDescription = () => {                  //changed
 
   const fetchuserdata = async () => {
     const response = await axios.get(
-      "http://localhost:3000/getuserdata/events",     //changed
+      "http://localhost:3000/getuserdata",     //changed
       {
         withCredentials: true,
       }
@@ -76,7 +78,7 @@ const EventDescription = () => {                  //changed
 
   return (
     <>
-  {/*     {user?.Permissions.includes("admin") ||
+      {user?.Permissions.includes("admin") ||
       user?.Permissions.includes("editchallenges") ? (
         <div className='flex justify-center align-center m-5'>
           <EditEventModal Cssdata={Cssdata} setCssdata={setCssdata} />
@@ -84,15 +86,16 @@ const EventDescription = () => {                  //changed
       ) : (
         ""
       )}
-      {user?.Permissions.includes("admin") ||s
-      user?.Permissions.includes("deletechallenges") ? (
+      {user?.Permissions.includes("admin") ||
+      user?.Permissions.includes("deleteevent") ? (
         <div className='flex justify-center align-center m-5'>
-          <DeleteModal id={Cssdata.id} />
+          <EventDeleteModal id={Cssdata.id} />
         </div>
       ) : (
         ""
-      )} */}
-    <h1>{Cssdata.eventName}</h1>
+      )}
+      
+          <h1>{Cssdata.eventName}</h1>
      <img src={Cssdata.img} alt="" />
        
     </>

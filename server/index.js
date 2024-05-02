@@ -1190,8 +1190,22 @@ app.post("/event/:id/create", async (req, res) => {
 
 app.post("/event/:id/update", async (req, res) => {
   try {
-    const Event = await Eventsdb.findByIDAndupdateOne({ _id: req.params.id });
-    res.status(200).json({ message: "event successfully updated" });
+    const Event = await Eventsdb.findOneAndUpdate(
+      { id: req.params.id },
+      {
+        $set: {
+          id: req.params.id,
+                eventName: req.body.eventName,
+                description: req.body.description,
+                img: req.body.img,
+                status: req.body.status,
+                date: req.body.date,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "event successfully updated",event:Event });
   } catch (error) {
     console.error(error);
     res
@@ -1202,7 +1216,7 @@ app.post("/event/:id/update", async (req, res) => {
 
 app.post("/event/:id/delete", async (req, res) => {
   try {
-    const Event = await Eventsdb.findByIDAnddeleteOne({ _id: req.params.id });
+    const Event = await Eventsdb.findOneAndDelete({ id: req.params.id });
     res.status(200).json({ message: "event successfully deleted" });
   } catch (error) {
     console.error(error);
