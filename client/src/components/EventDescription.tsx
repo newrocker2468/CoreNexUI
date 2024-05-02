@@ -79,7 +79,7 @@ const EventDescription = () => {                  //changed
   return (
     <>
       {user?.Permissions.includes("admin") ||
-      user?.Permissions.includes("editchallenges") ? (
+      user?.Permissions.includes("editevent") ? (
         <div className='flex justify-center align-center m-5'>
           <EditEventModal Cssdata={Cssdata} setCssdata={setCssdata} />
         </div>
@@ -87,27 +87,16 @@ const EventDescription = () => {                  //changed
         ""
       )}
       {user?.Permissions.includes("admin") ||
-<<<<<<< HEAD
-      user?.Permissions.includes("deletechallenges") ? (
-=======
       user?.Permissions.includes("deleteevent") ? (
->>>>>>> 1ce3ed31bdb9006ba60f187276a5b9f5ffe36c1a
         <div className='flex justify-center align-center m-5'>
           <EventDeleteModal id={Cssdata.id} />
         </div>
       ) : (
         ""
-<<<<<<< HEAD
-      )} 
-        <h1>{Cssdata.eventName}</h1>
-  <h1>{Cssdata.description}</h1>
-  <img src={Cssdata.img} alt="" width="450px"/>
-=======
       )}
       
           <h1>{Cssdata.eventName}</h1>
      <img src={Cssdata.img} alt="" />
->>>>>>> 1ce3ed31bdb9006ba60f187276a5b9f5ffe36c1a
        
     </>
   );
