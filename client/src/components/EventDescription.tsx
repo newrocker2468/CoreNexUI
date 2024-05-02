@@ -79,7 +79,7 @@ const EventDescription = () => {                  //changed
   return (
     <>
       {user?.Permissions.includes("admin") ||
-      user?.Permissions.includes("editchallenges") ? (
+      user?.Permissions.includes("editevent") ? (
         <div className='flex justify-center align-center m-5'>
           <EditEventModal Cssdata={Cssdata} setCssdata={setCssdata} />
         </div>
