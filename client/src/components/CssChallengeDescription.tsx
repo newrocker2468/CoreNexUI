@@ -33,7 +33,8 @@ const CssChallengeDescription = () => {
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line
-  const {urlid} = useParams<{id:string}>();
+  const {id} = useParams<{id:string}>();
+  
 
   const fetchuserdata = async () => {
     const response = await axios.get(
@@ -69,7 +70,8 @@ const CssChallengeDescription = () => {
             position: "top-center",
           });
         }
-        setCssdata(() => res.data);
+        setCssdata(res.data.challenges);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -136,7 +138,7 @@ const CssChallengeDescription = () => {
       <div className='mx-[10rem]'>
         <section className='csscards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center items-center'>
           {Cssdata.submissions?.map((sub: any, index) => {
-            return <ChallengesPosts htmlcssPairs={sub} key={index} id ={urlid}/>;
+            return <ChallengesPosts htmlcssPairs={sub} key={index} cid ={id}/>;
           })}
         </section>
       </div>

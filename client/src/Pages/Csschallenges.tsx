@@ -50,7 +50,7 @@ useEffect(() => {
 }, [showToast]);
 
 
- /*  useEffect(() => {
+ useEffect(() => {
 
     fetchCsschallengesdata();
   }, []);
@@ -67,7 +67,7 @@ useEffect(() => {
         setCssdata(data);
       })
       .catch((error) => console.error("Error:", error));
-  }; */
+  }; 
 
 
 

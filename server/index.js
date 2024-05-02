@@ -612,12 +612,13 @@ app.get("/csschallenges/:id", async (req, res) => {
   if (csschallenges) {
     const status = csschallenges.getStatus();
     csschallenges.status = status;
-   const numSubmissions = csschallenges.submissions.length;
-   res.json({ csschallenges, numSubmissions });
+    const numSubmissions = csschallenges.submissions.length;
+    res.json({ csschallenges, numSubmissions });
   } else {
     res.status(404).json({ message: "Challenge not found" });
   }
 });
+
 app.post("/csschallenges/:id", async (req, res) => {
   if (req.cookies.token) {
     jwt.verify(
@@ -746,13 +747,35 @@ else{
 }
  
 });
+// app.post("/csschallengesget", async (req, res) => {
+//   const { id } = req.body;
+//   console.log("id " + id);
+//   try {
+//     const challenges = await Csschallengesdb.findOne({ id: id });
+//     console.log(challenges);
+//     res.status(200).json(challenges);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("An error occurred while fetching CSS challenges.");
+//   }
+// });
 app.post("/csschallengesget", async (req, res) => {
   const { id } = req.body;
   console.log("id " + id);
   try {
-    const challenges = await Csschallengesdb.findOne({ id: id });
-    console.log(challenges);
-    res.status(200).json(challenges);
+    let challenges = await Csschallengesdb.findOne({ id: id });
+    if (challenges) {
+      // Use the getStatus method here
+      const status = challenges.getStatus();
+
+      // Update the status of the challenge
+      challenges.status = status;
+
+      const numSubmissions = challenges.submissions.length;
+      res.status(200).json({ challenges, numSubmissions });
+    } else {
+      res.status(404).json({ message: "Challenge not found" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while fetching CSS challenges.");
@@ -894,17 +917,21 @@ app.get("/csschallenge/editor/:id", async (req, res) => {
 });
 
 app.post('/challenges/:challengeId/submissions/:submissionId/vote', async (req, res) => {
+  console.log(req.params.challengeId, req.params.submissionId);
   // Get the challenge and submission from the database
-  const challenge = await Csschallengesdb.findById(req.params.challengeId);
+  const challenge = await Csschallengesdb.findOne({
+    id: req.params.challengeId,
+  });
   const submission = challenge.submissions.id(req.params.submissionId);
+  console.log(submission);
 
-  // Call the vote method
-  challenge.vote(req.user._id, submission._id);
+  // // Call the vote method
+  // challenge.vote(req.user._id, submission._id);
 
-  // Save the challenge
-  await challenge.save();
+  // // Save the challenge
+  // await challenge.save();
 
-  res.send('Vote has been recorded');
+  // res.send('Vote has been recorded');
 });
 
 

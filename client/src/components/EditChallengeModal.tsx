@@ -38,6 +38,7 @@ interface Challenge1 {
     from: string | undefined;
     to: string | undefined;
   };
+  submissions: [];
 }
 interface EditProps {
   Cssdata: Challenge1;
@@ -136,6 +137,7 @@ const CreateChallenge = async (id: string, displayImage: string) => {
         onClick: () => console.log("Action"),
       },
     });
+    navigate(-1)
     // setCssdata(response.data);
   } catch (error) {
 

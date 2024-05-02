@@ -25,13 +25,13 @@ const csschallengesSchema = mongoose.Schema(
         },
         status: String,
         isSelected: Boolean,
-        elementtype:String,
-      },
-    ],
-    votes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
+        elementtype: String,
+        votes: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "users",
+          },
+        ],
       },
     ],
   },
