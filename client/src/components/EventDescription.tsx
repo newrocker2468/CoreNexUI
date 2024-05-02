@@ -32,7 +32,7 @@ const EventDescription = () => {                  //changed
 
   const fetchuserdata = async () => {
     const response = await axios.get(
-      "http://localhost:3000/getuserdata/events",     //changed
+      "http://localhost:3000/getuserdata",     //changed
       {
         withCredentials: true,
       }
@@ -76,7 +76,7 @@ const EventDescription = () => {                  //changed
 
   return (
     <>
-  {/*     {user?.Permissions.includes("admin") ||
+      {user?.Permissions.includes("admin") ||
       user?.Permissions.includes("editchallenges") ? (
         <div className='flex justify-center align-center m-5'>
           <EditEventModal Cssdata={Cssdata} setCssdata={setCssdata} />
@@ -84,16 +84,17 @@ const EventDescription = () => {                  //changed
       ) : (
         ""
       )}
-      {user?.Permissions.includes("admin") ||s
+      {user?.Permissions.includes("admin") ||
       user?.Permissions.includes("deletechallenges") ? (
         <div className='flex justify-center align-center m-5'>
           <DeleteModal id={Cssdata.id} />
         </div>
       ) : (
         ""
-      )} */}
-    <h1>{Cssdata.eventName}</h1>
-     <img src={Cssdata.img} alt="" />
+      )} 
+        <h1>{Cssdata.eventName}</h1>
+  <h1>{Cssdata.description}</h1>
+  <img src={Cssdata.img} alt="" width="450px"/>
        
     </>
   );
