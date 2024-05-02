@@ -30,6 +30,8 @@ interface Challenge1 {
 
 const CssChallengeDescription = () => {
   const params = useParams();
+  const[sortedSubmissions, setSortedSubmissions] = useState([]);
+  const [votesno, setVotesno] = useState(0);
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line
@@ -55,7 +57,7 @@ const CssChallengeDescription = () => {
   useEffect(() => {
     const id = params.id;
     axios
-      .post("http://localhost:3000/csschallengesget/", {
+      .post("http://localhost:3000/csschallengesget", {
         id: id,
       }
       )
@@ -71,13 +73,17 @@ const CssChallengeDescription = () => {
           });
         }
         setCssdata(res.data.challenges);
+        setSortedSubmissions(res.data.sortedSubmissions);
+        console.log("dddddddddddddddddddddddddddddddddddd");
         console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
-
+useEffect(() => {
+  console.log(votesno);
+}, [votesno]);
   if (isLoading) {
     return <div>Loading...</div>; 
   }
@@ -137,8 +143,15 @@ const CssChallengeDescription = () => {
       </section>
       <div className='mx-[10rem]'>
         <section className='csscards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center items-center'>
-          {Cssdata.submissions?.map((sub: any, index) => {
-            return <ChallengesPosts htmlcssPairs={sub} key={index} cid ={id}/>;
+          {sortedSubmissions?.map((sub: any, index) => {
+            return (
+              <ChallengesPosts
+                htmlcssPairs={sub}
+                key={index}
+                cid={id}
+                setSortedSubmissions={setSortedSubmissions}
+              />
+            );
           })}
         </section>
       </div>

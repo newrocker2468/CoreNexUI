@@ -771,8 +771,10 @@ app.post("/csschallengesget", async (req, res) => {
       // Update the status of the challenge
       challenges.status = status;
 
-      const numSubmissions = challenges.submissions.length;
-      res.status(200).json({ challenges, numSubmissions });
+      // Get the sorted submissions with vote count
+      const sortedSubmissions = challenges.getSortedSubmissions();
+
+      res.status(200).json({ challenges, sortedSubmissions });
     } else {
       res.status(404).json({ message: "Challenge not found" });
     }
@@ -781,6 +783,7 @@ app.post("/csschallengesget", async (req, res) => {
     res.status(500).send("An error occurred while fetching CSS challenges.");
   }
 });
+
 
 // app.post("/editor/create/:id", async (req, res) => {
 //   const { id } = req.params;
@@ -916,23 +919,54 @@ app.get("/csschallenge/editor/:id", async (req, res) => {
   }
 });
 
-app.post('/challenges/:challengeId/submissions/:submissionId/vote', async (req, res) => {
-  console.log(req.params.challengeId, req.params.submissionId);
-  // Get the challenge and submission from the database
-  const challenge = await Csschallengesdb.findOne({
-    id: req.params.challengeId,
-  });
-  const submission = challenge.submissions.id(req.params.submissionId);
-  console.log(submission);
+app.post(
+  "/challenges/:challengeId/submissions/:submissionId/vote",
+  async (req, res) => {
+    const token = req.cookies.token;
+    console.log(token);
+    if (!token) {
+      return res.status(403).send("A token is required for authentication");
+    }
 
-  // // Call the vote method
-  // challenge.vote(req.user._id, submission._id);
+    try {
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const userEmail = decoded.email;
 
-  // // Save the challenge
-  // await challenge.save();
+      // Get the challenge and submission from the database
+      const challenge = await Csschallengesdb.findOne({
+        id: req.params.challengeId,
+      });
+      const submission = challenge.submissions.id(req.params.submissionId);
 
-  // res.send('Vote has been recorded');
-});
+      // Get the user from the database
+      const user = await userdb.findOne({ email: userEmail });
+
+      // Call the vote method
+      const voteStatus = challenge.vote(user._id, submission._id);
+
+      // Save the challenge
+      await challenge.save();
+
+      // Get the updated challenge from the database
+      const updatedChallenge = await Csschallengesdb.findOne({
+        id: req.params.challengeId,
+      });
+
+      // Sort the submissions by votes
+      const sortedSubmissions = updatedChallenge.getSortedSubmissions();
+
+      res.send({
+        message: voteStatus.message,
+        remainingVotes: voteStatus.remainingVotes,
+        votes: submission.votes.length,
+        sortedSubmissions: sortedSubmissions,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send("An error occurred while voting");
+    }
+  }
+);
 
 
 

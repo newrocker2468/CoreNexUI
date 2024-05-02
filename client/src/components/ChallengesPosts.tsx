@@ -5,6 +5,7 @@ import "@/Styles/Csselements.css";
 import { useParams } from "react-router-dom";
 import { useTheme } from "./theme-provider";
 import axios from "axios";
+import { toast } from "sonner";
 interface ChallengesPosts {
   cid: string | undefined;
   htmlcssPairs: {
@@ -14,6 +15,7 @@ interface ChallengesPosts {
     _id?: string;
     isSelected?: boolean;
   };
+  setSortedSubmissions: any;
 }
 
 
@@ -22,7 +24,11 @@ interface ChallengesPosts {
 
 
 
-const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs,cid }) => {
+const ChallengesPosts: FC<ChallengesPosts> = ({
+  htmlcssPairs,
+  cid,
+  setSortedSubmissions,
+}) => {
   console.log(htmlcssPairs);
   const { theme } = useTheme();
   const [isSelected, setIsSelected] = useState(htmlcssPairs.isSelected);
@@ -30,16 +36,23 @@ const ChallengesPosts: FC<ChallengesPosts> = ({ htmlcssPairs,cid }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-const vote = async () => {
-  try {
-    const response = await axios.post(
-      `http://localhost:3000/challenges/${cid}/submissions/${htmlcssPairs._id}/vote`
-    );
-    console.log(response.data);
-  } catch (err) {
-    console.log(err);
-  }
-};
+  const vote = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/challenges/${cid}/submissions/${htmlcssPairs._id}/vote`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      setSortedSubmissions(response.data.sortedSubmissions);
+      toast.info(response.data.message, {
+        position: "top-center",
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleClick = useCallback(
     (event: { target: HTMLDivElement | null }) => {
@@ -64,11 +77,11 @@ const vote = async () => {
 
     div.style.width = `${newWidth}px`;
     div.style.height = `${newHeight}px`;
-     div.addEventListener("click", handleClick);
+    div.addEventListener("click", handleClick);
 
-     return () => {
-       div.removeEventListener("click", handleClick);
-     };
+    return () => {
+      div.removeEventListener("click", handleClick);
+    };
   }, [htmlcssPairs.html, htmlcssPairs.css, htmlcssPairs.id, id, handleClick]);
 
   useEffect(() => {
@@ -120,9 +133,8 @@ const vote = async () => {
     </div>
     
   `;
-  
-    div.addEventListener("click", handleClick);
 
+    div.addEventListener("click", handleClick);
 
     // div.addEventListener("click", handleClick);
     div.addEventListener("click", (event) => {
@@ -150,7 +162,7 @@ const vote = async () => {
 
   return (
     <>
-      <div className="m-5">
+      <div className='m-5'>
         <div
           ref={divRef}
           className='container'
@@ -172,7 +184,9 @@ const vote = async () => {
             overflow: "hidden",
           }}
         />
-        <button onClick={vote}>Vote</button>
+        <button onClick={vote}>
+          Vote <span>{htmlcssPairs.votes.length}</span>
+        </button>
       </div>
     </>
   );
