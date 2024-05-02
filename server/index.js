@@ -893,6 +893,25 @@ app.get("/csschallenge/editor/:id", async (req, res) => {
   }
 });
 
+app.post('/challenges/:challengeId/submissions/:submissionId/vote', async (req, res) => {
+  // Get the challenge and submission from the database
+  const challenge = await Csschallengesdb.findById(req.params.challengeId);
+  const submission = challenge.submissions.id(req.params.submissionId);
+
+  // Call the vote method
+  challenge.vote(req.user._id, submission._id);
+
+  // Save the challenge
+  await challenge.save();
+
+  res.send('Vote has been recorded');
+});
+
+
+
+
+
+
 app.get("/getalluserdata",async(req,res) =>{
   try{
     const user =await userdb.find({});

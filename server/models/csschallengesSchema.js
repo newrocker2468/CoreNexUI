@@ -37,6 +37,33 @@ const csschallengesSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+
+csschallengesSchema.methods.vote = function (userId, submissionId) {
+  const submission = this.submissions.id(submissionId);
+
+  // Check if the user has already voted for this submission
+  if (submission.votes.includes(userId)) {
+    throw new Error("You have already voted for this submission");
+  }
+
+  // Check if the user has exceeded their maximum of 3 votes
+  const userVotes = this.submissions.reduce((count, submission) => {
+    return count + (submission.votes.includes(userId) ? 1 : 0);
+  }, 0);
+
+  if (userVotes >= 3) {
+    throw new Error("You have reached your maximum of 3 votes");
+  }
+
+  // Add the user's vote to the submission
+  submission.votes.push(userId);
+};
+
+
+
+
+
 csschallengesSchema.methods.getStatus = function () {
   const currentDate = new Date();
   const startDate = new Date(this.date.from);
