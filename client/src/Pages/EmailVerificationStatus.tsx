@@ -3,6 +3,7 @@ import { useEffect } from "react"
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+
 export default function EmailVerificationStatus() {
     const params = useParams();
     const navigate = useNavigate();
@@ -17,9 +18,9 @@ export default function EmailVerificationStatus() {
                     toast.success(res.data.message, {
                         position: "top-center",
                     })
-                    setTimeout(() => {
-                        navigate("/login")
-                    },3000)
+                    // setTimeout(() => {
+                    //     navigate("/login")
+                    // },3000)
                 })
         }
         catch(err){
@@ -27,8 +28,15 @@ export default function EmailVerificationStatus() {
         }
     },[])
     return (
-        <>
-            <h1>email verified</h1>
-        </>
-    )
+      <>
+        <div className='flex justify-center items-center flex-col'>
+          <h1>email verified</h1>
+          <iframe
+            src='https://lottie.host/embed/5afba5db-a07f-4577-ab63-1b986d3997cb/Y0FZoidco5.json'
+            style={{ backgroundColor: "transparent" }}
+            // frameBorder='0'
+          ></iframe>
+        </div>
+      </>
+    );
 }

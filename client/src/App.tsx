@@ -32,6 +32,7 @@ import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ChallengesPosts from "./components/ChallengesPosts";
 import ViewChallengePostCode from "./Pages/ViewChallengePostsCode";
+import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
 
 function App() {
   const location = useLocation();
@@ -122,6 +123,10 @@ const checkPermissions = (
               <Route path='/editor/:id' element={<ViewCsselement />} />
               <Route path='/verify/:email' element={<VerifyEmail />} />
               <Route path='/forgotpass' element={<ForgotPassword />} />
+              <Route
+                path='/verify-email/:emailVerificationToken'
+                element={<EmailVerificationStatus />}
+              />
               <Route
                 path='/csschallenge/editor/:id'
                 element={<ViewChallengePostCode />}
