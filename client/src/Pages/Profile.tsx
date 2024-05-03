@@ -22,6 +22,7 @@ interface MyObject {
     };
   };
   isSelected: boolean;
+  approvalStatus:string;
 }
 
 const Profile = () => {
