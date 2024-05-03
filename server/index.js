@@ -25,7 +25,7 @@ const FormData = require("form-data");
 const Eventsdb = require("./models/EventsSchema")
 const nodemailer = require("nodemailer");
 const uuid = require("uuid");
-
+const File = require("./models/noteAndFolderSchemas");
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -371,7 +371,7 @@ passport.use(
           user = new userdb({
             github: {
               Id: profile.id,
-              displayName: profile.displayName,
+              displayName: profile._json.login,
               image: profile.photos[0].value,
               bio: profile._json.bio,
             },
@@ -2043,8 +2043,45 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "An error occurred" });
   }
+
 });
 
+
+
+
+app.post("/files", async (req, res) => {
+  const files = req.body.files;
+
+  const newFiles = await Promise.all(
+    files.map(async (file) => {
+      const { filename, mimetype, path, folder, size } = file;
+
+      const newFile = new File({
+        filename,
+        mimetype,
+        path,
+        folder,
+        size,
+        // Save the folder name here
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      await newFile.save();
+      return newFile;
+    })
+  );
+
+  res.json(newFiles);
+});
+app.get("/files", async (req, res) => {
+  try {
+    const files = await File.find({});
+    res.json(files);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });

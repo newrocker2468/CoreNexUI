@@ -130,14 +130,6 @@ const getlink = (e) => {
                   </CardBody>
                 </Card>
               </Tab>
-              <Tab key='videos' title='Videos'>
-                <Card>
-                  <CardBody>
-                    Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
-                  </CardBody>
-                </Card>
-              </Tab>
             </Tabs>
           </div>
         </div>

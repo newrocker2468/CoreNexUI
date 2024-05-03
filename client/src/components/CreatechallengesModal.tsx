@@ -81,7 +81,7 @@ const uploadToFirebase = (
   const storage = getStorage();
   const storageRef = ref(storage, name);
 
-  return uploadBytes(storageRef, file).then((snapshot) => {
+  return uploadBytes(storageRef, file).then(() => {
     console.log("Uploaded a blob or file!");
     return getDownloadURL(storageRef);
   });
