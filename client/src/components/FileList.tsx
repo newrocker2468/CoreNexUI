@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import folder from "../Icons/folder.png";
 import {
   Modal,
@@ -8,20 +8,23 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Image,
 } from "@nextui-org/react";
-
+import { Link } from "@nextui-org/react";
 export default function FileList({ files }) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [activeIndex, setActiveIndex] = useState(null);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClick = (index) => {
     setActiveIndex(index);
-onOpen
+    onOpen();
+    setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
+    setActiveIndex(-1); // Set activeIndex to -1 when the modal is closed
   };
 
   return (
@@ -48,8 +51,7 @@ onOpen
             backgroundColor: index === activeIndex ? "grey" : "",
             cursor: "pointer",
           }}
-          onMouseOver={() => setActiveIndex(index)}
-          onMouseOut={() => setActiveIndex(-1)}
+          onMouseOver={() => !isModalOpen && setActiveIndex(index)} // Only change activeIndex when modal is not open
           onClick={() => handleClick(index)}
         >
           <img
@@ -72,8 +74,10 @@ onOpen
       ))}
       {isModalOpen && activeIndex !== null && (
         <Modal
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
+          scrollBehavior='inside'
+          size='4xl'
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           isDismissable={false}
           isKeyboardDismissDisabled={true}
         >
@@ -83,26 +87,60 @@ onOpen
                 <ModalHeader className='flex flex-col gap-1'>
                   Modal Title
                 </ModalHeader>
-                <ModalBody>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Nullam pulvinar risus non risus hendrerit venenatis.
-                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Nullam pulvinar risus non risus hendrerit venenatis.
-                    Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                  </p>
-                  <p>
-                    Magna exercitation reprehenderit magna aute tempor cupidatat
-                    consequat elit dolor adipisicing. Mollit dolor eiusmod sunt
-                    ex incididunt cillum quis. Velit duis sit officia eiusmod
-                    Lorem aliqua enim laboris do dolor eiusmod. Et mollit
-                    incididunt nisi consectetur esse laborum eiusmod pariatur
-                    proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                  </p>
+                <ModalBody
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {" "}
+                  <Link
+                    isBlock
+                    showAnchorIcon
+                    href={files[activeIndex] && files[activeIndex].path}
+                    color='foreground'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    Open File in New Tab
+                  </Link>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      overflow: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                
+                    <Image
+                      src={files[activeIndex] && files[activeIndex].path}
+                      alt=''
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain", // Ensure the image scales down to fit within the div
+                        margin: "auto", // Add this line
+                      }}
+                    />
+                  </div>
+                  <div
+                    className=''
+                    style={{ wordWrap: "break-word", wordBreak: "break-all" }}
+                  >
+                    Name : {files[activeIndex] && files[activeIndex].filename}
+                    <br />
+                    Size : {files[activeIndex] && files[activeIndex].size} KB
+                    <br />
+                    Mime Type :{" "}
+                    {files[activeIndex] && files[activeIndex].mimetype}
+                    <br />
+                  </div>
                 </ModalBody>
+
                 <ModalFooter>
                   <Button color='danger' variant='light' onPress={onClose}>
                     Close
