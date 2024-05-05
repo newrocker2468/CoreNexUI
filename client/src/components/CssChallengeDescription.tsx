@@ -46,7 +46,7 @@ const CssChallengeDescription = () => {
       }
     );
     console.log(response.data.user);
-    setUser(() => response.data.user);
+    setUser( response.data.user);
     setIsLoading(false); // Add this line
   };
 
@@ -73,6 +73,7 @@ const CssChallengeDescription = () => {
           });
         }
         setCssdata(res.data.challenges);
+        setIsLoading(false);
         setSortedSubmissions(res.data.sortedSubmissions);
         console.log("dddddddddddddddddddddddddddddddddddd");
         console.log(res.data);

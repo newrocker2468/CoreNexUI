@@ -917,15 +917,64 @@ app.get("/csschallenge/editor/:id", async (req, res) => {
     console.error(error);
     res.status(500).send("An error occurred while fetching the submission.");
   }
-});
+});app.post("/csschallenge/editor/:id/update", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    try {
+      // Verify the token and get the decoded user info
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
+      // Find the user in your database
+      const user = await userdb.findOne({email:decoded.email});
+
+      // Check if the user has the necessary permissions
+if (
+  !user.Permissions.includes("admin") &&
+  !user.Permissions.includes("updatesubmissions")
+) {
+  return res.json({
+    message: "You don't have permission to update submissions.",
+  });
+}
+
+const challenge = await Csschallengesdb.findOne({
+  submissions: { $elemMatch: { _id: req.params.id } },
+}).populate("submissions.user");
+
+
+
+      if (!challenge) {
+        return res.status(404).json({ message: "Submission not found" });
+      }
+
+      const submission = challenge.submissions.id(req.params.id);
+
+      submission.html = req.body.html;
+      submission.css = req.body.css;
+      submission.isSelected = req.body.isSelected;
+      await challenge.save();
+
+      res.status(200).json({ message: "Submission updated successfully." });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while updating the submission." });
+    }
+  } else {
+    res
+      .status(401)
+      .json({ message: "No token provided. Please log in again." });
+  }
+});
 app.post(
   "/challenges/:challengeId/submissions/:submissionId/vote",
   async (req, res) => {
     const token = req.cookies.token;
     console.log(token);
     if (!token) {
-      return res.status(403).send("A token is required for authentication");
+      return res
+        .json({ message: "Login first to use voting Functionality" });
     }
 
     try {

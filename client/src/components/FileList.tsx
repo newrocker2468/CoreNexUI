@@ -11,6 +11,7 @@ import {
   Image,
 } from "@nextui-org/react";
 import { Link } from "@nextui-org/react";
+
 export default function FileList({ files }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -115,17 +116,25 @@ export default function FileList({ files }) {
                       justifyContent: "center",
                     }}
                   >
-                
-                    <Image
-                      src={files[activeIndex] && files[activeIndex].path}
-                      alt=''
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain", // Ensure the image scales down to fit within the div
-                        margin: "auto", // Add this line
-                      }}
-                    />
+                    {files[activeIndex] &&
+                    files[activeIndex].mimetype === "application/pdf" ? (
+                      <iframe
+                        src={files[activeIndex].path}
+                        width='100%'
+                        height='500px'
+                      />
+                    ) : (
+                      <Image
+                        src={files[activeIndex].path}
+                        alt=''
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          objectFit: "contain", // Ensure the image scales down to fit within the div
+                          margin: "auto", // Add this line
+                        }}
+                      />
+                    )}
                   </div>
                   <div
                     className=''

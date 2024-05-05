@@ -45,7 +45,9 @@ const ChallengesPosts: FC<ChallengesPosts> = ({
           withCredentials: true,
         }
       );
-      setSortedSubmissions(response.data.sortedSubmissions);
+     if (response.data.sortedSubmissions) {
+       setSortedSubmissions(response.data.sortedSubmissions);
+     }
       toast.info(response.data.message, {
         position: "top-center",
       });
