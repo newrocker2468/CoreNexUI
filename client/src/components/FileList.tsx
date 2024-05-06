@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import folder from "../Icons/folder.png";
 import {
   Modal,
   ModalContent,
@@ -15,9 +14,10 @@ import { Link } from "@nextui-org/react";
 import { toast } from "sonner";
 
 export default function FileList({ files,setFiles }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { onOpen } = useDisclosure();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const [user,setUser]=useState<any>(null)
 useEffect(() => {
   axios.get("http://localhost:3000/getuser", {
@@ -37,7 +37,7 @@ useEffect(() => {
   //   setActiveIndex(-1); // Set activeIndex to -1 when the modal is closed
   // };
 
-  const deleteNote = (noteId) => {
+  const deleteNote = (noteId: string) => {
     axios
       .post(`http://localhost:3000/notes/upload/${noteId}/delete`, {
         withCredentials: true,
@@ -48,7 +48,7 @@ useEffect(() => {
             position: "top-center",
           });
           // Remove the deleted note from the local state so the UI updates
-          setFiles(files.filter((file) => file._id !== noteId));
+          setFiles(files.filter((file: { _id: string; }) => file._id !== noteId));
         }
       })
       .catch((error) => {
