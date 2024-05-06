@@ -18,12 +18,12 @@ import { addDays } from "date-fns";
 // ];
 
 interface Challenge1 {
-    id:String,
-    eventName:String,
-    description:String,
-    img:String,
-    status:String,
-    date:{from:String, to:String},
+  id: string;
+  eventName: string;
+  description: string;
+  img: string;
+  status: string;
+  date: { from: string; to: string };
 }
 const EventData: Challenge1[]= [];
 const fetchEventData = async () => {

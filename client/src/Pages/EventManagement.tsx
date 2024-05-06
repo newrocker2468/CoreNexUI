@@ -1,13 +1,10 @@
-import Csscard from "../components/Csschallengecard";
+
 import { useEffect } from "react";
-import CreatechallengesModal from "@/components/CreatechallengesModal";
 import { useState } from "react";
-import Csschallengesdata from "@/middlewares/Seeder";
 import { Link } from "react-router-dom";
 import axios from "axios"
 import EventCard from "@/components/EventCard";
 import { toast } from "sonner";
-import { set } from "date-fns";
 import EventData from "@/middlewares/EventSeed";
 import CreateEventModal from "@/components/CreateEventModal"
 interface user{
@@ -54,11 +51,7 @@ useEffect(() => {
     console.log(Cssdata);
   }, [Cssdata]);
   
-  useEffect(() => {
-
-    fetchCsschallengesdata();
-  }, []);
-
+ 
   const fetchCsschallengesdata = async () => {
     fetch(`http://localhost:3000/events`, {
       method: "GET",
@@ -76,6 +69,10 @@ useEffect(() => {
       .catch((error) => console.error("Error:", error));
   };
 
+ useEffect(() => {
+   fetchCsschallengesdata();
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
 
 
   const fetchuserdata = async () => {
@@ -100,7 +97,7 @@ useEffect(() => {
       <section className='flex align-center justify-center'>
         <div className='grid items-center w-[20dvw]'>
           {user?.Permissions.includes("admin") ||
-          user?.Permissions.includes("createchallenges") ? (
+          user?.Permissions.includes("createevents") ? (
             <CreateEventModal
               Cssdata={Cssdata}
               Setdata={setCssdata}
@@ -124,7 +121,6 @@ useEffect(() => {
                 id={data?.id}
                 title={data?.eventName}
                 description={data?.description}
-                sdesc={data?.sdesc}
                 img={data?.img}
                 status={data?.status}
                 sdate={data?.date?.from}

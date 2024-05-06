@@ -917,7 +917,8 @@ app.get("/csschallenge/editor/:id", async (req, res) => {
     console.error(error);
     res.status(500).send("An error occurred while fetching the submission.");
   }
-});app.post("/csschallenge/editor/:id/update", async (req, res) => {
+});
+app.post("/csschallenge/editor/:id/update", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     try {
@@ -967,6 +968,52 @@ const challenge = await Csschallengesdb.findOne({
       .json({ message: "No token provided. Please log in again." });
   }
 });
+
+app.post("/csschallenge/editor/:id/delete", async (req, res) => {
+  const token = req.cookies.token;
+  console.log(token);
+  console.log(req.params.id);
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const user = await userdb.findOne({ email: decoded.email });
+      if (
+        !user.Permissions.includes("admin") &&
+        !user.Permissions.includes("deletesubmissions")
+      ) {
+        return res.json({
+          message: "You don't have permission to delete submissions.",
+        });
+      }
+
+      const challenge = await Csschallengesdb.findOne({
+        submissions: { $elemMatch: { _id: req.params.id } },
+      }).populate("submissions.user");
+      console.log(challenge);
+
+      if (!challenge) {
+        console.log("Submission not found");
+        return res.json({ message: "Submission not found" });
+      }
+
+      challenge.submissions.id(req.params.id).deleteOne();
+      await challenge.save();
+
+      res.status(200).json({ message: "Submission deleted successfully." });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while deleting the submission." });
+    }
+  } else {
+    res
+      .status(401)
+      .json({ message: "No token provided. Please log in again." });
+  }
+});
+
+
 app.post(
   "/challenges/:challengeId/submissions/:submissionId/vote",
   async (req, res) => {
@@ -1249,64 +1296,117 @@ app.get("/event/:id", async (req, res) => {
   }
 });
 app.post("/event/:id/create", async (req, res) => {
-
-            let Event = await Eventsdb.findOne({
-              id: req.params.id,
-            });
-            if (!Event) {
-              console.log(req.body);
-              Event = new Eventsdb({
-                id: req.params.id,
-                eventName: req.body.eventName,
-                description: req.body.description,
-                img: req.body.img,
-                status: req.body.status,
-                date: req.body.date,
-              });
-              Event.save();
-              res.json({ message: "Event added successfully." });
-            } else {
-              res.json({ message: "Event already is Going on..." });
-            }
+const token = req.cookies.token;
+if (token) {
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("createevents")){
+      let Event = await Eventsdb.findOne({ id: req.params.id });
+      if (!Event) {
+        Event = new Eventsdb({
+          id: req.params.id,
+          eventName: req.body.eventName,
+          description: req.body.description,
+          img: req.body.img,
+          status: req.body.status,
+          date: req.body.date,
+        });
+        Event.save();
+        res.json({ message: "event added successfully" });
+      } else {
+        res.json({ message: "event already exists" });
+      }
+    }
+    else{
+      return res.status(401).json({ message: "You are not authorized to create events." });
+    }
+  })
+}
+else{
+  return res.status(401).json({ message: "No token provided" });
+}
       
 });
 
 app.post("/event/:id/update", async (req, res) => {
-  try {
-    const Event = await Eventsdb.findOneAndUpdate(
-      { id: req.params.id },
-      {
-        $set: {
-          id: req.params.id,
-                eventName: req.body.eventName,
-                description: req.body.description,
-                img: req.body.img,
-                status: req.body.status,
-                date: req.body.date,
-        },
-      },
-      { new: true }
-    );
+const token = req.cookies.token;
+if (token) {
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("editevents")){
+      try {
+        let Event = await Eventsdb.findOne({ id: req.body.id });
+        if (!Event) {
+          return res.status(404).json({ message: "Event not found." });
+        }
+        Event = await Eventsdb.findOneAndUpdate(
+          { id: req.body.id },
+          {
+            $set: {
+              eventName: req.body.eventName,
+              description: req.body.description,
+              img: req.body.img,
+              status: req.body.status,
+              date: req.body.date,
+            },
+          },
+          { new: true }
+        );
+        res.status(200).json({
+          Event: Event,
+          message: "Event updated successfully.",
+        });
+      } catch (error) {
+        console.error(error);
+        res
+          .status(500)
+          .json({ message: "An error occurred while updating Event" });
+      }
+    }
+    else{
+      return res.status(401).json({ message: "You are not authorized to update events." });
+    }
+  })
+}
+else{
+  return res.status(401).json({ message: "No token provided" });
 
-    res.status(200).json({ message: "event successfully updated",event:Event });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "an error has occured while updating event" });
-  }
+}
 });
 
 app.post("/event/:id/delete", async (req, res) => {
-  try {
-    const Event = await Eventsdb.findOneAndDelete({ id: req.params.id });
-    res.status(200).json({ message: "event successfully deleted" });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "an error has occured while deleting event" });
-  }
+ const token = req.cookies.token;
+ if(token){
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => { 
+    if (err) {
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    }
+    if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("deleteevents")){
+      const { id } = req.body;
+      console.log("id " + id);
+      try {
+        const Event = await Eventsdb.findOneAndDelete({ id: id });
+        console.log(Event);
+        res.status(200).json({ message: "Event deleted successfully" });
+      } catch (error) {
+        console.error(error);
+        res
+          .status(500)
+          .json({ message: "An error occurred while deleting Event" });
+      }
+    }
+    else{
+      return res.status(401).json({ message: "You are not authorized to delete events." });
+    }
+  })
+ }
+ else{
+    return res.status(401).json({ message: "No token provided" });
+ }
 });
 
 

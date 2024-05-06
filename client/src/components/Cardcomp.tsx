@@ -89,10 +89,10 @@ export default function Cardcomp() {
 
       <Card isFooterBlurred className='col-span-12 sm:col-span-4 h-[300px]'>
         <CardHeader className='absolute z-10 top-1 flex-col !items-start'>
-          <p className='text-tiny /60 uppercase font-bold'>
+          <p className='text-tiny /60 uppercase font-bold text-black'>
             Attendance Management
           </p>
-          <h4 className=' font-medium text-large'>
+          <h4 className=' font-medium text-large text-black'>
             Upload Attendance Sheets to Manage Attendance{" "}
           </h4>
         </CardHeader>
@@ -126,8 +126,8 @@ export default function Cardcomp() {
         className='w-full h-[300px] col-span-12 sm:col-span-5'
       >
         <CardHeader className='absolute z-10 top-1 flex-col items-start'>
-          <p className='text-tiny /60 uppercase font-bold'>New</p>
-          <h4 className='font-medium text-2xl'>Upload Notes</h4>
+          <p className='text-tiny /60 uppercase font-bold text-black'>New</p>
+          <h4 className='font-medium text-2xl text-black'>Upload Notes</h4>
         </CardHeader>
 
         <Image
@@ -138,11 +138,20 @@ export default function Cardcomp() {
         />
         <CardFooter className='absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between'>
           <div>
-            <p className='text-black text-tiny'>Available soon.</p>
-            <p className='text-black text-tiny'>Get notified.</p>
+            <p className='text-black text-tiny'>Upload your notes here</p>
+            <p className='text-black text-tiny'>
+              Capture Upload and Good to Go!
+            </p>
           </div>
-          <Button className='text-tiny' color='primary' radius='full' size='sm'>
-            Notify Me
+          <Button
+            className='text-tiny font-bold p-0 min-w-0 min-h-0'
+            color='primary'
+            radius='full'
+            size='sm'
+          >
+            <Link to='/notes/upload' className='p-5'>
+              Check Out
+            </Link>
           </Button>
         </CardFooter>
       </Card>
@@ -152,11 +161,11 @@ export default function Cardcomp() {
         className='w-full h-[300px] col-span-12 sm:col-span-7'
       >
         <CardHeader className='absolute z-10 top-1 flex-col items-start'>
-          <p className='text-tiny /60 uppercase font-bold'> EVENT MANAGEMENT</p>
-          <h4 className='/90 font-medium text-xl'>
-            Manage Events and Get Notified Upload Attendance Sheets to Manage
-            Attendance
-          </h4>
+          <p className='text-tiny /60 uppercase font-bold  text-white'>
+            {" "}
+            EVENT MANAGEMENT
+          </p>
+          <h4 className='/90 font-medium text-xl text-white'>Manage Events</h4>
         </CardHeader>
         <Image
           removeWrapper

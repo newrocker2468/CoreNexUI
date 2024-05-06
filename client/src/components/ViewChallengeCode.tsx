@@ -553,16 +553,17 @@ const ViewChallengeCode = () => {
   const deleteelement = () => {
     axios
       .post(
-        `http://localhost:3000/editor/${id}/delete`,
+        `http://localhost:3000/csschallenge/editor/${id}/delete`,
         {},
         { withCredentials: true }
       )
       .then((response) => {
         // console.log(response);
+             navigate(-2);
         toast.success("Element Deleted Successfully", {
           position: "top-center",
         });
-        navigate(-1);
+     
       })
       .catch((error) => console.error(error));
   };

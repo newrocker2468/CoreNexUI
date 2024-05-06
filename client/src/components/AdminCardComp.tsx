@@ -117,9 +117,7 @@ export default function AdminCardcomp() {
             </div>
           </div>
           <Button radius='full' size='sm'>
-            <Link to='/admin/uploadattendance'>
-              Upload Attendance Sheet
-            </Link>
+            <Link to='/admin/uploadattendance'>Upload Attendance Sheet</Link>
           </Button>
         </CardFooter>
       </Card>
@@ -177,12 +175,12 @@ export default function AdminCardcomp() {
               src='/images/breathing-app-icon.jpeg'
             />
             <div className='flex flex-col'>
-              <p className='text-tiny /60'>Breathing App</p>
-              <p className='text-tiny /60'>Get a good night's sleep.</p>
+              <p className='text-tiny /60'></p>
+              <p className='text-tiny /60'></p>
             </div>
           </div>
-          <Button radius='full' size='sm'>
-            Get App
+          <Button className='text-tiny' color='primary' radius='full' size='sm'>
+            <Link to='/event'>Manage Events</Link>
           </Button>
         </CardFooter>
       </Card>

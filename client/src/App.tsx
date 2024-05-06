@@ -147,13 +147,29 @@ const checkPermissions = (
                 element={
                   loading ? (
                     <div>Loading</div>
-                  ) : checkPermissions(user.Permissions, ["admin"]) ? (
+                  ) : checkPermissions(user.Permissions, [
+                      "admin",
+                      "approveposts",
+                      "rejectposts",
+                      "editcsselement",
+                      "deletecsselement",
+                      "createchallenges",
+                      "deletechallenges",
+                      "editchallenges",
+                      "createevents",
+                      "editevents",
+                      "deleteevents",
+                      "deletenotes",
+                      "updatesubmissions",
+                      "deletesubmissions",
+                      
+                    ]) ? (
                     <AdminPanel />
                   ) : (
                     <NoPermissions />
                   )
                 }
-              />{" "}
+              />
               <Route
                 path='/admin/uploadattendance'
                 element={
