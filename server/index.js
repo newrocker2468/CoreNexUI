@@ -26,6 +26,7 @@ const Eventsdb = require("./models/EventsSchema")
 const nodemailer = require("nodemailer");
 const uuid = require("uuid");
 const File = require("./models/noteAndFolderSchemas");
+const Notes = require("./models/noteAndFolderSchemas");
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -1425,10 +1426,11 @@ app.post("/eventsget", async (req, res) => {
 
 
 //route for notes upload
-app.post("/notesUpload/:id", async (req, res) => {
+app.post("/notes/upload/:id/delete", async (req, res) => {
   try {
-    const Note = await Notesdb.findone({ _id: req.params.id });
-    res.status(200).json({ Note });
+     await Notes.findOneAndDelete({ _id: req.params.id });
+    const Notesr = await Notes.find({});
+    res.status(200).json({ Notesr });
   } catch (error) {
     console.error(error);
     res
@@ -1436,7 +1438,26 @@ app.post("/notesUpload/:id", async (req, res) => {
       .json({ message: "An error has occured while fetching the notes " });
   }
 });
-
+app.get("/getuser", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Failed to authenticate token" });
+      }
+      try {
+        const user = await userdb.findOne({ email: decoded.email });
+        res.status(200).json({ user });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  } else {
+    res.status(401).json({ message: "No token provided" });
+  }
+});
 app.post("/notesUpload/:id/upload", async (req, res) => {
   try {
     const Note = new Notesdb({
@@ -2198,30 +2219,76 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
 
 
+// app.post("/files", async (req, res) => {
+//   const files = req.body.files;
+
+//   const newFiles = await Promise.all(
+//     files.map(async (file) => {
+//       const { filename, mimetype, path, folder, size } = file;
+
+//       const newFile = new File({
+//         filename,
+//         mimetype,
+//         path,
+//         folder,
+//         size,
+//         // Save the folder name here
+//         createdAt: new Date(),
+//         updatedAt: new Date(),
+//       });
+
+//       await newFile.save();
+//       return newFile;
+//     })
+//   );
+
+//   res.json(newFiles);
+// });
 app.post("/files", async (req, res) => {
-  const files = req.body.files;
+  const token = req.cookies.token; // Get the token from the Authorization header
 
-  const newFiles = await Promise.all(
-    files.map(async (file) => {
-      const { filename, mimetype, path, folder, size } = file;
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "No token provided. Please log in again." });
+  }
 
-      const newFile = new File({
-        filename,
-        mimetype,
-        path,
-        folder,
-        size,
-        // Save the folder name here
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+    const user = await userdb.findOne({ email: decoded.email });
+    if(!user){
+      console.log("user not found")
+      return res.json({message:"User not found"})
+    }
+    const files = req.body.files;
 
-      await newFile.save();
-      return newFile;
-    })
-  );
+    const newFiles = await Promise.all(
+      files.map(async (file) => {
+        const { filename, mimetype, path, folder, size } = file;
 
-  res.json(newFiles);
+        const newFile = new File({
+          filename,
+          mimetype,
+          path,
+          folder,
+          size,
+          user: user._id, // Add the user's email to the file data
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        await newFile.save();
+        return newFile;
+      })
+    );
+
+    res.json(newFiles);
+  } catch (error) {
+    console.error(error);
+    res 
+      .status(500)
+      .json({ message: "An error occurred while uploading the files." });
+  }
 });
 app.get("/files", async (req, res) => {
   try {

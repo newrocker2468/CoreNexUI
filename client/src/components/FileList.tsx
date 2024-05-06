@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import folder from "../Icons/folder.png";
 import {
   Modal,
@@ -11,21 +12,51 @@ import {
   Image,
 } from "@nextui-org/react";
 import { Link } from "@nextui-org/react";
+import { toast } from "sonner";
 
-export default function FileList({ files }) {
+export default function FileList({ files,setFiles }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleClick = (index) => {
+const [user,setUser]=useState<any>(null)
+useEffect(() => {
+  axios.get("http://localhost:3000/getuser", {
+    withCredentials: true,
+  }).then((res) => {
+    setUser(res.data.user);
+  });
+},[])
+  const handleClick = (index: React.SetStateAction<number | null>) => {
     setActiveIndex(index);
     onOpen();
     setIsModalOpen(true);
   };
 
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setActiveIndex(-1); // Set activeIndex to -1 when the modal is closed
+  // const handleClose = () => {
+  //   setIsModalOpen(false);
+  //   setActiveIndex(-1); // Set activeIndex to -1 when the modal is closed
+  // };
+
+  const deleteNote = (noteId) => {
+    axios
+      .post(`http://localhost:3000/notes/upload/${noteId}/delete`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success("Note Deleted Successfully", {
+            position: "top-center",
+          });
+          // Remove the deleted note from the local state so the UI updates
+          setFiles(files.filter((file) => file._id !== noteId));
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("An error occurred while deleting the note.", {
+          position: "top-center",
+        });
+      });
   };
 
   return (
@@ -71,6 +102,15 @@ export default function FileList({ files }) {
           </p>
           <p>{file.size} KB</p>
           <p>{file.uploadDate}</p>
+          {/* {(user?.Permissions?.includes("deletenotes") ||
+            user?._id === file.user) && (
+            <Button color='danger' onClick={() => deleteNote(file._id)}>
+              Delete Note
+            </Button>
+          )} */}
+          {/* <Button color='danger' onClick={() => deleteNote(file._id)}>
+            Delete Note
+          </Button> */}
         </div>
       ))}
       {isModalOpen && activeIndex !== null && (
@@ -151,12 +191,21 @@ export default function FileList({ files }) {
                 </ModalBody>
 
                 <ModalFooter>
+                  {(user?.Permissions?.includes("deletenotes") ||
+                    user?._id === files[activeIndex].user) && (
+                    <Button
+                      color='danger'
+                      onClick={() => deleteNote(files[activeIndex]._id)}
+                    >
+                      Delete Note
+                    </Button>
+                  )}
                   <Button color='danger' variant='light' onPress={onClose}>
                     Close
                   </Button>
-                  <Button color='primary' onPress={onClose}>
+                  {/* <Button color='primary' onPress={onClose}>
                     Action
-                  </Button>
+                  </Button> */}
                 </ModalFooter>
               </>
             )}

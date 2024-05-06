@@ -114,7 +114,7 @@ export default function NotesUploadComp() {
         {isLoading ? (
           <p>Loading...</p> // Show a loading message while the data is loading
         ) : (
-          <FileList files={uploadedFiles} />
+          <FileList files={uploadedFiles} setFiles={setUploadedFiles}/>
         )}
       </div>
     </>
