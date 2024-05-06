@@ -338,45 +338,29 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
               setIsvisible={setIsvisible}
             /> */}
         </div>
-        <div className='Parent-Box'>
-          <div className='Left'>
-            <div className='Box max-w-2xl w-[50dvw] min-w-sm'>
+        <div className='Parent-Box flex flex-col lg:flex-row '>
+          <div className='Left lg:flex hidden w-full lg:w-[30rem]'>
+            <div className='Box max-w-2xl w-full min-w-sm'>
               <h2 className='h2-Login-leftbox'>Login</h2>
-
-              {/* <h1 className='innerBox-h1'> Random Quote</h1> */}
-
               <div>
-                {" "}
                 <AnimatedCode />
               </div>
-              {/* <div id='video-background'>
-                    <video autoPlay muted loop id='myVideo'>
-                      <source src={`${codeanimation}`} type='video/mp4' />
-                    </video>
-
-                    <div className='content w-[50vw]'>
-                      <h1>Heading</h1>
-                      <p>Lorem ipsum...</p>
-                    </div>
-                   
-                  </div> */}
-              {/* <p>{quote}</p> */}
             </div>
           </div>
 
-          <div className='Right'>
+          <div className='Right w-full lg:w-auto flex justify-center items-center h-[70vh] lg:h-auto'>
             <h1 className='h1-Login'>Welcome Back</h1>
             <h3 className='h3-login'>Log in to your account to continue</h3>
             <div className='Box'>
               <Btn
-                btnStyles='w-[400px] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
+                btnStyles='w-[25rem] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
                 logo={GoogleIcon}
                 Text='Continue with Google'
                 onClick={loginwithgoogle}
               />
 
               <Btn
-                btnStyles='w-[400px] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
+                btnStyles='w-[25rem] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
                 logo={GithubIcon}
                 Text='Continue with Github'
                 onClick={loginwithgithub}
@@ -417,11 +401,8 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                 <div className='Logfooter'>
                   <CheckBox
                     text='Remember for 15 days'
-                    // onChange={()=>{
-                    //   setRemember(!Remember);
-                    // }}
                     onChange={formik.handleChange}
-                    name="Remember"
+                    name='Remember'
                   />
                   <AnchorLink
                     text='Forgot Password?'
@@ -430,7 +411,7 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                   />
                 </div>
                 <Btn
-                  btnStyles='w-[400px] mt-[1.5rem] mb-2.5 bg-nprimary border-2 border-[#3E3E45]  text-base text-center text-white'
+                  btnStyles='w-[25rem] mt-[1.5rem] mb-2.5 bg-nprimary border-2 border-[#3E3E45]  text-base text-center text-white'
                   Text='Log In'
                   isloading={loading}
                 />
