@@ -24,6 +24,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
 import axios from "axios"
+
 interface Challenge {
   id: string;
   title: string;
@@ -32,6 +33,7 @@ interface Challenge {
   img: string;
   status: string;
   date: { from: string; to: string };
+  submissions:[];
 }
 interface CreatechallengesModalProps {
   Cssdata: Challenge[];
@@ -79,7 +81,7 @@ const uploadToFirebase = (
   const storage = getStorage();
   const storageRef = ref(storage, name);
 
-  return uploadBytes(storageRef, file).then((snapshot) => {
+  return uploadBytes(storageRef, file).then(() => {
     console.log("Uploaded a blob or file!");
     return getDownloadURL(storageRef);
   });

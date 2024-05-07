@@ -35,7 +35,6 @@ const ViewChallengeCode = () => {
         setIsSelected(response.data.isSelected);
       })
       .catch((error) => {
-        console.log("Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg");
         console.log("error.response:", error.response);
         console.log(
           "error.response.status:",
@@ -554,42 +553,38 @@ const ViewChallengeCode = () => {
   const deleteelement = () => {
     axios
       .post(
-        `http://localhost:3000/editor/${id}/delete`,
+        `http://localhost:3000/csschallenge/editor/${id}/delete`,
         {},
         { withCredentials: true }
       )
       .then((response) => {
         // console.log(response);
+             navigate(-2);
         toast.success("Element Deleted Successfully", {
           position: "top-center",
         });
-        navigate(-1);
+     
       })
       .catch((error) => console.error(error));
   };
   const updateelement = () => {
     axios
       .post(
-        `http://localhost:3000/editor/${id}/update`,
-        { html, css, sameUser },
+        `http://localhost:3000/csschallenge/editor/${id}/update`,
+        { html, css, sameUser, isSelected},
         { withCredentials: true }
       )
       .then((response) => {
+              navigate(-2);
+          toast.info(response.data.message, {
+            position: "top-center",
+          });
+        console.log(response.data);
         setHtml(response.data.CssElements.html);
         setCss(response.data.CssElements.css);
-        toast.success(
-          response.data.user.Permissions.includes("admin") ||
-            response.data.user.Permissions.includes("editcsselement")
-            ? "Element Updated Successfully"
-            : "Element Updated Successfully, Awaiting Admin Approval",
-          {
-            position: "top-center",
-          }
-        );
-        navigate(-1);
+
       })
       .catch((error) => {
-        console.error("Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg");
         if (error.response && error.response.status === 404) {
           toast.error("Error 404 ! Element Not Found");
         }
@@ -736,7 +731,7 @@ const ViewChallengeCode = () => {
               <div className='mr-[4rem]'>
                 {((user.Permissions &&
                   (user.Permissions.includes("admin") ||
-                    user.Permissions.includes("editcsselement"))) ||
+                    user.Permissions.includes("updatesubmissions"))) ||
                   sameUser) && (
                   <Button
                     color='primary'
@@ -749,7 +744,7 @@ const ViewChallengeCode = () => {
                 )}
                 {((user.Permissions &&
                   (user.Permissions.includes("admin") ||
-                    user.Permissions.includes("deletecsselement"))) ||
+                    user.Permissions.includes("deletesubmissions"))) ||
                   sameUser) && (
                   <Button
                     color='danger'

@@ -126,7 +126,12 @@ export default function AssignPermissions() {
           <div className='flex justify-center '>
             Users Current Permissions :
             {selectedUser.Permissions.map((per, index) => {
-              return <div key={index} className="mx-2"> {per}</div>;
+              return (
+                <div key={index} className='mx-2'>
+                  {" "}
+                  {per}
+                </div>
+              );
             })}
           </div>
           <div className='flex items-center justify-center m-[4rem]'>
@@ -136,13 +141,10 @@ export default function AssignPermissions() {
               value={selected}
               onValueChange={(newSelected) => {
                 if (newSelected.includes("admin")) {
-                  // If 'admin' is selected, select only 'admin'
                   setSelected(["admin"]);
-                } else if (newSelected.length === 7) {
-                  // If all other permissions are selected, select 'admin'
+                } else if (newSelected.length === 13) {
                   setSelected(["admin"]);
                 } else {
-                  // Otherwise, update the selected permissions
                   setSelected(newSelected);
                 }
               }}
@@ -150,22 +152,28 @@ export default function AssignPermissions() {
             >
               <Checkbox value='admin'>Admin (will have all rights)</Checkbox>
               <Checkbox value='approveposts'>
-                Approve Css Element Posts
+                Approve CSS Element Posts
               </Checkbox>
-              <Checkbox value='rejectposts'>Reject Css Element Posts</Checkbox>
-              <Checkbox value='editcsselement'>Edit Css Element Posts</Checkbox>
+              <Checkbox value='rejectposts'>Reject CSS Element Posts</Checkbox>
+              <Checkbox value='editcsselement'>Edit CSS Element Posts</Checkbox>
               <Checkbox value='deletecsselement'>
-                Delete Css Element Posts
+                Delete CSS Element Posts
               </Checkbox>
               <Checkbox value='createchallenges'>
-                Create New Css Challenges
+                Create New CSS Challenges
               </Checkbox>
               <Checkbox value='deletechallenges'>
-                Delete Css Challenges
+                Delete CSS Challenges
               </Checkbox>
               <Checkbox value='editchallenges'>
-                Edit Existing Css Challenges
+                Edit Existing CSS Challenges
               </Checkbox>
+              <Checkbox value='createevents'>Create Events</Checkbox>
+              <Checkbox value='editevents'>Edit Events</Checkbox>
+              <Checkbox value='deleteevents'>Delete Events</Checkbox>
+              <Checkbox value='deletenotes'>Delete Notes</Checkbox>
+              <Checkbox value='updatesubmissions'>Edit Submissions</Checkbox>
+              <Checkbox value='deletesubmissions'>Delete Submissions</Checkbox>
             </CheckboxGroup>
           </div>
 

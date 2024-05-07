@@ -1,14 +1,7 @@
-import { Link, useParams } from "react-router-dom";
-import Csschallengecard from "./Csschallengecard";
-import uiverse from "@/images/uiversecss2.jpg";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
-import DeleteModal from "./DeleteModal";
-import EditChallengeModal from "./EditChallengeModal";
-import Btn from "./Btn";
-import { v4 as uuidv4 } from "uuid";
-import EventCard from "./EventCard";
 import EditEventModal from "./EditEventModal";
 import "@/Styles/CssChallengeDescription.css"
 import EventDeleteModal from "./EventDeleteModal";
@@ -20,21 +13,22 @@ import { ClassNames } from "@emotion/react";
 
 
 interface Challenge1 {
-  id: string ;
-  eventName: string ;
-  sdesc: string ;
-  description: string;
-  img: string ;
-  status: string ;
+  id: string | undefined;
+  eventName: string | undefined;
+  sdesc: string | undefined;
+  description: string | undefined;
+  img: string | undefined;
+  status: string | undefined;
   date: {
-    from: string;
-    to: string ;
+    from: string | undefined;
+    to: string | undefined;
   };
 }
 
 const EventDescription = () => {                  //changed
   const params = useParams();
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line
 
@@ -67,11 +61,11 @@ const EventDescription = () => {                  //changed
       .catch((err) => {
         console.log(err);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
-    // Add this condition
-    return <div>Loading...</div>; // Replace this with your actual loading indicator
+    return <div>Loading...</div>; 
   }
 
   if (!Cssdata) {
@@ -85,7 +79,7 @@ const EventDescription = () => {                  //changed
   return (
     <>
       {user?.Permissions.includes("admin") ||
-      user?.Permissions.includes("editchallenges") ? (
+      user?.Permissions.includes("editevents") ? (
         <div className='flex justify-center align-center m-5'>
           <EditEventModal Cssdata={Cssdata} setCssdata={setCssdata} />
         </div>
@@ -93,13 +87,20 @@ const EventDescription = () => {                  //changed
         ""
       )}
       {user?.Permissions.includes("admin") ||
-      user?.Permissions.includes("deleteevent") ? (
+      user?.Permissions.includes("deleteevents") ? (
         <div className='flex justify-center align-center m-5'>
           <EventDeleteModal id={Cssdata.id} />
         </div>
       ) : (
         ""
       )}
+<<<<<<< HEAD
+=======
+      
+          <h1>{Cssdata.eventName}</h1>
+          <p>{Cssdata.description}</p>
+     <img src={Cssdata.img} alt="" />
+>>>>>>> e95bae6bcabc4aa6ef14f76d6d39f61d6e37b881
 
        
     <div className="container">

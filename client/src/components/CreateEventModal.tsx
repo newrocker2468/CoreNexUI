@@ -22,15 +22,13 @@ import { Textarea } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-import { toast } from "sonner";
 import axios from "axios"
 interface Challenge {
-  id:String,
-  eventName:String,
-  description:String,
-  img:String,
-  status:String,
+  id:string,
+  eventName:string,
+  description:string,
+  img:string,
+  status:string,
   date: { from: string; to: string };
 }
 interface CreatechallengesModalProps {
@@ -49,7 +47,6 @@ const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
   const [eventName, seteventName] = useState("");
-  const [sdesc, setsdesc] = useState("");
   const [desc, setdesc] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [date, setDate] = React.useState<DateRange | undefined>({
@@ -68,7 +65,7 @@ const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
     appId: import.meta.env.VITE_APPID,
     measurementId: import.meta.env.VITE_MEASUREMENTID,
   };
-  const app = initializeApp(firebaseConfig);
+ initializeApp(firebaseConfig);
   // const analytics = getAnalytics(app);
   // const storage = getStorage(app);
   
@@ -79,7 +76,7 @@ const uploadToFirebase = (
   const storage = getStorage();
   const storageRef = ref(storage, name);
 
-  return uploadBytes(storageRef, file).then((snapshot) => {
+  return uploadBytes(storageRef, file).then(() => {
     console.log("Uploaded a blob or file!");
     return getDownloadURL(storageRef);
   });
@@ -152,7 +149,6 @@ const uploadToFirebase = (
     return {
       id: id,
       eventName: eventName,
-      sdesc: sdesc,
       description: desc,
       img: img,
       status: "Ongoing",
@@ -193,19 +189,7 @@ const uploadToFirebase = (
                       }}
                     />{" "}
                   </div>
-
-           {/*        <div className='w-[50%] m-[0.5rem]'>
-                    {" "}
-              {      <Input
-                      isClearable={true}
-                      placeholder='Enter Short Challenge Description'
-                      label='Short Description'
-                      value={sdesc}
-                      onChange={(e) => {
-                        setsdesc(e.target.value);
-                      }}
-                    />}
-                  </div> */}
+  
                 </div>
 
                 <div className='w-full m-[0.5rem]'>

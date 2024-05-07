@@ -1,6 +1,12 @@
 import Home from "./Pages/Home";
 import "./App.css";
-import { Routes, Route, useNavigate,useLocation} from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useRouteMatch,
+} from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Signup from "./Pages/Signup";
@@ -32,8 +38,12 @@ import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ChallengesPosts from "./components/ChallengesPosts";
 import ViewChallengePostCode from "./Pages/ViewChallengePostsCode";
+import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
+import NotesUpload from "./Pages/NotesUpload";
+import NotesUploadComp from "./components/NotesUploadComp";
 
 function App() {
+  
   const location = useLocation();
     const navigate = useNavigate();
 const [loading, setLoading] = useState(true);
@@ -96,6 +106,7 @@ const checkPermissions = (
             <RootLayout />
             <NavTest />
             <Routes>
+              <Route path='/notes/upload/*' element={<NotesUploadComp />} />
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
               <Route path='/signup' element={<Signup />} />
@@ -107,6 +118,7 @@ const checkPermissions = (
                 path='/Csselements/:category'
                 element={<CssElementsCategory />}
               />
+              <Route path='/notes/upload' element={<NotesUpload />} />
               ;
               <Route
                 path='/Csschallenges/:id'
@@ -123,6 +135,10 @@ const checkPermissions = (
               <Route path='/verify/:email' element={<VerifyEmail />} />
               <Route path='/forgotpass' element={<ForgotPassword />} />
               <Route
+                path='/verify-email/:emailVerificationToken'
+                element={<EmailVerificationStatus />}
+              />
+              <Route
                 path='/csschallenge/editor/:id'
                 element={<ViewChallengePostCode />}
               />
@@ -131,13 +147,29 @@ const checkPermissions = (
                 element={
                   loading ? (
                     <div>Loading</div>
-                  ) : checkPermissions(user.Permissions, ["admin"]) ? (
+                  ) : checkPermissions(user.Permissions, [
+                      "admin",
+                      "approveposts",
+                      "rejectposts",
+                      "editcsselement",
+                      "deletecsselement",
+                      "createchallenges",
+                      "deletechallenges",
+                      "editchallenges",
+                      "createevents",
+                      "editevents",
+                      "deleteevents",
+                      "deletenotes",
+                      "updatesubmissions",
+                      "deletesubmissions",
+                      
+                    ]) ? (
                     <AdminPanel />
                   ) : (
                     <NoPermissions />
                   )
                 }
-              />{" "}
+              />
               <Route
                 path='/admin/uploadattendance'
                 element={

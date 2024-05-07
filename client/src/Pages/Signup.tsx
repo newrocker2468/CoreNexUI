@@ -168,11 +168,16 @@ export default function Signup() {
   });
   return (
     <>
-      <div className='parent-box w-[90dvw]'>
+      <div className='parent-box w-full flex items-center justify-center'>
         <div
           className={`signup w-[30rem]  h-[45rem] ${bgColor} rounded-[1.5rem] flex justify-center align-center flex-col`}
         >
-          <h1 className={`flex justify-center items-center `}>Sign Up</h1>
+          <h1 className={`flex justify-center items-center `}>
+            User Registration
+          </h1>
+          <p className='text-center'>
+            Please fill in the form below to create an account.
+          </p>
           <form
             action=''
             onSubmit={formik.handleSubmit}
@@ -200,7 +205,7 @@ export default function Signup() {
             />
             <PasswordInput
               variant='bordered'
-              placeholder='Re-Enter your password'
+              placeholder='Confirm your password'
               name='repassword'
               value={formik.values.repassword}
               onChange={formik.handleChange}
@@ -209,14 +214,14 @@ export default function Signup() {
               isInvalid={RePassisInvalid}
             />
             <CheckBox
-              text='I agree to the Terms and Privacy Policy'
+              text='I accept the Terms of Service and Privacy Policy'
               boxstyles='mt-4'
               name='terms'
               onChange={formik.handleChange}
               isInvalid={CheckBoxisInvalid}
             />
             <Btn
-              Text='Sign Up'
+              Text='Register'
               btnStyles='bg-nprimary  p-[1rem] px-[11rem] mt-[2rem] rounded-[0.7rem]'
             />
           </form>

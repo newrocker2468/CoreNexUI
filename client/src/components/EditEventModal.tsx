@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import "@/Styles/CssChallengeDescription.css";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import React, { Dispatch, SetStateAction } from "react";
 import "@/Styles/EventDescription.css";
 
@@ -21,13 +22,12 @@ import { Textarea } from "@nextui-org/react";
 import Btn from "./Btn";
 import EditIcon from "@/Icons/edit (1).png";
 import uiversecss from "@/images/uiversecss2.jpg";
-import { addDays, format, set } from "date-fns";
+import { addDays, format } from "date-fns";
 import { toast } from "sonner";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 interface Challenge1 {
   id: string | undefined;
   eventName: string | undefined;
@@ -50,7 +50,6 @@ const EditEventModal: FC<EditProps> = ({
   setCssdata,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const navigate = useNavigate();
   const storedStartDate = Cssdata?.date?.from
     ? new Date(Cssdata.date.from)
     : new Date();
@@ -78,8 +77,8 @@ const [user ,setUser]=useState<any>(null)
    measurementId: import.meta.env.VITE_MEASUREMENTID,
  };
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const storage = getStorage(app);
+  getAnalytics(app);
+ getStorage(app);
 const uploadToFirebase = (
   file: Blob | Uint8Array | ArrayBuffer,
   name:string,
@@ -87,7 +86,7 @@ const uploadToFirebase = (
   const storage = getStorage();
   const storageRef = ref(storage, name);
 
-  return uploadBytes(storageRef, file).then((snapshot) => {
+  return uploadBytes(storageRef, file).then(() => {
     console.log("Uploaded a blob or file!");
     return getDownloadURL(storageRef);
   });

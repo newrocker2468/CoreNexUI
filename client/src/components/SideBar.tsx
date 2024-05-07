@@ -110,10 +110,25 @@ const SideBar = () => {
               {" "}
               Challenges
             </MenuItem>
-            <MenuItem component={<Link to='/docs' />}> Documentation</MenuItem>
-            {(user?.Permissions?.includes("admin") ||
-              user?.Permissions?.includes("approveposts") ||
-              user?.Permissions?.includes("rejectposts")) && (
+            {/* <MenuItem component={<Link to='/docs' />}> Documentation</MenuItem> */}
+            {user?.Permissions?.some((permission) =>
+              [
+                "admin",
+                "approveposts",
+                "rejectposts",
+                "editcsselement",
+                "deletecsselement",
+                "createchallenges",
+                "deletechallenges",
+                "editchallenges",
+                "createevents",
+                "editevents",
+                "deleteevents",
+                "deletenotes",
+                "editsubmissions",
+                "deletesubmissions",
+              ].includes(permission)
+            ) && (
               <MenuItem component={<Link to='/admin' />}>
                 {" "}
                 Admin Controls
