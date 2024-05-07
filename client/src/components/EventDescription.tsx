@@ -94,13 +94,12 @@ const EventDescription = () => {                  //changed
       ) : (
         ""
       )}
-<<<<<<< HEAD
-=======
+
       
           <h1>{Cssdata.eventName}</h1>
           <p>{Cssdata.description}</p>
      <img src={Cssdata.img} alt="" />
->>>>>>> e95bae6bcabc4aa6ef14f76d6d39f61d6e37b881
+
 
        
     <div className="container">
