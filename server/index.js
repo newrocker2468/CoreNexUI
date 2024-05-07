@@ -364,14 +364,14 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
-        console.log("hi");
+        console.log(profile);
         console.log(profile._json.bio);
         let user = await userdb.findOne({ email: profile._json.blog });
         if (!user) {
           user = new userdb({
             github: {
               Id: profile.id,
-              displayName: profile.displayName,
+              displayName: profile._json.login,
               image: profile.photos[0].value,
               bio: profile._json.bio,
             },
@@ -381,7 +381,7 @@ passport.use(
               image: "",
               bio: "",
             },
-            email: profile._json.blog,
+            email: profile.emails[0].value,
             password: uuidv4(),
             lastLoggedInWith: "github",
             Permissions: ["newuser"],
