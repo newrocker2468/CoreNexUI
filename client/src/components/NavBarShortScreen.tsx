@@ -16,6 +16,7 @@ import HamburgerDark from "@/Icons/hamburgerdark.svg";
 import { useTheme } from "./theme-provider";
 import UserContext from "./UserContext";
 import SideBar from "./SideBar";
+import { ModeToggle } from "./mode-toggle";
 
 export function NavBarShortScreen() {
   const { user } = useContext(UserContext);
@@ -65,6 +66,7 @@ export function NavBarShortScreen() {
             }}
           />
         </div>
+        <ModeToggle/>
         <div className='flex justify-center items-center '>
           <SideBar fheight={false} marginb={false} fwidth={true}/>
         </div>
