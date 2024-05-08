@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef, useContext } from "react";
 import { Tabs, Tab, Card, CardBody, useDisclosure } from "@nextui-org/react";
 import { Switch } from "@nextui-org/react";
@@ -5,11 +7,10 @@ import { Button } from "@nextui-org/react";
 import { Link } from "@nextui-org/react";
 // import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+// import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import Editor from "@monaco-editor/react";
 import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "./UserContext";
-import { usePrompt } from "react-router-dom";
 
 import {
   Modal,
@@ -26,7 +27,7 @@ const LiveEditor = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [html, setHtml] = useState("<!--Code Here -->");
   const divRef = useRef<HTMLDivElement>(null);
   const [isSelected, setIsSelected] = useState(false);
@@ -38,7 +39,7 @@ const LiveEditor = () => {
     localStorage.setItem("css", css);
   };
 
-  function handleEditorDidMount(editor, monaco) {
+  function handleEditorDidMount(editor :any, monaco : any) {
     monaco.editor.defineTheme("myTheme", {
       base: "vs-dark",
       inherit: true,
@@ -63,7 +64,7 @@ const LiveEditor = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "b"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -87,7 +88,7 @@ const LiveEditor = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -125,7 +126,7 @@ const LiveEditor = () => {
         "8",
         "9",
       ],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => any; }, position: { lineNumber: any; column: number; }) {
         // Get the line up to the cursor position
         const line = model.getValueInRange({
           startLineNumber: position.lineNumber,
@@ -177,7 +178,7 @@ const LiveEditor = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -200,7 +201,7 @@ const LiveEditor = () => {
     });
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -223,7 +224,7 @@ const LiveEditor = () => {
     });
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -247,7 +248,7 @@ const LiveEditor = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: [">", "."],
-      provideCompletionItems: (model, position) => {
+      provideCompletionItems: (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => string; getWordUntilPosition: (arg0: any) => any; }, position: { lineNumber: any; column: any; }) => {
         const codePre: string = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,
@@ -278,7 +279,7 @@ const LiveEditor = () => {
         ];
         let flag = true;
         // If the tag is unpaired, return an empty suggestions object
-        if (unpairedTags.includes(tag)) {
+        if (unpairedTags.includes((tag as string))) {
           flag = false;
           return { suggestions: [] };
         }
@@ -325,7 +326,7 @@ const LiveEditor = () => {
         "8",
         "9",
       ],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: number; startColumn: number; endLineNumber: any; endColumn: any; }) => any; }, position: { lineNumber: any; column: number; }) {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: 1,
           startColumn: 1,
@@ -384,7 +385,7 @@ const LiveEditor = () => {
         "9",
         "*",
       ],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => any; getLineMaxColumn: (arg0: any) => any; }, position: { lineNumber: any; column: number; }) {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,
@@ -432,7 +433,7 @@ const LiveEditor = () => {
     });
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["."],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => any; }, position: { lineNumber: any; column: number; }) {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,
@@ -475,7 +476,7 @@ const LiveEditor = () => {
       },
     });
 
-    editor.onDidChangeModelContent((event) => {
+    editor.onDidChangeModelContent((event: { changes: any; }) => {
       // Get the changes from the event
       const changes = event.changes;
 
@@ -637,10 +638,10 @@ const LiveEditor = () => {
     const div = divRef.current;
     if (!div) return;
     // const contentWidth = div.scrollWidth;
-    const contentHeight = div.scrollHeight;
+    // const contentHeight = div.scrollHeight;
 
     // const newWidth = contentWidth * 1.1;
-    const newHeight = contentHeight;
+    // const newHeight = contentHeight;
 
     div.style.width = `40dvw`;
     div.style.height = `70dvh`;
@@ -781,7 +782,11 @@ const LiveEditor = () => {
                       height='100vh'
                       defaultLanguage='html'
                       value={html}
-                      onChange={(newValue) => setHtml(newValue)}
+                      onChange={(newValue) => {
+                        if (newValue !== undefined) {
+                          setHtml(newValue);
+                        }
+                      }}
                       defaultValue='<!--Enter Your Html Code Here-->'
                       onMount={handleEditorDidMount}
                       className='border-2 border-black rounded overflow-hidden'
@@ -807,7 +812,11 @@ const LiveEditor = () => {
                       height='100vh'
                       defaultLanguage='css'
                       value={css}
-                      onChange={(newValue) => setCss(newValue)}
+                      onChange={(newValue) => {
+                        if (newValue !== undefined) {
+                          setCss(newValue);
+                        }
+                      }}
                       defaultValue=''
                       onMount={handleEditorDidMount}
                       className='border-2 border-black rounded overflow-hidden'

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FunctionComponent } from "react";
 declare module "lucide-react" {
   export const Moon: FunctionComponent;

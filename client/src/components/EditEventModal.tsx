@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import "@/Styles/CssChallengeDescription.css";
@@ -56,8 +57,8 @@ const EditEventModal: FC<EditProps> = ({
   const storedEndDate = Cssdata?.date?.to
     ? new Date(Cssdata.date.to)
     : addDays(new Date(), 7);
-  const [id, setid] = useState(`${Cssdata?.id}`);
-const [user ,setUser]=useState<any>(null)
+  const [id] = useState(`${Cssdata?.id}`);
+const [ ,setUser]=useState<any>(null)
   const [files, setFiles] = useState<File[]>([]);
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: storedStartDate,
@@ -187,7 +188,7 @@ useEffect(() => {
  
 
 
-  const createFormData = (id: string, img: string) => {
+  const createFormData = (_id: string, img: string) => {
     const StartDate = date?.from ? format(date.from, "MMM dd, yyyy") : "";
     const EndDate = date?.to ? format(date.to, "MMM dd, yyyy") : "";
 

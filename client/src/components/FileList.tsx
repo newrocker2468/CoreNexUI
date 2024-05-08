@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -12,8 +13,20 @@ import {
 } from "@nextui-org/react";
 import { Link } from "@nextui-org/react";
 import { toast } from "sonner";
-
-export default function FileList({ files,setFiles }) {
+import {FC} from "react"
+interface FileListProps {
+  files: {
+    _id: string;
+    path: string;
+    filename: string;
+    size: number;
+    mimetype: string;
+    uploadDate: string;
+    user: string;
+  }[];
+  setFiles: any;
+}
+const FileList:FC<FileListProps> = ({ files,setFiles }) => {
   const { onOpen } = useDisclosure();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,7 +108,7 @@ useEffect(() => {
               maxWidth: "100%",
             }}
           />
-          <p style={{ wordWrap: "anywhere", maxWidth: "200px" }}>
+          <p style={{ wordBreak: "normal", maxWidth: "200px" }}>
             {file.filename.length > 20
               ? `${file.filename.substring(0, 20)}...`
               : file.filename}
@@ -215,3 +228,4 @@ useEffect(() => {
     </div>
   );
 }
+export default FileList;

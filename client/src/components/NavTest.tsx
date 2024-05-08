@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import * as React from "react";
@@ -22,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
 import UserContext from "./UserContext";
 import { Link as RouterLink} from "react-router-dom";
-import { JwtPayload, jwtDecode } from "jwt-decode";
+
 import { NavBarShortScreen } from "./NavBarShortScreen";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -98,7 +101,7 @@ export default function NavTest() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
- const [token, setToken] = useState(null);
+ const [, setToken] = useState(null);
 useEffect(() => {
   const fetchUser = async () => {
     try {
@@ -130,49 +133,55 @@ useEffect(() => {
       }
     } catch (error) {
       console.log(error);
+const response = (error as any).response;
 
       // If the error is due to an expired token, refresh the token
-      if (error.response.status === 401) {
-        try {
-          // Request a new token
-          const tokenRes = await axios.post(
-            "http://localhost:3000/refresh_token",
-            {},
-            { withCredentials: true }
-          );
+  if(error instanceof Error){
+        if (response.status === 401) {
+          try {
+            // Request a new token
+             await axios.post(
+              "http://localhost:3000/refresh_token",
+              {},
+              { withCredentials: true }
+            );
 
-          // Retry the original request
-          const retryRes = await axios("http://localhost:3000/validate-token", {
-            withCredentials: true,
-          });
+            // Retry the original request
+            const retryRes = await axios(
+              "http://localhost:3000/validate-token",
+              {
+                withCredentials: true,
+              }
+            );
 
-          const user = await retryRes.data.user;
-          if (user) {
-            const platform = user.lastLoggedInWith;
-            const profile = user[platform];
-            let highres_img = profile.image;
-            if (profile.image.includes("s96-c")) {
-              highres_img = profile.image.replace("s96-c", "s500-c");
-            } else if (profile.image.includes("sz=50")) {
-              highres_img = profile.image.replace("sz=50", "sz=240");
-            }
-            console.log("dddddddddddddddddddddddddddddddddd");
+            const user = await retryRes.data.user;
+            if (user) {
+              const platform = user.lastLoggedInWith;
+              const profile = user[platform];
+              let highres_img = profile.image;
+              if (profile.image.includes("s96-c")) {
+                highres_img = profile.image.replace("s96-c", "s500-c");
+              } else if (profile.image.includes("sz=50")) {
+                highres_img = profile.image.replace("sz=50", "sz=240");
+              }
+              console.log("dddddddddddddddddddddddddddddddddd");
               console.log(user);
-            setUser((prevState) => ({
-              ...prevState,
-              userName: profile.displayName,
-              avatarProps: profile.image,
-              highres_img: highres_img,
-              isLoggedIn: true,
-              email: user.email!,
-              bio: profile.bio,
-              Permissions: user.Permissions,
-            }));
+              setUser((prevState) => ({
+                ...prevState,
+                userName: profile.displayName,
+                avatarProps: profile.image,
+                highres_img: highres_img,
+                isLoggedIn: true,
+                email: user.email!,
+                bio: profile.bio,
+                Permissions: user.Permissions,
+              }));
+            }
+          } catch (refreshError) {
+            console.log(refreshError);
           }
-        } catch (refreshError) {
-          console.log(refreshError);
         }
-      }
+  }
     }
   };
 
@@ -183,7 +192,7 @@ useEffect(() => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/logout", {
+   await axios.get("http://localhost:3000/logout", {
         withCredentials: true,
       });
       // console.log(response);
@@ -371,7 +380,7 @@ useEffect(() => {
 const ListItem = React.forwardRef<
   React.ElementRef<typeof RouterLink>,
   React.ComponentPropsWithoutRef<typeof RouterLink>
->(({ className, title, children, to, ...props }, ref) => {
+>(({ className, title, children, to, ...props }) => {
   return (
     <li>
       <NavigationMenuLink asChild>

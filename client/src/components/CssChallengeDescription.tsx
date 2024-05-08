@@ -1,17 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useParams } from "react-router-dom";
 import Csschallengecard from "./Csschallengecard";
 import "@/Styles/CssChallengeDescription.css";
-import uiverse from "@/images/uiversecss2.jpg";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import DeleteModal from "./DeleteModal";
 import EditChallengeModal from "./EditChallengeModal";
 import Btn from "./Btn";
-import { v4 as uuidv4 } from "uuid";
-import CssElement from "./CssElement";
 import { toast } from "sonner";
-import { useLocation } from "react-router-dom";
 import ChallengesPosts from "./ChallengesPosts";
 
 interface Challenge1 {
@@ -31,7 +30,7 @@ interface Challenge1 {
 const CssChallengeDescription = () => {
   const params = useParams();
   const[sortedSubmissions, setSortedSubmissions] = useState([]);
-  const [votesno, setVotesno] = useState(0);
+  const [votesno] = useState(0);
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line

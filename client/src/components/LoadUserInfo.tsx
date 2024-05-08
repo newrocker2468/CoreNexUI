@@ -1,6 +1,6 @@
 import { Autocomplete, AutocompleteItem, Avatar } from "@nextui-org/react";
 import axios from "axios";
-import { Key, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoadUserData from "@/components/LoadUserData";
 
 type User = {

@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Home from "./Pages/Home";
 import "./App.css";
 import {
@@ -5,7 +8,6 @@ import {
   Route,
   useNavigate,
   useLocation,
-  useRouteMatch,
 } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -31,12 +33,10 @@ import PermissionManager from "./Pages/PermissionManager";
 import UploadData from "./components/UploadData";
 
 import EventManagement from "./Pages/EventManagement";
-import EditEventModal from "./components/EditEventModal";
 import EventDescription from "./components/EventDescription";
 
 import VerifyEmail from "./Pages/VerifyEmail";
 import ForgotPassword from "./Pages/ForgotPassword";
-import ChallengesPosts from "./components/ChallengesPosts";
 import ViewChallengePostCode from "./Pages/ViewChallengePostsCode";
 import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
 import NotesUpload from "./Pages/NotesUpload";
@@ -61,7 +61,7 @@ const [loading, setLoading] = useState(true);
     Permissions: ["newuser"],
   });
 
-const [permission,setpermission] = useState(["newuser"]);
+const [,setpermission] = useState(["newuser"]);
 const fetchUserData = async () => {
   try {
     const response = await axios("http://localhost:3000/validate-token", {

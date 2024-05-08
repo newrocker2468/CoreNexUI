@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useState, useEffect } from "react";
 import {Highlight, themes } from "prism-react-renderer";
 import { useTheme } from "./theme-provider";
 // import {defaultTheme} from "prism-react-renderer";
-import { set } from "date-fns";
+
 
 interface Codeprops {
   newTextToWrite?: string;
@@ -21,10 +22,8 @@ const Code: FC<Codeprops> = ({
   code,
   animationDelay,
   animated,
-  maxHeight,
   show,
-  startLine,
-  endLine,
+  
 }) => {
   const initialText = codeLast ? code + codeLast : code;
   const [text, setText] = useState(animated ? "" : initialText);
@@ -61,7 +60,7 @@ const Code: FC<Codeprops> = ({
         animationDelay ? animationDelay : 50
       );
     }
-  }, [initialText, show]);
+  }, [animated, animationDelay, initialText, show]);
 
   // console.log(text);
 
@@ -84,49 +83,47 @@ const Code: FC<Codeprops> = ({
         return () => clearInterval(intervalId);
       });
     }
-  }, [newTextToWrite]);
+  }, [code, codeLast, newTextToWrite]);
   return (
     <>
-
-        <Highlight
-          // {...defaultTheme}
-          theme={theme === "dark" ? themes.shadesOfPurple : themes.oneLight}
-          code={text}
-          language='tsx'
-        >
-          {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre
-              style={{
-                ...style,
-                backgroundColor: "transparent",
-                paddingTop: 0,
-                paddingBottom: 0,
-                // maxHeight: show ? (maxHeight ? maxHeight : 24) : 0,
-                opacity: show ? 1 : 0,
-                height: "auto",
-width:"inherit",
-              }}
-              className={className + "transition-all duration-700"}
-            >
-              {tokens.map((line, i) => (
-                <div
-                  key={i}
-                  {...getLineProps({ line })}
-                  style={{ position: "relative"}}
-                  className="text-pretty overflow-hidden"
-                >
-                  {" "}
-                  {/* <span>{lineNumber}</span> */}
-                  {/* <span>{i + 1}</span> */}
-                  {line.map((token, key) => (
-                    <span key={key} {...getTokenProps({ token })}  className=""/>
-                  ))}
-                </div>
-              ))}
-            </pre>
-          )}
-        </Highlight>
-   
+      <Highlight
+        // {...defaultTheme}
+        theme={theme === "dark" ? themes.shadesOfPurple : themes.oneLight}
+        code={text}
+        language='tsx'
+      >
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <pre
+            style={{
+              ...style,
+              backgroundColor: "transparent",
+              paddingTop: 0,
+              paddingBottom: 0,
+              // maxHeight: show ? (maxHeight ? maxHeight : 24) : 0,
+              opacity: show ? 1 : 0,
+              height: "auto",
+              width: "inherit",
+            }}
+            className={className + "transition-all duration-700"}
+          >
+            {tokens.map((line, i) => (
+              <div
+                key={i}
+                {...getLineProps({ line })}
+                style={{ position: "relative" }}
+                className='text-pretty overflow-hidden'
+              >
+                {" "}
+                {/* <span>{lineNumber}</span> */}
+                {/* <span>{i + 1}</span> */}
+                {line.map((token, key) => (
+                  <span key={key} {...getTokenProps({ token })} className='' />
+                ))}
+              </div>
+            ))}
+          </pre>
+        )}
+      </Highlight>
     </>
   );
 };

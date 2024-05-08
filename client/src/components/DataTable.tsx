@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import  { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Table,
@@ -17,39 +19,39 @@ type DataType = {
 };
 
 function UploadData() {
-  const [file, setFile] = useState<File | null>(null);
+  // const [file] = useState<File | null>(null);
   const [data, setData] = useState<DataType[]>([]);
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  // const handleSubmit = async (event: React.FormEvent) => {
+  //   event.preventDefault();
 
-    if (!file) {
-      alert("Please select a file");
-      return;
-    }
+  //   if (!file) {
+  //     alert("Please select a file");
+  //     return;
+  //   }
 
-    const formData = new FormData();
-    formData.append("file", file);
+  //   const formData = new FormData();
+  //   formData.append("file", file);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-        console.log(response.data);
-      // Assuming the response data is an array of DataType
-      if (Array.isArray(response.data)) {
-        setData(response.data);
-      }
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:3000/upload",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+  //       console.log(response.data);
+  //     // Assuming the response data is an array of DataType
+  //     if (Array.isArray(response.data)) {
+  //       setData(response.data);
+  //     }
+  //     console.log(response.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   // Fetch data from your database
   const fetchData = async () => {
@@ -76,7 +78,7 @@ function UploadData() {
       {data.map((table, index) => (
         <div className='p-5' key={index}>
           <h2 className='text-2xl font-bold mb-5'>Table {index + 1}</h2>
-          {table.Tables.map((table, index) => {
+          {table.Tables.map((table : any, index : any) => {
             if (table.TableJson) {
               const headers = Object.values(table.TableJson[0]);
               const rows = Object.values(table.TableJson).slice(1);
@@ -84,14 +86,14 @@ function UploadData() {
                 <div key={index} className="m-5">
                   <Table aria-label={`Table ${index + 1}`}>
                     <TableHeader>
-                      {headers.map((header, headerIndex) => (
+                      {headers.map((header : any, headerIndex) => (
                         <TableColumn key={headerIndex}>{header}</TableColumn>
                       ))}
                     </TableHeader>
                     <TableBody>
-                      {rows.map((row, rowIndex) => (
+                      {rows.map((row : any, rowIndex) => (
                         <TableRow key={rowIndex}>
-                          {Object.values(row).map((cell, cellIndex) => (
+                          {Object.values(row).map((cell : any, cellIndex) => (
                             <TableCell key={cellIndex}>{cell || '--'}</TableCell>
                           ))}
                         </TableRow>
@@ -107,15 +109,15 @@ function UploadData() {
                 <div key={index} className="m-5">
                   <Table aria-label={`Sub Table ${index + 1}`}>
                     <TableHeader>
-                      {headers.map((header, headerIndex) => (
+                      {headers.map((header : any, headerIndex) => (
                         <TableColumn key={headerIndex}>{header}</TableColumn>
                       ))}
                     </TableHeader>
                     <TableBody>
-                      {rows.map((row, rowIndex) => (
+                      {rows.map((row : any, rowIndex) => (
                         <TableRow key={rowIndex}>
                           {/*object.values converts objects to array of its properties*/}
-                          {Object.values(row).map((cell, cellIndex) => (
+                          {Object.values(row).map((cell : any, cellIndex) => (
                             <TableCell key={cellIndex}>{cell || '-'}</TableCell>
                           ))}
                         </TableRow>

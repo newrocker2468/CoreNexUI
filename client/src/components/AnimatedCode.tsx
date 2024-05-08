@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useState } from "react";
 import Code from "./Code";
-import RandomQuoteGenerator from "@/middlewares/RandomQuoteGenerator";
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCode,faBook } from "@fortawesome/free-solid-svg-icons";
@@ -39,7 +39,7 @@ export default Motivation;
 `;
 
   
-  const [quote, setQuote] = useState<string>(
+  const [quote] = useState<string>(
     "“ Sci-fi films are the epic films of the day because we can no longer put 10,000 extras in the scene - but we can draw thousands of aliens with computers. ” - William Shatner"
   );
 const [devMode, setDevMode] = useState(false);
@@ -50,11 +50,11 @@ useEffect(() => {
     setDevMode(true);
     return;
   }
-  const fetchQuote = async () => {
-    const quote1 = await RandomQuoteGenerator();
-    console.log(quote1);
-    setQuote(quote1[0].quote);
-  };
+  // const fetchQuote = async () => {
+  //   const quote1 = await RandomQuoteGenerator();
+  //   console.log(quote1);
+  //   setQuote(quote1[0].quote);
+  // };
 
   // fetchQuote();
 }, [devMode]);

@@ -1,6 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import "@/Styles/CssChallengeDescription.css";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import {  FC, useEffect, useState } from "react";
 import React, { Dispatch, SetStateAction } from "react";
 
 import {
@@ -20,11 +23,10 @@ import { Textarea } from "@nextui-org/react";
 import Btn from "./Btn";
 import EditIcon from "@/Icons/edit (1).png";
 import uiversecss from "@/images/uiversecss2.jpg";
-import { addDays, format, set } from "date-fns";
+import { addDays, format} from "date-fns";
 import { toast } from "sonner";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 interface Challenge1 {
@@ -57,8 +59,8 @@ const EditChallengeModal: FC<EditProps> = ({
   const storedEndDate = Cssdata?.date?.to
     ? new Date(Cssdata.date.to)
     : addDays(new Date(), 7);
-  const [id, setid] = useState(`${Cssdata?.id}`);
-const [user ,setUser]=useState<any>(null)
+  // const [id] = useState(`${Cssdata?.id}`);
+const [setUser]=useState<any>(null)
   const [files, setFiles] = useState<File[]>([]);
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: storedStartDate,
@@ -77,9 +79,7 @@ const [user ,setUser]=useState<any>(null)
    appId: import.meta.env.VITE_APPID,
    measurementId: import.meta.env.VITE_MEASUREMENTID,
  };
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const storage = getStorage(app);
+  initializeApp(firebaseConfig);
 const uploadToFirebase = (
   file: Blob | Uint8Array | ArrayBuffer,
   name:string,
@@ -87,7 +87,7 @@ const uploadToFirebase = (
   const storage = getStorage();
   const storageRef = ref(storage, name);
 
-  return uploadBytes(storageRef, file).then((snapshot) => {
+  return uploadBytes(storageRef, file).then(() => {
     console.log("Uploaded a blob or file!");
     return getDownloadURL(storageRef);
   });
@@ -103,11 +103,11 @@ const uploadToFirebase = (
 
 
 
-const CreateChallenge = async (id: string, displayImage: string) => {
+const CreateChallenge = async ( displayImage: string) => {
   try {
     const response = await axios.post(
       `http://localhost:3000/csschallengesupdate`,
-      createFormData(id, displayImage),
+      createFormData(displayImage),
       {
         headers: {
           "Content-Type": "application/json",
@@ -171,16 +171,16 @@ useEffect(() => {
       const name = file.name;
       console.log(name);
       const imageUrl = await uploadToFirebase(file, name); // assuming this returns a Promise that resolves with the image URL
-      const formdata = createFormData(id, imageUrl);
+      const formdata = createFormData( imageUrl);
       setCssdata({ ...Cssdata, ...formdata });
-      CreateChallenge(id, imageUrl);
+      CreateChallenge(imageUrl);
       setFiles([]);
     };
     reader.readAsDataURL(files[0]);
   } else {
-    const formdata = createFormData(id, uiversecss);
+    const formdata = createFormData(uiversecss);
     setCssdata({ ...Cssdata, ...formdata });
-    CreateChallenge(id, uiversecss);
+    CreateChallenge( uiversecss);
   }
 
 
@@ -189,7 +189,7 @@ useEffect(() => {
  
 
 
-  const createFormData = (id: string, img: string) => {
+  const createFormData = ( img: string) => {
     const StartDate = date?.from ? format(date.from, "MMM dd, yyyy") : "";
     const EndDate = date?.to ? format(date.to, "MMM dd, yyyy") : "";
 

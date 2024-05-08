@@ -47,7 +47,10 @@ app.use(bodyParser.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://firebasestorage.googleapis.com"],
+    origin: [
+      "http://localhost:5173",
+      "https://firebasestorage.googleapis.com",
+    ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })

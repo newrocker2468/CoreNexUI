@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table } from "@nextui-org/react";
+
 import DataTable from "./DataTable";
 
 function UploadData() {
   const [file, setFile] = useState<File | null>(null);
-  const [data, setData] = useState([]);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const [, setData] = useState<any[]>([]);
+
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -37,6 +40,8 @@ function UploadData() {
   };
 
   // Fetch data from your database
+
+
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:3000/data");

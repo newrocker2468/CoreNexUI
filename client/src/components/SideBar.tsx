@@ -4,9 +4,15 @@ import { useTheme } from "./theme-provider";
 import { ScrollShadow } from "@nextui-org/react";
 import UserContext from "./UserContext";
 import { useContext } from "react";
-const SideBar = () => {
+import {FC} from "react";
+interface user {
+  fheight?: boolean;
+  marginb?: boolean;
+  fwidth?: boolean;
+}
+const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
   const { theme } = useTheme();
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   // Define styles for light and dark themes
   const styles =
     theme === "dark"
@@ -16,7 +22,7 @@ const SideBar = () => {
           onHover: {
             backgroundColor: "#212121",
           },
-          marginBottom: "20rem",
+          marginBottom: marginb ? "20rem" : "1rem",
           marginTop: "1rem",
         }
       : {
@@ -38,9 +44,10 @@ const SideBar = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          height: "100vh",
+          height: fheight ? "100dvh" : "",
+
           overflow: "auto",
-          width: "200px",
+          width: fwidth ? "100%" : "200px",
         }}
       >
         {/* collapsed={true} */}

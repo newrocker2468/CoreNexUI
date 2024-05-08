@@ -1,7 +1,6 @@
-import React, { Key, useEffect } from "react";
+import { Key, useEffect } from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { FC } from "react";
-import { set } from "date-fns";
 
 interface ModalRadioCreateCssProps {
   Category: string;

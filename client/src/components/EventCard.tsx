@@ -1,30 +1,29 @@
-import uiversecss from "@/images/uiversecss2.jpg";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import "@/Styles/Card.css";
 import { FC, useState } from "react";
 import { useHover } from "@react-aria/interactions";
 import whitetick from "@/Icons/check.png";
 import blacktick from "@/Icons/blackcheck.png";
 import { useTheme } from "./theme-provider";
-import { Link } from "react-router-dom";
-import { DateRange } from "react-day-picker";
 interface CsscardProps {
-  id:String,
-  title:String,
-  description:String,
-  img:String,
-  status:String,
+  id: string;
+  title: string;
+  description: string;
+  img: string;
+  status: string;
   sdate?: string;
   edate?: string;
 }
 
-const EventCard: FC<CsscardProps> = ({id, title, description,sdesc, img, status,sdate,edate }) => {
+const EventCard: FC<CsscardProps> = ({ title, description, img,sdate,edate }) => {
   console.log(title + "dddddddddddddddddddddddddddddddddddddd")
   const [isHovered, setIsHovered] = useState(false);
   const { hoverProps } = useHover({
     onHoverStart: () => setIsHovered(true),
     onHoverEnd: () => setIsHovered(false),
   });
-  const calculateStatus = (sdate, edate) => {
+  const calculateStatus = (sdate: string, edate: string) => {
     const currentDate = new Date();
     const startDate = new Date(sdate);
     const endDate = new Date(edate);
@@ -65,7 +64,7 @@ const EventCard: FC<CsscardProps> = ({id, title, description,sdesc, img, status,
               className='inline'
               width={"25rem"}
             />
-            <span className='mr-1.5'> {calculateStatus(sdate, edate)}</span>
+            <span className='mr-1.5'> {calculateStatus(sdate || "", edate || "")}</span>
           </p>
 
           <div>

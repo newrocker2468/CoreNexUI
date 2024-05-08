@@ -1,8 +1,9 @@
-import { css } from "@emotion/react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Editor } from "@monaco-editor/react";
 import { Button, Card, CardBody, Switch, Tab, Tabs } from "@nextui-org/react";
 import axios from "axios";
-import { FC, useContext, useEffect, useRef, useState } from "react";
+import {  useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import SideBar from "./SideBar";
 import { toast } from "sonner";
@@ -46,7 +47,7 @@ const ViewChallengeCode = () => {
       });
   }, []);
 
-  function handleEditorDidMount(editor, monaco) {
+  function handleEditorDidMount(editor : any, monaco: any) {
     monaco.editor.defineTheme("myTheme", {
       base: "vs-dark",
       inherit: true,
@@ -73,7 +74,7 @@ const ViewChallengeCode = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "b"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -97,7 +98,7 @@ const ViewChallengeCode = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -135,7 +136,7 @@ const ViewChallengeCode = () => {
         "8",
         "9",
       ],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => any; }, position: { lineNumber: any; column: number; }) {
         // Get the line up to the cursor position
         const line = model.getValueInRange({
           startLineNumber: position.lineNumber,
@@ -187,7 +188,7 @@ const ViewChallengeCode = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -210,7 +211,7 @@ const ViewChallengeCode = () => {
     });
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -233,7 +234,7 @@ const ViewChallengeCode = () => {
     });
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["<", "d"],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (_model: any, position: { lineNumber: any; column: number; }) {
         // your logic to generate suggestions
         return {
           suggestions: [
@@ -257,7 +258,7 @@ const ViewChallengeCode = () => {
 
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: [">", "."],
-      provideCompletionItems: (model, position) => {
+      provideCompletionItems: (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => string; getWordUntilPosition: (arg0: any) => any; }, position: { lineNumber: any; column: any; }) => {
         const codePre: string = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,
@@ -288,7 +289,7 @@ const ViewChallengeCode = () => {
         ];
         let flag = true;
         // If the tag is unpaired, return an empty suggestions object
-        if (unpairedTags.includes(tag)) {
+        if (unpairedTags.includes(tag as string)) {
           flag = false;
           return { suggestions: [] };
         }
@@ -335,7 +336,7 @@ const ViewChallengeCode = () => {
         "8",
         "9",
       ],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: number; startColumn: number; endLineNumber: any; endColumn: any; }) => any; }, position: { lineNumber: any; column: number; }) {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: 1,
           startColumn: 1,
@@ -394,7 +395,7 @@ const ViewChallengeCode = () => {
         "9",
         "*",
       ],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => any; getLineMaxColumn: (arg0: any) => any; }, position: { lineNumber: any; column: number; }) {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,
@@ -442,7 +443,7 @@ const ViewChallengeCode = () => {
     });
     monaco.languages.registerCompletionItemProvider("html", {
       triggerCharacters: ["."],
-      provideCompletionItems: function (model, position) {
+      provideCompletionItems: function (model: { getValueInRange: (arg0: { startLineNumber: any; startColumn: number; endLineNumber: any; endColumn: any; }) => any; }, position: { lineNumber: any; column: number; }) {
         const textUntilPosition = model.getValueInRange({
           startLineNumber: position.lineNumber,
           startColumn: 1,
@@ -485,7 +486,7 @@ const ViewChallengeCode = () => {
       },
     });
 
-    editor.onDidChangeModelContent((event) => {
+    editor.onDidChangeModelContent((event: { changes: any; }) => {
       // Get the changes from the event
       const changes = event.changes;
 
@@ -557,7 +558,7 @@ const ViewChallengeCode = () => {
         {},
         { withCredentials: true }
       )
-      .then((response) => {
+      .then(() => {
         // console.log(response);
              navigate(-2);
         toast.success("Element Deleted Successfully", {
@@ -648,17 +649,17 @@ const ViewChallengeCode = () => {
     const div = divRef.current;
     if (!div) return;
     // const contentWidth = div.scrollWidth;
-    const contentHeight = div.scrollHeight;
+    // const contentHeight = div.scrollHeight;
 
     // const newWidth = contentWidth * 1.1;
-    const newHeight = contentHeight;
+    // const newHeight = contentHeight;
 
     div.style.width = `40dvw`;
     div.style.height = `70dvh`;
   }, [html, css]);
 
   useEffect(() => {
-    const response = axios
+    axios
       .get(`http://localhost:3000/getuserdata/match/${id}`, {
         withCredentials: true,
       })
@@ -775,7 +776,11 @@ const ViewChallengeCode = () => {
                         height='100vh'
                         defaultLanguage='html'
                         value={html}
-                        onChange={(newValue) => setHtml(newValue)}
+                        onChange={(newValue) => {
+                          if (newValue !== undefined) {
+                            setHtml(newValue);
+                          }
+                        }}
                         defaultValue='<!--Enter Your Html Code Here-->'
                         onMount={handleEditorDidMount}
                         className='border-2 border-black rounded overflow-hidden'
@@ -801,7 +806,11 @@ const ViewChallengeCode = () => {
                         height='100vh'
                         defaultLanguage='css'
                         value={css}
-                        onChange={(newValue) => setCss(newValue)}
+                        onChange={(newValue) => {
+                          if (newValue !== undefined) {
+                            setCss(newValue);
+                          }
+                        }}
                         defaultValue=''
                         onMount={handleEditorDidMount}
                         className='border-2 border-black rounded overflow-hidden'

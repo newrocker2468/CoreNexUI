@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@nextui-org/react";
-import { Tabs, Tab, Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { Link } from "@nextui-org/react";
 import  Otp  from "@/components/Otp";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ export default function VerifyEmail(){
       const [value, setValue] = useState("");
 const params = useParams();
 const email = params.email;
-    const resendotp = (e) => {
+    const resendotp = (e : any) => {
         e.preventDefault();
         const response = axios.post(
           `http://localhost:3000/verify/${email}/resendotp`
@@ -26,7 +27,7 @@ const email = params.email;
             })
         })
     }
-const verifyotp = (e) => {
+const verifyotp = (e : any) => {
     e.preventDefault();
     const response = axios.post(
       `http://localhost:3000/verify/${email}/verifyotp`,
@@ -46,7 +47,7 @@ const verifyotp = (e) => {
        
     })
 };  
-const getlink = (e) => {
+const getlink = (e : any) => {
     e.preventDefault();
     const response = axios.post(
       `http://localhost:3000/send-verification-email`,{
@@ -83,7 +84,7 @@ const getlink = (e) => {
             })
             
         })
-    },[])
+    },[email, navigate])
     return (
       <>
         <div className='flex flex-col items-center justify-center'>

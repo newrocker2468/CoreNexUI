@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FC } from "react";
 import "@/Styles/Csselements.css";
 import { useParams } from "react-router-dom";
-import { useTheme } from "./theme-provider";
 import axios from "axios";
 import { toast } from "sonner";
 interface ChallengesPosts {
@@ -14,7 +15,9 @@ interface ChallengesPosts {
     id: string;
     _id?: string;
     isSelected?: boolean;
+    votes: any;
   };
+
   setSortedSubmissions: any;
 }
 
@@ -30,8 +33,8 @@ const ChallengesPosts: FC<ChallengesPosts> = ({
   setSortedSubmissions,
 }) => {
   console.log(htmlcssPairs);
-  const { theme } = useTheme();
-  const [isSelected, setIsSelected] = useState(htmlcssPairs.isSelected);
+
+  const [isSelected] = useState(htmlcssPairs.isSelected);
 
   const divRef = useRef<HTMLDivElement>(null);
   const { id } = useParams<{ id: string }>();
@@ -56,16 +59,18 @@ const ChallengesPosts: FC<ChallengesPosts> = ({
     }
   };
 
-  const handleClick = useCallback(
-    (event: { target: HTMLDivElement | null }) => {
-      if (event.target === divRef.current) {
-        if (window.location.pathname === `/Csschallenges/${id}`) {
-          navigate(`/editor/${htmlcssPairs.id}`);
-        }
+const handleClick = useCallback(
+  (event: any) => {
+    const target = event.target as HTMLDivElement;
+    if (target === divRef.current) {
+      if (window.location.pathname === `/Csschallenges/${id}`) {
+        navigate(`/editor/${htmlcssPairs.id}`);
       }
-    },
-    [navigate, htmlcssPairs.id]
-  );
+    }
+  },
+  [id, navigate, htmlcssPairs.id]
+);
+
 
   useEffect(() => {
     const div = divRef.current;
@@ -153,14 +158,7 @@ const ChallengesPosts: FC<ChallengesPosts> = ({
     shadowRoot.addEventListener("click", (event) => {
       event.stopPropagation();
     });
-  }, [
-    htmlcssPairs.html,
-    htmlcssPairs.css,
-    navigate,
-    htmlcssPairs.id,
-    htmlcssPairs._id,
-    handleClick,
-  ]);
+  }, [htmlcssPairs.html, htmlcssPairs.css, navigate, htmlcssPairs.id, htmlcssPairs._id, handleClick, id]);
 
   return (
     <>

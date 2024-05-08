@@ -1,13 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -21,7 +18,7 @@ import UserContext from "./UserContext";
 import SideBar from "./SideBar";
 
 export function NavBarShortScreen() {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
@@ -68,8 +65,8 @@ export function NavBarShortScreen() {
             }}
           />
         </div>
-        <div className='flex justify-center items-center float-left'>
-          <SideBar />
+        <div className='flex justify-center items-center '>
+          <SideBar fheight={false} marginb={false} fwidth={true}/>
         </div>
         <SheetFooter>
           <SheetClose asChild>

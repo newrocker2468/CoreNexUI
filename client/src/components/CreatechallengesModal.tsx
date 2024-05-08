@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import {
@@ -33,7 +34,7 @@ interface Challenge {
   img: string;
   status: string;
   date: { from: string; to: string };
-  submissions:[];
+  submissions: any[];
 }
 interface CreatechallengesModalProps {
   Cssdata: Challenge[];
@@ -70,7 +71,7 @@ const CreatechallengesModal: FC<CreatechallengesModalProps> = ({
     appId: import.meta.env.VITE_APPID,
     measurementId: import.meta.env.VITE_MEASUREMENTID,
   };
-  const app = initializeApp(firebaseConfig);
+ initializeApp(firebaseConfig);
   // const analytics = getAnalytics(app);
   // const storage = getStorage(app);
   
@@ -161,6 +162,7 @@ const uploadToFirebase = (
         from: StartDate,
         to: EndDate,
       },
+      submissions: [],
     };
   };
 

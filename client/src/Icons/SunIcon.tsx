@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import { SVGProps } from "react";
 export const SunIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     aria-hidden='true'

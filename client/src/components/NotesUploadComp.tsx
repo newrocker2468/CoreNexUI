@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@nextui-org/react";
 import { Input as Shdcninput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,12 +10,19 @@ import axios from "axios";
 import FileList from "./FileList";
 
 interface MyFile {
-  filename: string;
-  mimetype: string;
+  _id: string;
   path: string;
-  size:number;
+  filename: string;
+  size: number;
+  mimetype: string;
+  uploadDate: string;
+  user: string;
+ 
 }
-
+// type FileListProps = {
+//   files: MyFile[];
+//   // other props
+// };
 export default function NotesUploadComp() {
   const firebaseConfig = {
     apiKey: import.meta.env.VITE_API_KEY,

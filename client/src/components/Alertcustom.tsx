@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import {
 //   Alert,
 //   AlertIcon,
@@ -56,11 +57,8 @@ interface AlertProps {
   isvisible: boolean;
   setIsvisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const AlertCustom: FC<AlertProps> = ({ message, isvisible, setIsvisible }) => {
+const AlertCustom: FC<AlertProps> = ({ message, isvisible }) => {
   if (!isvisible) return <></>;
-  const handleClose = () => {
-    setIsvisible(false);
-  };
   return (
     <Alert style={{
 width: "23rem",

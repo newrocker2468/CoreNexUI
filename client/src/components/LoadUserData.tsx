@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import { Card, CardFooter, Image, Button } from "@nextui-org/react";
+import {  Image } from "@nextui-org/react";
 import CssElement from "./CssElement";
 type User = {
   email: string;
@@ -93,7 +93,7 @@ return (
       <div className='text-center'>No of Posts : {User.cssElements.length}</div>
     )}
     {User &&
-      User.Permissions.map((element, index) => (
+      User.Permissions.map((element) => (
         <div className='m-5'>{element}</div>
       ))}
     <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>

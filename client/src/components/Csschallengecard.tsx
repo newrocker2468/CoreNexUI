@@ -1,12 +1,12 @@
-import uiversecss from "@/images/uiversecss2.jpg";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import "@/Styles/Card.css";
 import { FC, useState } from "react";
 import { useHover } from "@react-aria/interactions";
 import whitetick from "@/Icons/check.png";
 import blacktick from "@/Icons/blackcheck.png";
 import { useTheme } from "./theme-provider";
-import { Link } from "react-router-dom";
-import { DateRange } from "react-day-picker";
+
 interface CsscardProps {
   id?: string;
   title?: string;
@@ -20,13 +20,13 @@ interface CsscardProps {
 }
 
 const Csscard: FC<CsscardProps> = ({
-  id,
+
   title,
   description,
   sdesc,
   img,
   status,
-  sdate,
+
   edate,
   numSubmissions,
 }) => {
@@ -35,22 +35,7 @@ const Csscard: FC<CsscardProps> = ({
     onHoverStart: () => setIsHovered(true),
     onHoverEnd: () => setIsHovered(false),
   });
-  const calculateStatus = (sdate, edate) => {
-    const currentDate = new Date();
-    const startDate = new Date(sdate);
-    const endDate = new Date(edate);
 
-    if (currentDate < startDate) {
-      const diffInDays = Math.ceil(
-        (startDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      return diffInDays + " days left";
-    } else if (currentDate >= startDate && currentDate <= endDate) {
-      return "Ongoing";
-    } else if (currentDate > endDate) {
-      return "Finished";
-    }
-  };
 
   const { theme } = useTheme();
   // console.log(theme);

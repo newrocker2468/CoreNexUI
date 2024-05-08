@@ -6,10 +6,7 @@ import EditEventModal from "./EditEventModal";
 import "@/Styles/CssChallengeDescription.css"
 import EventDeleteModal from "./EventDeleteModal";
 import {Image} from "@nextui-org/react";
-import {Card, CardBody} from "@nextui-org/react";
-import {Divider} from "@nextui-org/divider";
-import {Spinner} from "@nextui-org/react";
-import { ClassNames } from "@emotion/react";
+
 
 
 interface Challenge1 {

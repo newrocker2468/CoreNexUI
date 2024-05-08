@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Challenge1 {
   id: string;
   title: string;
@@ -6,7 +7,7 @@ interface Challenge1 {
   img: string;
   status: string;
   date: { from: string; to: string };
-  submissions: [];  
+  submissions: any[];
 }
 const Csschallengesdata: Challenge1[] = [];
 const fetchCsschallengesdata = async () => {

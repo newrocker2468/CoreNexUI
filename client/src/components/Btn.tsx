@@ -13,9 +13,7 @@ interface BtnProps {
   Text: string;
   logo?: string | LucideIcon;
   color?: color;
-  onClick?:
-    | React.MouseEventHandler<HTMLButtonElement>
-    | ((id: string | undefined) => Promise<void>);
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   isloading?: boolean;
   logoWidth?: number;
   onPress?: () => void;
@@ -65,7 +63,7 @@ const Btn: FC<BtnProps> = ({
       >
         {logo ? (
           <div style={{ width: logoWidth || 28, marginRight: -1 }}>
-            <img src={logo} alt='' />
+            <img src={`${logo}`} alt='' />
           </div>
         ) : (
           ""

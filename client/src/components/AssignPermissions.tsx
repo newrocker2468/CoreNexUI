@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Autocomplete, AutocompleteItem, Avatar } from "@nextui-org/react";
 import axios from "axios";
-import { Key, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { CheckboxGroup, Checkbox } from "@nextui-org/react";
 import { Image } from "@nextui-org/react";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { toast } from "sonner";
 type User = {
   email: string;

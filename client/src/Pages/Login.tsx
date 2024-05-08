@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import "../Styles/Login.css";
 // import RandomQuoteGenerator from "@/middlewares/RandomQuoteGenerator";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import EmailInput from "@/components/EmailInput.tsx";
 import "../output.css";
 import Btn from "@/components/Btn";
@@ -65,8 +66,8 @@ type FormikValues = {
 
 
 export default function Login() {
-    const { user, setUser } = useContext(UserContext);
-    const [Remember, setRemember] = useState(false);
+    const { setUser } = useContext(UserContext);
+    const [Remember] = useState(false);
  const formik = useFormik({
    initialValues: {
      email: "",
@@ -298,7 +299,7 @@ if (Remember) {
 }
 }
   };
-const [Response, setResponse] = useState("")
+const [Response] = useState("")
 const [loading, setLoading] = useState(false);
   const [EmailisInvalid, setEmailisInvalid] = useState(false);
    const [PassisInvalid, setPassisInvalid] = useState(false);
@@ -307,16 +308,16 @@ const [isvisible, setIsvisible] = useState(false);
   //   "Globalization, as defined by rich people like us, is a very nice thing... you are talking about the Internet, you are talking about cell phones, you are talking about computers. This doesn't affect two-thirds of the people of the world."
   // );  
 const navigate = useNavigate();
-const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-  setLoading(true);
-  event.preventDefault();
+// const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+//   setLoading(true);
+//   event.preventDefault();
 
-    setResponse("Please enter a valid email");
-    setIsvisible(true);
-    return setLoading(false);
+//     setResponse("Please enter a valid email");
+//     setIsvisible(true);
+//     return setLoading(false);
 
 
-};
+// };
 
   // useEffect(() => {
   //   RandomQuoteGenerator()

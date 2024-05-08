@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
 export default function CodeEditor1() {

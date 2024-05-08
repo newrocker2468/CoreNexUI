@@ -3,8 +3,7 @@ import SideBar from "../components/SideBar";
 import CssElement from "@/components/CssElement";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { Button, Link, User, divider } from "@nextui-org/react";
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
+import { Button, User } from "@nextui-org/react";
 import { toast } from "sonner";
 interface MyObject {
   _id: string;
@@ -60,59 +59,62 @@ if(res.data.error){
     }
   };
 
-  const deleteElement = async (id: string, email: string) => {
-    console.log(email);
-    console.log(id);
-    try {
-      const res = await axios.post(
-        `http://localhost:3000/Cssinapproval/delete/${id}`,
-        { email: email },
-        { withCredentials: true }
-      );
+ const deleteElement = async (id: string, email: string) => {
+   console.log(email);
+   console.log(id);
 
-if(res.data.error){
- toast(res.data.message, {
-   position: "top-center",
- });
-}
-else{
-        console.log(res.data);
-        setElementsforApproval(res.data.element);
-        toast(res.data.message, {
-          position: "top-center",
-        });
-}
-    } catch (error) {
-      console.log(error);
+   try {
+     const res = await axios.post(
+       `http://localhost:3000/Cssinapproval/delete/${id}`,
+       { email: email },
+       { withCredentials: true }
+     );
 
-      // If the error is due to an expired token, refresh the token
-      if (error.response.status === 401) {
-        try {
-          // Request a new token
-          const tokenRes = await axios.post(
-            "http://localhost:3000/refresh_token",
-            {},
-            { withCredentials: true }
-          );
+     if (res.data.error) {
+       toast(res.data.message, {
+         position: "top-center",
+       });
+     } else {
+       console.log(res.data);
+       setElementsforApproval(res.data.element);
+       toast(res.data.message, {
+         position: "top-center",
+       });
+     }
+   } catch (error) {
+     console.log(error);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const response = (error as any).response;
 
-          // Retry the original request
-          const retryRes = await axios.post(
-            `http://localhost:3000/Cssinapproval/delete/${id}`,
-            { email: email },
-            { withCredentials: true }
-          );
 
-          console.log(retryRes.data);
-          setElementsforApproval(retryRes.data.element);
-          toast(retryRes.data.message, {
-            position: "top-center",
-          });
-        } catch (refreshError) {
-          console.log(refreshError);
-        }
-      }
-    }
-  };
+     if (error instanceof Error && response && response === 401) {
+       try {
+         // Request a new token
+         await axios.post(
+           "http://localhost:3000/refresh_token",
+           {},
+           { withCredentials: true }
+         );
+
+         // Retry the original request
+         const retryRes = await axios.post(
+           `http://localhost:3000/Cssinapproval/delete/${id}`,
+           { email: email },
+           { withCredentials: true }
+         );
+
+         console.log(retryRes.data);
+         setElementsforApproval(retryRes.data.element);
+         toast(retryRes.data.message, {
+           position: "top-center",
+         });
+       } catch (refreshError) {
+         console.log(refreshError);
+       }
+     }
+   }
+ };
+
 
   const approveElement = async (id: string, email: string) => {
     try {

@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { extendTheme } from "@chakra-ui/react";
-import Logo from "@/Icons/Logo.svg";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
+
 type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {
@@ -8,7 +7,6 @@ type ThemeProviderProps = {
   defaultTheme?: Theme;
   storageKey?: string;
 };
-
 
 type ThemeProviderState = {
   theme: Theme;
@@ -28,26 +26,20 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  
-  const [theme, setTheme] = useState<Theme>(
+  const [userPreference, setUserPreference] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
 
+  const theme = useMemo(() => {
+    if (userPreference !== "system") return userPreference;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }, [userPreference]);
+
   useEffect(() => {
     const root = window.document.documentElement;
-
     root.classList.remove("light", "dark");
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
-      root.classList.add(systemTheme);
-      return;
-    }
-
     root.classList.add(theme);
   }, [theme]);
 
@@ -55,7 +47,7 @@ export function ThemeProvider({
     theme,
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+      setUserPreference(theme);
     },
   };
 
