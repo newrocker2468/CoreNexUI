@@ -68,7 +68,7 @@ export function NavBarShortScreen() {
         </div>
         <ModeToggle/>
         <div className='flex justify-center items-center '>
-          <SideBar fheight={false} marginb={false} fwidth={true}/>
+          <SideBar fheight={false} marginb={true} fwidth={true}/>
         </div>
         <SheetFooter>
           <SheetClose asChild>

@@ -32,7 +32,7 @@ const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
             backgroundColor: "white",
             color: "black",
           },
-          marginBottom: "20rem",
+          marginBottom: marginb ? "20rem" : "1rem",
           marginTop: "1rem",
         };
 
@@ -44,7 +44,7 @@ const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
         style={{
           display: "flex",
           flexDirection: "column",
-          height: fheight ? "100dvh" : "",
+          height: fheight ? "100dvh" : "60vh",
 
           overflow: "auto",
           width: fwidth ? "100%" : "200px",
