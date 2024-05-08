@@ -101,10 +101,10 @@ const SideBar = () => {
                 {" "}
                 Tooltips
               </MenuItem>
-              <MenuItem component={<Link to='/Csselements/Myfavorites' />}>
+              {/* <MenuItem component={<Link to='/Csselements/Myfavorites' />}>
                 {" "}
                 Myfavorites
-              </MenuItem>
+              </MenuItem> */}
             </SubMenu>
             <MenuItem component={<Link to='/Csschallenges' />}>
               {" "}

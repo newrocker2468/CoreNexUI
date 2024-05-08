@@ -23,6 +23,7 @@ import Userdata from "./Userdata";
 import UserContext from "./UserContext";
 import { Link as RouterLink} from "react-router-dom";
 import { JwtPayload, jwtDecode } from "jwt-decode";
+import { NavBarShortScreen } from "./NavBarShortScreen";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -207,7 +208,7 @@ useEffect(() => {
   return (
     <>
       <div
-        className={`flex align-center justify-start  sm:justify-around mb-[1.3em] mt-[0.9rem] text-center md:items-center`}
+        className={`flex align-center justify-between  sm:justify-around mb-[1.3em] mt-[0.9rem] text-center md:items-center`}
       >
         <div className='md:flex align-center  w-[5rem] justify-start ml-[1.5rem]'>
           <Logo
@@ -322,10 +323,10 @@ useEffect(() => {
               </NavigationMenuItem>
               <NavigationMenuItem className='sm:flex hidden'>
                 <RouterLink
-                  to='/docs'
+                  to='/event'
                   className={`${navigationMenuTriggerStyle()}  no-underline text-current text-sm leading-none`}
                 >
-                  <span className='font-bold '>Documentation</span>
+                  <span className='font-bold '>Events</span>
                 </RouterLink>
               </NavigationMenuItem>
               <div
@@ -358,6 +359,9 @@ useEffect(() => {
               </NextUILink>
             </div>
           )}
+          <div className="sm:hidden flex mr-5">
+            <NavBarShortScreen/>
+          </div>
         </div>
       </div>
     </>

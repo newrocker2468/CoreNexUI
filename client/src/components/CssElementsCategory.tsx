@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CssElement from "./CssElement";
 import { v4 as uuidv4 } from "uuid";
@@ -11,18 +11,20 @@ import { toast } from "sonner";
 const CssElementsCategory = () => {
   const { category } = useParams();
 const [data, setData] = useState([]);
-   const [isSidebarVisible, setIsSidebarVisible] = useState(
-     window.innerWidth > 800
-   );
+  const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 1200
+  );
 
-   useEffect(() => {
-     const handleResize = () => {
-       setIsSidebarVisible(window.innerWidth > 1200);
-     };
 
-     window.addEventListener("resize", handleResize);
-     return () => window.removeEventListener("resize", handleResize);
-   }, []);
+  const handleResize = useCallback(() => {
+    setIsSidebarVisible(window.innerWidth > 1200);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
+
   useEffect(() => {
     fetch(`http://localhost:3000/Csselements/${category}`)
       .then((response) => response.json())
@@ -59,7 +61,7 @@ const [data, setData] = useState([]);
               >
                 Create
               </Link> */}
-            <div>
+            <div className='flex justify-center'>
               <Button
                 href={`/editor/create/${id}`}
                 as={Link}
@@ -73,7 +75,7 @@ const [data, setData] = useState([]);
               {data.map((element) => (
                 <div className='m-3' key={uuidv4()}>
                   <CssElement key={uuidv4()} htmlcssPairs={element} />
-              </div>
+                </div>
               ))}
             </div>
           </div>

@@ -29,7 +29,9 @@ const Profile = () => {
   const [approvedposts, setapprovedposts] = useState<MyObject[]>([]);
     const [inreviewposts, setinreviewposts] = useState<MyObject[]>([]);
   const { user } = useContext(UserContext);
-
+  const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 800
+  );
   function printUntilAt(s: string) {
     let i = 0;
     const arr = [];
@@ -57,6 +59,15 @@ const Profile = () => {
 // }
 
 // ,[])
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSidebarVisible(window.innerWidth > 1200);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); 
 useEffect(()=>{
   try{
     axios.get("http://localhost:3000/getuserdata",{
@@ -84,7 +95,11 @@ useEffect(() => {
    return (
      <>
        <div className='flex'>
-         <SideBar />
+         {isSidebarVisible && (
+           <div className='flex-shrink-0 overflow-auto h-screen'>
+             <SideBar />
+           </div>
+         )}
          <div className='flex flex-col w-[70%] p-5 '>
            <div className='flex justify-flex-start  '>
              <AnimatedLoading

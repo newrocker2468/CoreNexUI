@@ -73,8 +73,8 @@ export default function Csselements() {
         </div>
       )}
       <div className='flex-grow'>
-        <div className='grid'>
-          <div className='flex justify-center'>
+        <div className='grid place-items-center'>
+
             <Button
               href={`/editor/create/${id}`}
               as={nLink}
@@ -83,7 +83,7 @@ export default function Csselements() {
             >
               Create CssElement
             </Button>
-          </div>
+        
           <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
             {htmlCssPairs.map((pair) => (
               <div className='m-3' key={uuidv4()}>
