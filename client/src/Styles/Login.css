@@ -100,16 +100,3 @@ p{
         gap: 0.6rem;
 }
 
-.hrAlign{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-
-}
-.hrAlign > .hr{
-width:10rem;
-height: 2px;
-margin: 1.5em 2em 1.5em 2em;
-background-color: rgb(144, 144, 144);
-}

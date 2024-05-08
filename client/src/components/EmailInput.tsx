@@ -1,9 +1,8 @@
-import { AlertCircle } from "lucide-react";
+
 import { Input } from "@nextui-org/react";
 import "../Styles/FormInput.css";
 import { FC } from "react";
 import MailIcon from "../Icons/MailIcon";
-import ErrorAlert from "./ErrorAlert";
 import ErrorMessage from "./ErrorMessage";
 type Errors = {
   email?: string;
@@ -24,7 +23,6 @@ interface EmailInputProps {
 
 const EmailInput: FC<EmailInputProps> = ({
   variant,
-  value,
   name,
   onChange,
   id,
@@ -35,7 +33,7 @@ const EmailInput: FC<EmailInputProps> = ({
   // const variants = ["flat", "bordered", "underlined", "faded"];
 
   return (
-    <div style={{ margin: 10 }} className='my-input'>
+    <div style={{ margin: 10 }} className='sm:w-[26rem] '>
       <Input
         onChange={onChange}
         // value={value}
@@ -51,10 +49,11 @@ const EmailInput: FC<EmailInputProps> = ({
         startContent={
           <MailIcon className='text-xl text-default-400 pointer-events-none flex-shrink-0' />
         }
+        fullWidth={false}
       />
       {errors.email && (
         <>
-  <ErrorMessage errors={errors} name={`${name}`}/>
+          <ErrorMessage errors={errors} name={`${name}`} />
         </>
       )}
       {/* {errors && errors.email && (

@@ -353,24 +353,24 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
             <h3 className='h3-login'>Log in to your account to continue</h3>
             <div className='Box'>
               <Btn
-                btnStyles='w-[25rem] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
+                btnStyles='md:w-[25rem] w-[100%] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
                 logo={GoogleIcon}
                 Text='Continue with Google'
                 onClick={loginwithgoogle}
               />
 
               <Btn
-                btnStyles='w-[25rem] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
+                btnStyles='md:w-[25rem] w-[100%] bg-black border-2 border-[#3E3E45] mt-2.5 text-base text-white'
                 logo={GithubIcon}
                 Text='Continue with Github'
                 onClick={loginwithgithub}
               />
-
-              <div className='hrAlign'>
-                <hr className='hr' />
-                <h5 className=''>OR</h5>
-                <hr className='hr' />
+              <div className='flex justify-center items-center space-x-8 mt-[1rem]'>
+                <div className='w-20 border-t border-gray-400'></div>
+                <h5>OR</h5>
+                <div className='w-20 border-t border-gray-400'></div>
               </div>
+
               <form onSubmit={formik.handleSubmit}>
                 <EmailInput
                   id='email'
@@ -398,24 +398,28 @@ const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
                   isInvalid={PassisInvalid}
                 />
 
-                <div className='Logfooter'>
-                  <CheckBox
-                    text='Remember for 15 days'
-                    onChange={formik.handleChange}
-                    name='Remember'
-                  />
+                <div className='flex justify-around items-center mt-5'>
+                  <div className="mr-5">
+                    <CheckBox
+                      text='Remember for 15 days'
+                      onChange={formik.handleChange}
+                      name='Remember'
+                    />
+                  </div>
                   <AnchorLink
                     text='Forgot Password?'
                     astyles='grey'
                     to='/forgotpass'
                   />
                 </div>
-                <Btn
-                  btnStyles='w-[25rem] mt-[1.5rem] mb-2.5 bg-nprimary border-2 border-[#3E3E45]  text-base text-center text-white'
-                  Text='Log In'
-                  isloading={loading}
-                />
-                <div className='FooterAlign'>
+                <div className='flex justify-center items-center'>
+                  <Btn
+                    btnStyles=' md:w-[25rem] w-[100%] mt-[1.5rem] mb-2.5 bg-nprimary border-2 border-[#3E3E45]  text-base text-center text-white'
+                    Text='Log In'
+                    isloading={loading}
+                  />
+                </div>
+                <div className='flex justify-around items-center'>
                   <span>Need to Create New Account ?</span>
                   <AnchorLink text='Sign Up' astyles='grey' to='/signup' />
                 </div>

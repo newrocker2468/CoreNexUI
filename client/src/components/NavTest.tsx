@@ -207,9 +207,9 @@ useEffect(() => {
   return (
     <>
       <div
-        className={`flex align-center justify-around mb-[1.3em] mt-[0.9rem] text-center`}
+        className={`flex align-center justify-start  sm:justify-around mb-[1.3em] mt-[0.9rem] text-center md:items-center`}
       >
-        <div className='flex align-center justify-around w-[5rem]'>
+        <div className='md:flex align-center  w-[5rem] justify-start ml-[1.5rem]'>
           <Logo
             fill={theme === "dark" ? "#FFFFFF" : "#000000"}
             width='2.6rem'
@@ -219,7 +219,7 @@ useEffect(() => {
         <div className='flex align-center justify-center '>
           <NavigationMenu className='z-40'>
             <NavigationMenuList>
-              <NavigationMenuItem>
+              <NavigationMenuItem className='sm:flex hidden'>
                 <NavigationMenuTrigger className='font-bold'>
                   Getting started
                 </NavigationMenuTrigger>
@@ -300,7 +300,7 @@ useEffect(() => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className='font-bold'>
+                <NavigationMenuTrigger className='font-bold sm:flex hidden'>
                   Css Elements
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -320,7 +320,7 @@ useEffect(() => {
                   {/* className='line-clamp-2 text-sm leading-snug text-muted-foreground' */}
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              <NavigationMenuItem>
+              <NavigationMenuItem className='sm:flex hidden'>
                 <RouterLink
                   to='/docs'
                   className={`${navigationMenuTriggerStyle()}  no-underline text-current text-sm leading-none`}
@@ -329,7 +329,7 @@ useEffect(() => {
                 </RouterLink>
               </NavigationMenuItem>
               <div
-                className='flex justify-center align-center'
+                className='md:flex justify-center align-center hidden'
                 style={{ marginLeft: "2rem" }}
               >
                 <ModeToggle />
@@ -341,7 +341,7 @@ useEffect(() => {
         <div>
           {/* <NextuiBtn name={userName} avatarProps={} description ={description}/> */}
           {user.isLoggedIn ? (
-            <div className='flex justify-center align-center pt-1.5'>
+            <div className='flex justify-center align-center pt-1.5 md:flex hidden'>
               <Userdata
                 name={user.userName}
                 image={user.avatarProps}
@@ -352,7 +352,7 @@ useEffect(() => {
               {/* <img src={`${image}`} alt='user image' /> */}
             </div>
           ) : (
-            <div className='right-[4rem] top-[1.1rem]'>
+            <div className='right-[4rem] top-[1.1rem] sm:flex hidden'>
               <NextUILink href='/login' className='btn'>
                 <LoginWithEmail />
               </NextUILink>
