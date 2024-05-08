@@ -91,43 +91,41 @@ useEffect(() => {
   return (
     <>
       <section className='flex align-center justify-center'>
-        <div className='grid items-center w-[20dvw]'>
+        <div className='grid items-center '>
           {user?.Permissions.includes("admin") ||
           user?.Permissions.includes("createchallenges") ? (
-            <CreatechallengesModal
-              Cssdata={Cssdata}
-              Setdata={setCssdata}
-       
-            />
+            <CreatechallengesModal Cssdata={Cssdata} Setdata={setCssdata} />
           ) : (
             ""
           )}
         </div>
       </section>
-      {Cssdata?.map((data, index) => {
-        return (
-          <div className='mt-[3rem] mb-[3rem]' key={index}>
-            <Link
-              to={`${data?.id}`}
-              key={index}
-              className='text-inherit no-underline'
-            >
-              <Csscard
+      <div className="flex flex-col justify-center items-center">
+        {Cssdata?.map((data, index) => {
+          return (
+            <div className='md:mt-[1rem] mt-[4rem]' key={index}>
+              <Link
+                to={`${data?.id}`}
                 key={index}
-                id={data?.id}
-                title={data?.title}
-                description={data?.description}
-                sdesc={data?.sdesc}
-                img={data?.img}
-                status={data?.status}
-                sdate={data?.date?.from}
-                edate={data?.date?.to}
-                numSubmissions={data?.submissions?.length}
-              />
-            </Link>
-          </div>
-        );
-      })}
+                className='text-inherit no-underline md:m-4 mx-[4rem]   md:h-[50vh] md:w-[78vw]   relative  cursor-pointer flex  justify-between h-auto w-auto md:flex-row flex-col-reverse '
+              >
+                <Csscard
+                  key={index}
+                  id={data?.id}
+                  title={data?.title}
+                  description={data?.description}
+                  sdesc={data?.sdesc}
+                  img={data?.img}
+                  status={data?.status}
+                  sdate={data?.date?.from}
+                  edate={data?.date?.to}
+                  numSubmissions={data?.submissions?.length}
+                />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 };
