@@ -27,6 +27,7 @@ const nodemailer = require("nodemailer");
 const uuid = require("uuid");
 const File = require("./models/noteAndFolderSchemas");
 const Notes = require("./models/noteAndFolderSchemas");
+const path = require("path");
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -41,7 +42,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
-
+app.use(express.static(path.join(__dirname, "build")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -119,7 +120,9 @@ function validateUser(req, res, next) {
 
 
 
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/build/index.html"));
+});
 
 //!SECTION Google Auth
 passport.use(
