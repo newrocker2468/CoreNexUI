@@ -3,8 +3,14 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import EditEventModal from "./EditEventModal";
-import "../Styles/EventDescription.css"
+import "@/Styles/CssChallengeDescription.css"
 import EventDeleteModal from "./EventDeleteModal";
+import {Image} from "@nextui-org/react";
+import {Card, CardBody} from "@nextui-org/react";
+import {Divider} from "@nextui-org/divider";
+import {Spinner} from "@nextui-org/react";
+import { ClassNames } from "@emotion/react";
+
 
 interface Challenge1 {
   id: string | undefined;
@@ -88,12 +94,60 @@ const EventDescription = () => {                  //changed
       ) : (
         ""
       )}
+
       
           <h1>{Cssdata.eventName}</h1>
           <p>{Cssdata.description}</p>
      <img src={Cssdata.img} alt="" />
 
+
        
+    <div className="container">
+     <div className="left">
+     <Image
+     isBlurred
+      alt="NextUI hero Image with delay"
+      src={Cssdata.img}
+    />
+    
+     </div>
+     {/* <div className="keyfeature"> */}
+     <div className="right">
+     <div className="wrapper">
+<div className="circle-1"></div>
+<div className="circle-2"></div>
+<div className="inner-card">
+  <section className="top">
+    <span className="u-l">Key Description of the Event {Cssdata.eventName} </span>
+  </section>
+  <section className="bottom">
+    <ul className="users">
+      <li className="user">
+        <span className="user-name">EVENT NAME</span>
+        <span className="user-occupation">{Cssdata.eventName}</span>
+      </li>
+      <li className="user">
+        <span className="user-name">Event Description</span>
+        <span className="user-occupation">{Cssdata.description}</span>
+      </li>
+      <li className="user">
+        <span className="user-name">Status</span>
+        <span className="user-occupation">{Cssdata.status}</span>
+      </li>
+      <li className="user">
+        <span className="user-name">Date</span>
+        <span className="user-occupation">{Cssdata.date.from}-to-{Cssdata.date.to}</span>
+      </li>
+    </ul>   
+  </section>
+</div>
+</div>
+</div>
+     
+
+    </div>
+     
+
     </>
   );
 };
