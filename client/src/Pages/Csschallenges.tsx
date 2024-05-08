@@ -100,10 +100,10 @@ useEffect(() => {
           )}
         </div>
       </section>
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center ">
         {Cssdata?.map((data, index) => {
           return (
-            <div className='md:mt-[1rem] mt-[4rem]' key={index}>
+            <div className='md:mt-[1rem] mt-[5rem]' key={index}>
               <Link
                 to={`${data?.id}`}
                 key={index}
