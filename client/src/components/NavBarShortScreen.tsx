@@ -54,7 +54,7 @@ export function NavBarShortScreen() {
         <SheetHeader>
           <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
-        <div className='flex justify-start items-center mt-[2rem] ml-[2rem]'>
+        <div className='flex justify-around items-center mt-[2rem] ml-[2rem]'>
           <User
             name={user.userName || "User"}
             description={
@@ -65,10 +65,11 @@ export function NavBarShortScreen() {
               size: "lg",
             }}
           />
+          <ModeToggle />
         </div>
-        <ModeToggle/>
+
         <div className='flex justify-center items-center '>
-          <SideBar fheight={false} marginb={true} fwidth={true}/>
+          <SideBar fheight={false} marginb={true} fwidth={true} />
         </div>
         <SheetFooter>
           <SheetClose asChild>
