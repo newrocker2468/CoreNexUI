@@ -102,7 +102,7 @@ const checkPermissions = (
     <>
       <UserContext.Provider value={{ user, setUser }}>
         <NextUIProvider navigate={navigate}>
-          <ThemeProvider defaultTheme='light'>
+          <ThemeProvider defaultTheme='dark'>
             <RootLayout />
             <NavTest />
             <Routes>
