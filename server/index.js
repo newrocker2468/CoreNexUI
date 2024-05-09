@@ -52,7 +52,7 @@ app.use(
       "http://localhost:5173",
       "https://firebasestorage.googleapis.com",
       "https://core-nex-ui-newrocker2468s-projects.vercel.app/",
-      "https://core-nex-ddmd8elvz-newrocker2468s-projects.vercel.app/home",
+      "https://core-nex-ddmd8elvz-newrocker2468s-projects.vercel.app",
       "https://corenexui-production.up.railway.app/",
     ],
     credentials: true,
