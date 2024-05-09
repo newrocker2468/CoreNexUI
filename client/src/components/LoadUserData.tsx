@@ -25,26 +25,20 @@ const[highresimg,sethighresimg] = useState()
    useEffect(() => {
     try {
       axios
-        .get(`http://localhost:3000/getuserdata/${email}`, {
+        .get(`${import.meta.env.VITE_BASE_URL}/getuserdata/${email}`, {
           withCredentials: true,
         })
         .then((res) => {
           SetUser(res.data.user);
           console.log(res.data);
-              let highres_img = res.data.user.google.image;
-              if (res.data.user.google.image.includes("s96-c")) {
-                highres_img = res.data.user.google.image.replace(
-                  "s96-c",
-                  "s500-c"
-                );
-                sethighresimg(highres_img);
-              } else if (res.data.user.google.image.includes("sz=50")) {
-                highres_img = res.data.user.google.image.replace(
-                  "sz=50",
-                  "sz=240"
-                );
-                sethighresimg(highres_img);
-              }
+          let highres_img = res.data.user.google.image;
+          if (res.data.user.google.image.includes("s96-c")) {
+            highres_img = res.data.user.google.image.replace("s96-c", "s500-c");
+            sethighresimg(highres_img);
+          } else if (res.data.user.google.image.includes("sz=50")) {
+            highres_img = res.data.user.google.image.replace("sz=50", "sz=240");
+            sethighresimg(highres_img);
+          }
         });
     } catch (err) {
       console.log(err);

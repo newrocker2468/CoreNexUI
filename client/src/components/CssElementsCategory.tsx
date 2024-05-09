@@ -26,19 +26,19 @@ const [data, setData] = useState([]);
   }, [handleResize]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/Csselements/${category}`)
+    fetch(`${import.meta.env.VITE_BASE_URL}/Csselements/${category}`)
       .then((response) => response.json())
       .then((fetchedData) => {
-        if(fetchedData.error){
-          toast("error",{
-            position:"top-center"
-          })
+        if (fetchedData.error) {
+          toast("error", {
+            position: "top-center",
+          });
         }
         setData(fetchedData);
-        if(fetchedData.length===0){
-          toast.error("No Css Elements Available to display",{
-            position:"top-center"
-          })
+        if (fetchedData.length === 0) {
+          toast.error("No Css Elements Available to display", {
+            position: "top-center",
+          });
         }
       })
       .catch((error) => console.error(error));

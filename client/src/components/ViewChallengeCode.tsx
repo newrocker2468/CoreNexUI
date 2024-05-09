@@ -26,9 +26,7 @@ const ViewChallengeCode = () => {
   );
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:3000/csschallenge/editor/${id}`
-      )
+      .get(`${import.meta.env.VITE_BASE_URL}/csschallenge/editor/${id}`)
       .then((response) => {
         console.log(response.data);
         setHtml(response.data.html);
@@ -554,36 +552,34 @@ const ViewChallengeCode = () => {
   const deleteelement = () => {
     axios
       .post(
-        `http://localhost:3000/csschallenge/editor/${id}/delete`,
+        `${import.meta.env.VITE_BASE_URL}/csschallenge/editor/${id}/delete`,
         {},
         { withCredentials: true }
       )
       .then(() => {
         // console.log(response);
-             navigate(-2);
+        navigate(-2);
         toast.success("Element Deleted Successfully", {
           position: "top-center",
         });
-     
       })
       .catch((error) => console.error(error));
   };
   const updateelement = () => {
     axios
       .post(
-        `http://localhost:3000/csschallenge/editor/${id}/update`,
-        { html, css, sameUser, isSelected},
+        `${import.meta.env.VITE_BASE_URL}/csschallenge/editor/${id}/update`,
+        { html, css, sameUser, isSelected },
         { withCredentials: true }
       )
       .then((response) => {
-              navigate(-2);
-          toast.info(response.data.message, {
-            position: "top-center",
-          });
+        navigate(-2);
+        toast.info(response.data.message, {
+          position: "top-center",
+        });
         console.log(response.data);
         setHtml(response.data.CssElements.html);
         setCss(response.data.CssElements.css);
-
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
@@ -660,7 +656,7 @@ const ViewChallengeCode = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/getuserdata/match/${id}`, {
+      .get(`${import.meta.env.VITE_BASE_URL}/getuserdata/match/${id}`, {
         withCredentials: true,
       })
       .then((response) => {

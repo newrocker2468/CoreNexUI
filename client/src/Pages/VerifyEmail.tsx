@@ -16,7 +16,7 @@ const email = params.email;
     const resendotp = (e : any) => {
         e.preventDefault();
         const response = axios.post(
-          `http://localhost:3000/verify/${email}/resendotp`
+          `${import.meta.env.VITE_BASE_URL}/verify/${email}/resendotp`
         );
         response.then((res) => {
           if (res.data.message === "Email already verified") {
@@ -30,7 +30,7 @@ const email = params.email;
 const verifyotp = (e : any) => {
     e.preventDefault();
     const response = axios.post(
-      `http://localhost:3000/verify/${email}/verifyotp`,
+      `${import.meta.env.VITE_BASE_URL}/verify/${email}/verifyotp`,
       { otp: value }
     );
     response.then((res) => {
@@ -50,8 +50,9 @@ const verifyotp = (e : any) => {
 const getlink = (e : any) => {
     e.preventDefault();
     const response = axios.post(
-      `http://localhost:3000/send-verification-email`,{
-        email:email
+      `${import.meta.env.VITE_BASE_URL}/send-verification-email`,
+      {
+        email: email,
       }
     );
     response.then((res) => {
@@ -68,7 +69,7 @@ const getlink = (e : any) => {
     useEffect(()=>{
 
         const response = axios.get(
-          `http://localhost:3000/verify/${email}/getotp`
+          `${import.meta.env.VITE_BASE_URL}/verify/${email}/getotp`
         );
     
         response.then((res) => {

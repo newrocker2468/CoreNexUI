@@ -28,7 +28,7 @@ const DeleteModal:FC <Challenge>=() =>{
 const DeleteChallenge = async (id: string | undefined) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/csschallengesdelete`,
+      `${import.meta.env.VITE_BASE_URL}/csschallengesdelete`,
       { id: id },
       {
         headers: {

@@ -28,7 +28,7 @@ const EventDeleteModal:FC <Challenge>=() =>{
 const EventDelete = async (id: string | undefined) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/event/${id}/delete`,
+      `${import.meta.env.VITE_BASE_URL}/event/${id}/delete`,
       { id: id },
       {
         headers: {

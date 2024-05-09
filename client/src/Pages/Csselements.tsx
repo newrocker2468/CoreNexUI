@@ -41,7 +41,7 @@ export default function Csselements() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/allcsselements")
+      .get(`${import.meta.env.VITE_BASE_URL}/allcsselements`)
       .then((response) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const pairs = response.data.map((item: any) => ({

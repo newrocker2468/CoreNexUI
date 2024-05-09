@@ -56,7 +56,7 @@ function UploadData() {
   // Fetch data from your database
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/data");
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/data`);
       // Assuming the response data is an array of DataType
       if (Array.isArray(response.data)) {
         setData(response.data);

@@ -64,9 +64,12 @@ const [loading, setLoading] = useState(true);
 const [,setpermission] = useState(["newuser"]);
 const fetchUserData = async () => {
   try {
-    const response = await axios("http://localhost:3000/validate-token", {
-      withCredentials: true,
-    });
+    const response = await axios(
+      `${import.meta.env.VITE_BASE_URL}/validate-token`,
+      {
+        withCredentials: true,
+      }
+    );
  setpermission(response.data.user.Permissions)
   } catch (err) {
     console.log(err);

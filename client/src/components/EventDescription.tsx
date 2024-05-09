@@ -31,7 +31,7 @@ const EventDescription = () => {                  //changed
 
   const fetchuserdata = async () => {
     const response = await axios.get(
-      "http://localhost:3000/getuserdata",     //changed
+      `${import.meta.env.VITE_BASE_URL}/getuserdata`, //changed
       {
         withCredentials: true,
       }
@@ -48,10 +48,10 @@ const EventDescription = () => {                  //changed
   useEffect(() => {
     const id = params.id;
     axios
-      .post("http://localhost:3000/eventsget", {       //changed
+      .post(`${import.meta.env.VITE_BASE_URL}/eventsget`, {
+        //changed
         id: id,
-      }
-      )
+      })
       .then((res) => {
         setCssdata(res.data);
       })

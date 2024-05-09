@@ -9,19 +9,19 @@ interface Challenge1 {
 }
 const EventData: Challenge1[]= [];
 const fetchEventData = async () => {
- await fetch(`http://localhost:3000/events`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      EventData.push(...data);
-      console.log(EventData);
-    })
-    .catch((error) => console.error("Error:", error));
+ await fetch(`${import.meta.env.VITE_BASE_URL}/events`, {
+   method: "GET",
+   headers: {
+     "Content-Type": "application/json",
+   },
+ })
+   .then((response) => response.json())
+   .then((data) => {
+     console.log(data);
+     EventData.push(...data);
+     console.log(EventData);
+   })
+   .catch((error) => console.error("Error:", error));
 };
 fetchEventData();
 export default EventData;

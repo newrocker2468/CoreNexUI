@@ -39,7 +39,7 @@ const CssChallengeDescription = () => {
 
   const fetchuserdata = async () => {
     const response = await axios.get(
-      "http://localhost:3000/getuserdata/csschallenges",
+      `${import.meta.env.VITE_BASE_URL}/getuserdata/csschallenges`,
       {
         withCredentials: true,
       }
@@ -56,18 +56,17 @@ const CssChallengeDescription = () => {
   useEffect(() => {
     const id = params.id;
     axios
-      .post("http://localhost:3000/csschallengesget", {
+      .post(`${import.meta.env.VITE_BASE_URL}/csschallengesget`, {
         id: id,
-      }
-      )
+      })
       .then((res) => {
-    // if(message){
-    //       toast(message,{
-    //         position: "top-center",
-    //       });
-    //     }
-        if(res.data.message){
-          toast(res.data.message,{
+        // if(message){
+        //       toast(message,{
+        //         position: "top-center",
+        //       });
+        //     }
+        if (res.data.message) {
+          toast(res.data.message, {
             position: "top-center",
           });
         }

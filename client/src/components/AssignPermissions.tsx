@@ -34,7 +34,7 @@ export default function AssignPermissions() {
   useEffect(() => {
     try {
       axios
-        .get("http://localhost:3000/getalluserdata", {
+        .get(`${import.meta.env.VITE_BASE_URL}/getalluserdata`, {
           withCredentials: true,
         })
         .then((res) => {
@@ -58,7 +58,7 @@ export default function AssignPermissions() {
     try {
       axios
         .post(
-          `http://localhost:3000/assignpermissions/${email}`,
+          `${import.meta.env.VITE_BASE_URL}/assignpermissions/${email}`,
           {
             selected: selected,
           },
@@ -67,10 +67,10 @@ export default function AssignPermissions() {
           }
         )
         .then((res) => {
-          toast.success(res.data.message,{
+          toast.success(res.data.message, {
             position: "top-center",
             duration: 5000,
-          })
+          });
         });
     } catch (err) {
       console.log(err);

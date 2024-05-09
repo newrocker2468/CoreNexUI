@@ -23,7 +23,7 @@ const ViewCsselement = () => {
   const [isSelected, setIsSelected] = useState(theme === "light" ? false : true);
     useEffect(() => {
         axios
-          .get(`http://localhost:3000/editor/${id}`)
+          .get(`${import.meta.env.VITE_BASE_URL}/editor/${id}`)
           .then((response) => {
             setHtml(response.data.html);
             setCss(response.data.css);
@@ -33,15 +33,14 @@ const ViewCsselement = () => {
             console.log(
               "Inside the error handlinnnnnnnnnnnnnnnnnnggggggggggggg"
             );
-             console.log("error.response:", error.response);
-             console.log(
-               "error.response.status:",
-               error.response && error.response.status
-             );
-     
-              // toast.error("Error 404 ! Element Not Found");
-              // navigate("/Csselements");
-            
+            console.log("error.response:", error.response);
+            console.log(
+              "error.response.status:",
+              error.response && error.response.status
+            );
+
+            // toast.error("Error 404 ! Element Not Found");
+            // navigate("/Csselements");
           });
     },[])
 
@@ -540,15 +539,14 @@ function handleEditorDidMount(editor: any, monaco: any) {
 const deleteelement = () => {
   axios
     .post(
-      `http://localhost:3000/editor/${id}/delete`,
+      `${import.meta.env.VITE_BASE_URL}/editor/${id}/delete`,
       {},
       { withCredentials: true }
     )
     .then(() => {
       // console.log(response);
-      toast.success("Element Deleted Successfully",{
-        position: "top-center"
-      
+      toast.success("Element Deleted Successfully", {
+        position: "top-center",
       });
       navigate(-1);
     })
@@ -557,7 +555,7 @@ const deleteelement = () => {
 const updateelement = () => {
   axios
     .post(
-      `http://localhost:3000/editor/${id}/update`,
+      `${import.meta.env.VITE_BASE_URL}/editor/${id}/update`,
       { html, css, sameUser },
       { withCredentials: true }
     )
@@ -651,12 +649,13 @@ const updateelement = () => {
 
 
 useEffect(() => {
-  axios.get(`http://localhost:3000/getuserdata/match/${id}`,{
-    withCredentials: true
-  })
-  .then((response) => {
-setSameUser(response.data.sameUser)
-  })
+  axios
+    .get(`${import.meta.env.VITE_BASE_URL}/getuserdata/match/${id}`, {
+      withCredentials: true,
+    })
+    .then((response) => {
+      setSameUser(response.data.sameUser);
+    });
 })
   useEffect(() => {
     const handleResize = () => {

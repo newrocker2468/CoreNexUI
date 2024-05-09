@@ -106,7 +106,7 @@ const uploadToFirebase = (
 const EditEvent = async (id: string, displayImage: string) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/event/${id}/update`,
+      `${import.meta.env.VITE_BASE_URL}/event/${id}/update`,
       createFormData(id, displayImage),
       {
         headers: {
@@ -145,17 +145,19 @@ const EditEvent = async (id: string, displayImage: string) => {
 };
 const fetchuserdata = async () => {
   console.log("fetchuserdata");
-  axios.get("http://localhost:3000/validate-token", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true,
-  }).then((response) => {
-    console.log(response.data);
-        if(response.data.user){
-         setUser(response.data.user)
-        }
-  })
+  axios
+    .get(`${import.meta.env.VITE_BASE_URL}/validate-token`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    })
+    .then((response) => {
+      console.log(response.data);
+      if (response.data.user) {
+        setUser(response.data.user);
+      }
+    });
 }
 useEffect(() => {
   fetchuserdata()

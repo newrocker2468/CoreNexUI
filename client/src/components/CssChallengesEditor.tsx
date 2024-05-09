@@ -554,7 +554,7 @@ const LiveEditor = () => {
   const email = user.email;
   const [Category, setCategory] = useState("");
   const uploadToDatabase = () => {
-    fetch(`http://localhost:3000/challenge/${id}/submission`, {
+    fetch(`${import.meta.env.VITE_BASE_URL}/challenge/${id}/submission`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -564,9 +564,7 @@ const LiveEditor = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        
         if (data.message) {
-  
           toast.success(data.message, {
             position: "top-center",
             action:
@@ -576,7 +574,9 @@ const LiveEditor = () => {
                 </Link>
               ) : null,
           });
-      navigate(`/Csschallenges/${id}` ,{ state: { message: data.message } });
+          navigate(`/Csschallenges/${id}`, {
+            state: { message: data.message },
+          });
         }
 
         console.log(data);

@@ -61,7 +61,7 @@ export default function NotesUploadComp() {
       // Call your API to save the URLs in your database
       axios
         .post(
-          `http://localhost:3000/files`,
+          `${import.meta.env.VITE_BASE_URL}/files`,
           {
             files: urls.map((url, index) => ({
               filename: selectedFiles[index].name,
@@ -82,7 +82,7 @@ export default function NotesUploadComp() {
  useEffect(() => {
    // Fetch the list of uploaded files from your backend
    axios
-     .get(`http://localhost:3000/files`, {
+     .get(`${import.meta.env.VITE_BASE_URL}/files`, {
        withCredentials: true,
      })
      .then((response) => {

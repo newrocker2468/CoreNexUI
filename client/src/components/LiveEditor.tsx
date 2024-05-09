@@ -573,7 +573,7 @@ const login = user.isLoggedIn
 const email = user.email
   const [Category, setCategory] = useState("");
   const uploadToDatabase = () => {
-      fetch(`http://localhost:3000/editor/create/${id}`, {
+      fetch(`${import.meta.env.VITE_BASE_URL}/editor/create/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

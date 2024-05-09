@@ -79,7 +79,7 @@ export default function Login() {
    setLoading(true);
    axios
      .post(
-       "http://localhost:3000/login",
+       `${import.meta.env.VITE_BASE_URL}/login`,
        {
          email: values.email,
          password: values.password,
@@ -88,32 +88,31 @@ export default function Login() {
        { withCredentials: true }
      )
      .then((response) => {
-if (response.data.error) {
-  toast.error(response.data.message, {
-    position: "top-center",
-  });
-}
-       if (response.data.signup){
-      toast.error(response.data.message, {
-        position: "top-center",
-      });
-          navigate("/signup");
+       if (response.data.error) {
+         toast.error(response.data.message, {
+           position: "top-center",
+         });
        }
-       if (response.data.user){
-  console.log(response.data.user.email);
-        setUser((prevState) => ({
-          ...prevState,
-          isLoggedIn: true,
-          email: response.data.user.email,
-          Permissions: response.data.user.Permissions,
-        }));
-        console.log(response.data.newUser);
-          toast.success(response.data.message, {
-            position: "top-center",
-          });
-          navigate("/home");
-       } 
-       
+       if (response.data.signup) {
+         toast.error(response.data.message, {
+           position: "top-center",
+         });
+         navigate("/signup");
+       }
+       if (response.data.user) {
+         console.log(response.data.user.email);
+         setUser((prevState) => ({
+           ...prevState,
+           isLoggedIn: true,
+           email: response.data.user.email,
+           Permissions: response.data.user.Permissions,
+         }));
+         console.log(response.data.newUser);
+         toast.success(response.data.message, {
+           position: "top-center",
+         });
+         navigate("/home");
+       }
      });
  } catch (err) {
           console.log(err);
@@ -185,7 +184,7 @@ const loginwithgoogle = async () => {
  try {
 
   axios.post(
-    "http://localhost:3000/login/save",
+    `${import.meta.env.VITE_BASE_URL}/login/save`,
     {
       email: formik.values.email,
       password: formik.values.password,
@@ -196,9 +195,12 @@ const loginwithgoogle = async () => {
 
 
   
-   const response = await axios.get("http://localhost:3000/validate-token", {
-     withCredentials: true,
-   });
+   const response = await axios.get(
+     `${import.meta.env.VITE_BASE_URL}/validate-token`,
+     {
+       withCredentials: true,
+     }
+   );
    const user = response.data.user;
          const name = user.google.displayName; 
           console.log("validate-token response:", response);
@@ -226,12 +228,12 @@ const loginwithgoogle = async () => {
       else{
         if (Remember) {
           window.open(
-            "http://localhost:3000/auth/google/callback?rememberMe=true",
+            `${import.meta.env.VITE_BASE_URL}/auth/google/callback?rememberMe=true`,
             "_self"
           );
         } else {
           window.open(
-            "http://localhost:3000/auth/google/callback?rememberMe=false",
+            `${import.meta.env.VITE_BASE_URL}/auth/google/callback?rememberMe=false`,
             "_self"
           );
         }
@@ -241,12 +243,12 @@ const loginwithgoogle = async () => {
    console.log("Please log in again");
 if (Remember) {
   window.open(
-    "http://localhost:3000/auth/google/callback?rememberMe=true",
+    `${import.meta.env.VITE_BASE_URL}/auth/google/callback?rememberMe=true`,
     "_self"
   );
 } else {
   window.open(
-    "http://localhost:3000/auth/google/callback?rememberMe=false",
+    `${import.meta.env.VITE_BASE_URL}/auth/google/callback?rememberMe=false`,
     "_self"
   );
 }
@@ -256,9 +258,12 @@ if (Remember) {
   const loginwithgithub = async () => {
     
 try { 
-  const response = await axios.get("http://localhost:3000/validate-token", {
-    withCredentials: true,
-  });
+  const response = await axios.get(
+    `${import.meta.env.VITE_BASE_URL}/validate-token`,
+    {
+      withCredentials: true,
+    }
+  );
   const user = response.data.user;
   const name = user.github.displayName;
   if (name) {
@@ -278,7 +283,7 @@ try {
   } else {
 
      window.open(
-       "http://localhost:3000/auth/github/callback",
+       `${import.meta.env.VITE_BASE_URL}/auth/github/callback`,
        "_self"
      );
    
@@ -287,13 +292,10 @@ try {
   console.log("Please log in again");
 
 if (Remember) {
-  window.open(
-    "http://localhost:3000/auth/github/callback",
-    "_self"
-  );
+  window.open(`${import.meta.env.VITE_BASE_URL}/auth/github/callback`, "_self");
 } else {
   window.open(
-    "http://localhost:3000/auth/github/callback?rememberMe=false",
+    `${import.meta.env.VITE_BASE_URL}/auth/github/callback?rememberMe=false`,
     "_self"
   );
 }

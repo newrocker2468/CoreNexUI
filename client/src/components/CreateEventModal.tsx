@@ -95,7 +95,7 @@ const uploadToFirebase = (
     try {
       const response = await axios({
         method: "post",
-        url: `http://localhost:3000/event/${id}/create`,
+        url: `${import.meta.env.VITE_BASE_URL}/event/${id}/create`,
         data: JSON.stringify(createFormData(id, displayImage)),
         headers: {
           "Content-Type": "application/json",

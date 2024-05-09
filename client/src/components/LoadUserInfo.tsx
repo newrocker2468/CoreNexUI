@@ -23,7 +23,7 @@ export default function LoadUserInfo() {
   useEffect(() => {
     try {
       axios
-        .get("http://localhost:3000/getalluserdata", {
+        .get(`${import.meta.env.VITE_BASE_URL}/getalluserdata`, {
           withCredentials: true,
         })
         .then((res) => {

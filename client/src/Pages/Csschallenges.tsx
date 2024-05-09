@@ -56,7 +56,7 @@ useEffect(() => {
   }, []);
 
   const fetchCsschallengesdata = async () => {
-    fetch(`http://localhost:3000/csschallenges`, {
+    fetch(`${import.meta.env.VITE_BASE_URL}/csschallenges`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -74,8 +74,8 @@ useEffect(() => {
   const fetchuserdata = async () => {
     try {
       axios
-        .get("http://localhost:3000/getuserdata/csschallenges",{
-          withCredentials:true
+        .get(`${import.meta.env.VITE_BASE_URL}/getuserdata/csschallenges`, {
+          withCredentials: true,
         })
         .then((response) => {
           console.log(response.data.user);

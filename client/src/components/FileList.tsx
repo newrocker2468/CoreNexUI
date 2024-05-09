@@ -33,7 +33,7 @@ const FileList:FC<FileListProps> = ({ files,setFiles }) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const [user,setUser]=useState<any>(null)
 useEffect(() => {
-  axios.get("http://localhost:3000/getuser", {
+  axios.get(`${import.meta.env.VITE_BASE_URL}/getuser`, {
     withCredentials: true,
   }).then((res) => {
     setUser(res.data.user);
@@ -52,7 +52,7 @@ useEffect(() => {
 
   const deleteNote = (noteId: string) => {
     axios
-      .post(`http://localhost:3000/notes/upload/${noteId}/delete`, {
+      .post(`${import.meta.env.VITE_BASE_URL}/notes/upload/${noteId}/delete`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -61,7 +61,9 @@ useEffect(() => {
             position: "top-center",
           });
           // Remove the deleted note from the local state so the UI updates
-          setFiles(files.filter((file: { _id: string; }) => file._id !== noteId));
+          setFiles(
+            files.filter((file: { _id: string }) => file._id !== noteId)
+          );
         }
       })
       .catch((error) => {

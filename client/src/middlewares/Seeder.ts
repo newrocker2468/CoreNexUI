@@ -11,7 +11,7 @@ interface Challenge1 {
 }
 const Csschallengesdata: Challenge1[] = [];
 const fetchCsschallengesdata = async () => {
-  fetch(`http://localhost:3000/csschallenges`, {
+  fetch(`${import.meta.env.VITE_BASE_URL}/csschallenges`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +19,6 @@ const fetchCsschallengesdata = async () => {
   })
     .then((response) => response.json())
     .then((data) => {
-
       Csschallengesdata.push(...data);
       console.log(Csschallengesdata);
     })

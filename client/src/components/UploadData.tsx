@@ -23,7 +23,7 @@ const [, setData] = useState<any[]>([]);
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/upload",
+        `${import.meta.env.VITE_BASE_URL}/upload`,
         formData,
         {
           headers: {
@@ -44,7 +44,7 @@ const [, setData] = useState<any[]>([]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/data");
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/data`);
       setData(response.data);
     } catch (err) {
       console.error(err);

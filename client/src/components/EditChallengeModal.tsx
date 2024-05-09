@@ -106,7 +106,7 @@ const uploadToFirebase = (
 const CreateChallenge = async ( displayImage: string) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/csschallengesupdate`,
+      `${import.meta.env.VITE_BASE_URL}/csschallengesupdate`,
       createFormData(displayImage),
       {
         headers: {
@@ -146,7 +146,7 @@ const CreateChallenge = async ( displayImage: string) => {
 };
 const fetchuserdata = async () => {
   console.log("fetchuserdata");
-  axios.get("http://localhost:3000/validate-token", {
+  axios.get(`${import.meta.env.VITE_BASE_URL}/validate-token`, {
     headers: {
       "Content-Type": "application/json",
     },

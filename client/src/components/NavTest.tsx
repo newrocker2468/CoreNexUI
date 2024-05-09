@@ -105,9 +105,12 @@ export default function NavTest() {
 useEffect(() => {
   const fetchUser = async () => {
     try {
-      const response = await axios("http://localhost:3000/validate-token", {
-        withCredentials: true,
-      });
+      const response = await axios(
+        `${import.meta.env.VITE_BASE_URL}/validate-token`,
+        {
+          withCredentials: true,
+        }
+      );
 
       const user = await response.data.user;
       if (user) {
@@ -141,14 +144,14 @@ const response = (error as any).response;
           try {
             // Request a new token
              await axios.post(
-              "http://localhost:3000/refresh_token",
-              {},
-              { withCredentials: true }
-            );
+               `${import.meta.env.VITE_BASE_URL}/refresh_token`,
+               {},
+               { withCredentials: true }
+             );
 
             // Retry the original request
             const retryRes = await axios(
-              "http://localhost:3000/validate-token",
+              `${import.meta.env.VITE_BASE_URL}/validate-token`,
               {
                 withCredentials: true,
               }
@@ -192,7 +195,7 @@ const response = (error as any).response;
 
   const handleLogout = async () => {
     try {
-   await axios.get("http://localhost:3000/logout", {
+   await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
         withCredentials: true,
       });
       // console.log(response);

@@ -53,7 +53,7 @@ useEffect(() => {
   
  
   const fetchCsschallengesdata = async () => {
-    fetch(`http://localhost:3000/events`, {
+    fetch(`${import.meta.env.VITE_BASE_URL}/events`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -61,10 +61,10 @@ useEffect(() => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("<datataa></datataa>")
-        console.log(data)
+        console.log("<datataa></datataa>");
+        console.log(data);
         setCssdata(data);
-        console.log(Cssdata)
+        console.log(Cssdata);
       })
       .catch((error) => console.error("Error:", error));
   };
@@ -78,8 +78,8 @@ useEffect(() => {
   const fetchuserdata = async () => {
     try {
       axios
-        .get("http://localhost:3000/getuserdata/csschallenges",{
-          withCredentials:true
+        .get(`${import.meta.env.VITE_BASE_URL}/getuserdata/csschallenges`, {
+          withCredentials: true,
         })
         .then((response) => {
           console.log(response.data.user);

@@ -42,8 +42,8 @@ export default function PostAdpprovalReject() {
   const getElementsforApproval = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/CssElements/getallforApproval",
-        {withCredentials:true}
+        `${import.meta.env.VITE_BASE_URL}/CssElements/getallforApproval`,
+        { withCredentials: true }
       );
 if(res.data.error){
   toast(res.data.message,{
@@ -65,7 +65,7 @@ if(res.data.error){
 
    try {
      const res = await axios.post(
-       `http://localhost:3000/Cssinapproval/delete/${id}`,
+       `${import.meta.env.VITE_BASE_URL}/Cssinapproval/delete/${id}`,
        { email: email },
        { withCredentials: true }
      );
@@ -91,14 +91,14 @@ const response = (error as any).response;
        try {
          // Request a new token
          await axios.post(
-           "http://localhost:3000/refresh_token",
+           `${import.meta.env.VITE_BASE_URL}/refresh_token`,
            {},
            { withCredentials: true }
          );
 
          // Retry the original request
          const retryRes = await axios.post(
-           `http://localhost:3000/Cssinapproval/delete/${id}`,
+           `${import.meta.env.VITE_BASE_URL}/Cssinapproval/delete/${id}`,
            { email: email },
            { withCredentials: true }
          );
@@ -119,7 +119,7 @@ const response = (error as any).response;
   const approveElement = async (id: string, email: string) => {
     try {
       const res = await axios.post(
-        `http://localhost:3000/Cssinapproval/approve/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/Cssinapproval/approve/${id}`,
         { email: email },
         { withCredentials: true }
       );

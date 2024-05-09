@@ -42,7 +42,9 @@ const ChallengesPosts: FC<ChallengesPosts> = ({
   const vote = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/challenges/${cid}/submissions/${htmlcssPairs._id}/vote`,
+        `${import.meta.env.VITE_BASE_URL}/challenges/${cid}/submissions/${
+          htmlcssPairs._id
+        }/vote`,
         {},
         {
           withCredentials: true,

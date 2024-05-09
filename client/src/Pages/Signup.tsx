@@ -92,7 +92,7 @@ export default function Signup() {
     onSubmit: (values) => {
       try {
         axios
-          .post("http://localhost:3000/register", {
+          .post(`${import.meta.env.VITE_BASE_URL}/register`, {
             email: values.email,
             password: values.password,
             repassword: values.repassword,
@@ -108,7 +108,7 @@ export default function Signup() {
               res.data.message ===
                 "User already exists, Please verify your email!"
             ) {
-              navigate(`/verify/${values.email}`,{replace:true});
+              navigate(`/verify/${values.email}`, { replace: true });
             }
             if (res.data.message === "User already exists , Please Login!") {
               navigate("/login");
@@ -202,6 +202,7 @@ export default function Signup() {
               onChange={formik.handleChange}
               errors={formik.errors}
               isInvalid={PassisInvalid}
+              styles='sm:w-[26rem]'
             />
             <PasswordInput
               variant='bordered'
@@ -212,6 +213,7 @@ export default function Signup() {
               validate={validateRePassword}
               errors={formik.errors}
               isInvalid={RePassisInvalid}
+              styles='sm:w-[26rem]'
             />
             <CheckBox
               text='I accept the Terms of Service and Privacy Policy'
@@ -220,9 +222,10 @@ export default function Signup() {
               onChange={formik.handleChange}
               isInvalid={CheckBoxisInvalid}
             />
+
             <Btn
               Text='Register'
-              btnStyles='bg-nprimary  p-[1rem] px-[11rem] mt-[2rem] rounded-[0.7rem]'
+              btnStyles='bg-nprimary  p-[1rem] md:w-[25rem] w-[60%] mt-[2rem] rounded-[0.7rem]'
             />
           </form>
         </div>

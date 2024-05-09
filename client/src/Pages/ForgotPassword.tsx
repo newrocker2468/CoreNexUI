@@ -9,9 +9,12 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const resetpass = () => {
         try{
-          const response =  axios.post("http://localhost:3000/forgotpassword", {
-                email: email,
-            })
+          const response = axios.post(
+            `${import.meta.env.VITE_BASE_URL}/forgotpassword`,
+            {
+              email: email,
+            }
+          );
             response.then((res) => {
               if (res.data.message === "Email not verified"){
                 navigate(`/verify/${email}`)

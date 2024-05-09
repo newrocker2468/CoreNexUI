@@ -70,7 +70,7 @@ const Profile = () => {
   }, []); 
 useEffect(()=>{
   try{
-    axios.get("http://localhost:3000/getuserdata",{
+    axios.get(`${import.meta.env.VITE_BASE_URL}/getuserdata`,{
  withCredentials:true
  
   },

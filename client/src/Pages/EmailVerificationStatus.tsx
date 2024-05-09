@@ -16,7 +16,9 @@ export default function EmailVerificationStatus() {
   useEffect(() => {
     try {
       const response = axios.get(
-        `http://localhost:3000/verify-email/${emailVerificationToken}`
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/verify-email/${emailVerificationToken}`
       );
       response.then((res) => {
         console.log(res.data.message);

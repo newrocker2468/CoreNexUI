@@ -12,6 +12,7 @@ type Errors = {
   email?: string;
   password?: string;
   repassword?: string;
+
 };
 interface PasswordInputProps {
   variant?: Variant;
@@ -23,6 +24,7 @@ interface PasswordInputProps {
   validate?: (value: string) => string | undefined;
   errors: Errors;
   isInvalid: boolean;
+  styles?: string;
 }
 const PasswordInput: FC<PasswordInputProps> = ({
   name,
@@ -32,12 +34,13 @@ const PasswordInput: FC<PasswordInputProps> = ({
   validate,
   errors,
   isInvalid,
+    styles
 }) => {
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
   return (
-    <div className='my-input m-2'>
+    <div className={`my-input m-2 ${styles}`}>
       <Input
         onChange={onChange}
         // value={value}
@@ -47,6 +50,7 @@ const PasswordInput: FC<PasswordInputProps> = ({
         variant={variant}
         placeholder={placeholder}
         validate={validate}
+        // style={styles}
         startContent={
           <LockIcon className='text-xl text-default-400 pointer-events-none flex-shrink-0' />
         }
@@ -68,8 +72,7 @@ const PasswordInput: FC<PasswordInputProps> = ({
       />
       {errors && (
         <>
-   
-     <ErrorMessage errors={errors} name={name}/>
+          <ErrorMessage errors={errors} name={name} />
         </>
       )}
     </div>
