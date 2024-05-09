@@ -51,7 +51,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://firebasestorage.googleapis.com",
-      "https://core-nex-ui-newrocker2468s-projects.vercel.app",
+      "https://core-nex-ui-newrocker2468s-projects.vercel.app/",
+      "https://corenexui-production.up.railway.app/",
     ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -123,7 +124,7 @@ function validateUser(req, res, next) {
 
 
 // app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+//   res.sendFile(path.join(__dirname, "./client/dist/index.html"));
 // });
 
 //!SECTION Google Auth
