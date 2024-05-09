@@ -51,11 +51,13 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://firebasestorage.googleapis.com",
+      "https://core-nex-ui-newrocker2468s-projects.vercel.app",
     ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
 );
+
 
 app.use(express.json());
 
