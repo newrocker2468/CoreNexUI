@@ -50,6 +50,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      `${process.env.FRONTEND_URL}`,
       "https://firebasestorage.googleapis.com",
       "https://corenexui-production.up.railway.app",
       "https://core-nex-ui.vercel.app",
@@ -200,7 +201,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login",
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
   }),
   function (req, res) {
     // Successful authentication, create JWT.
@@ -253,7 +254,7 @@ app.get(
       secure: true,
     });
   
-    res.redirect("http://localhost:5173/home");
+    res.redirect(`${process.env.FRONTEND_URL}/home`);
   }
 );
 
@@ -447,7 +448,7 @@ app.get(
 app.get(
   "/auth/github/callback",
   passport.authenticate("github", {
-    failureRedirect: "http://localhost:5173/login",
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
   }),
   function (req, res) {
     // Successful authentication, create JWT.
@@ -479,7 +480,7 @@ app.get(
     });
 
     // Redirect user to the desired page
-    res.redirect("http://localhost:5173/home");
+    res.redirect(`${process.env.FRONTEND_URL}/home`);
   }
 );
 
@@ -1583,7 +1584,7 @@ if(!user){
     from: "corenexui1@gmail.com",
     to: email,
     subject: "Email Verification",
-    html: `<a href="http://localhost:5173/verify-email/${user.emailVerificationToken}">Click here to verify your email</a>`,
+    html: `<a href="${process.env.FRONTEND_URL}/verify-email/${user.emailVerificationToken}">Click here to verify your email</a>`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -1716,7 +1717,7 @@ app.get("/verify-email/:token", async (req, res) => {
   await user.save();
 res.json({
   message: "Email verified successfully",
-  redirect: "http://localhost:5173/login",
+  redirect: `${process.env.FRONTEND_URL}/login`,
 });
 });
 
