@@ -53,7 +53,7 @@ app.use(
       `${process.env.FRONTEND_URL}`,
       "https://firebasestorage.googleapis.com",
       "https://corenexui-production.up.railway.app",
-      "https://core-nex-ui.vercel.app",
+      "https://core-nex-ui.vercel.app/",
     ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
