@@ -1,24 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "./index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "destination": "./index.html",
-      "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-      "headers": {
-        "Access-Control-Allow-Origin": "https://core-nex-ui-s2jo.vercel.app",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Methods": "GET,HEAD,PUT,PATCH,POST,DELETE"
-      }
-    }
-  ],
- 
   "rewrites":  [
     {"source": "/(.*)", "destination": "/"}
   ]
