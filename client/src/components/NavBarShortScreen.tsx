@@ -18,7 +18,6 @@ import UserContext from "./UserContext";
 import SideBar from "./SideBar";
 import { ModeToggle } from "./mode-toggle";
 import LoginWithEmail from "./LoginWithEmail";
-import Btn from "./Btn";
 export function NavBarShortScreen() {
   const { user } = useContext(UserContext);
   const { theme } = useTheme();
