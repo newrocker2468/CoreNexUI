@@ -46,6 +46,17 @@ app.use(express.static(path.join(__dirname, "build")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(function (req, res, next) {
+  res.header("Content-Type", "application/json;charset=UTF-8");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
+
 const verifyJWT = require("./middlewares/verifyJWT.js")
 
 app.use(
@@ -243,19 +254,19 @@ app.get(
     );
 
    // Send the tokens back to the client
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 1000, // 1 hour
-      sameSite: "none",
-      secure: true,
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   maxAge: 60 * 60 * 1000, // 1 hour
+    //   sameSite: "none",
+    //   secure: true,
+    // });
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: "none",
-      secure: true,
-    });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    //   sameSite: "none",
+    //   secure: true,
+    // });
 
     res.redirect(`${process.env.FRONTEND_URL}/home?token=${token}&refreshToken=${refreshToken}`);
     // res.redirect(`${process.env.FRONTEND_URL}/home`);
