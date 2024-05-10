@@ -43,7 +43,7 @@ import NotesUpload from "./Pages/NotesUpload";
 import NotesUploadComp from "./components/NotesUploadComp";
 
 function App() {
-
+  axios.defaults.withCredentials = true;
   const location = useLocation();
     const navigate = useNavigate();
 const [loading, setLoading] = useState(true);

@@ -24,7 +24,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
 import UserContext from "./UserContext";
-import { Link as RouterLink} from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import Cookies from "js-cookie";
 import { NavBarShortScreen } from "./NavBarShortScreen";
 
@@ -101,103 +101,102 @@ export default function NavTest() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
- const [, setToken] = useState(null);
-useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const response = await axios(
-        `${import.meta.env.VITE_BASE_URL}/validate-token`,
-        {
-          withCredentials: true,
+  const [, setToken] = useState(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios(
+          `${import.meta.env.VITE_BASE_URL}/validate-token`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(response.data);
+        const user = await response.data.user;
+        if (user) {
+          const platform = user.lastLoggedInWith;
+          const profile = user[platform];
+          let highres_img = profile.image;
+          if (profile.image.includes("s96-c")) {
+            highres_img = profile.image.replace("s96-c", "s500-c");
+          } else if (profile.image.includes("sz=50")) {
+            highres_img = profile.image.replace("sz=50", "sz=240");
+          }
+
+          setUser((prevState) => ({
+            ...prevState,
+            userName: profile.displayName,
+            avatarProps: profile.image,
+            highres_img: highres_img,
+            isLoggedIn: true,
+            email: user.email!,
+            bio: profile.bio,
+            Permissions: user.Permissions,
+          }));
         }
-      );
-      console.log(response.data);
-      const user = await response.data.user;
-      if (user) {
-        const platform = user.lastLoggedInWith;
-        const profile = user[platform];
-        let highres_img = profile.image;
-       if (profile.image.includes("s96-c")) {
-          highres_img = profile.image.replace("s96-c", "s500-c");
-         } else if (profile.image.includes("sz=50")) {
-          highres_img = profile.image.replace("sz=50", "sz=240");
-        }
+      } catch (error) {
+        console.log(error);
+        const response = (error as any).response;
 
-        setUser((prevState) => ({
-          ...prevState,
-          userName: profile.displayName,
-          avatarProps: profile.image,
-          highres_img: highres_img,
-          isLoggedIn: true,
-          email: user.email!,
-          bio: profile.bio,
-          Permissions: user.Permissions,
-        }));
-      }
-    } catch (error) {
-      console.log(error);
-const response = (error as any).response;
+        // If the error is due to an expired token, refresh the token
+        if (error instanceof Error) {
+          if (response.status === 401) {
+            try {
+              // Request a new token
+              await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/refresh_token`
+              ).catch(() => {
+                console.log("ERROR FETCHING API REFRSH TOKEN");
+              })
 
-      // If the error is due to an expired token, refresh the token
-  if(error instanceof Error){
-        if (response.status === 401) {
-          try {
-            // Request a new token
-             await axios.post(
-               `${import.meta.env.VITE_BASE_URL}/refresh_token`,
-               {},
-               { withCredentials: true }
-             );
+              // Retry the original request
+              const retryRes = await axios(
+                `${import.meta.env.VITE_BASE_URL}/validate-token`
+              ).catch(() => {
+                console.log("ERROR FETCHING API REFRSH TOKEN 2");
+              })
 
-            // Retry the original request
-            const retryRes = await axios(
-              `${import.meta.env.VITE_BASE_URL}/validate-token`,
-              {
-                withCredentials: true,
+              // @ts-expect-error -  DATA IS UNDEGINED
+              const user = await retryRes.data.user;
+              if (user) {
+                const platform = user.lastLoggedInWith;
+                const profile = user[platform];
+                let highres_img = profile.image;
+                if (profile.image.includes("s96-c")) {
+                  highres_img = profile.image.replace("s96-c", "s500-c");
+                } else if (profile.image.includes("sz=50")) {
+                  highres_img = profile.image.replace("sz=50", "sz=240");
+                }
+                console.log("dddddddddddddddddddddddddddddddddd");
+                console.log(user);
+                setUser((prevState) => ({
+                  ...prevState,
+                  userName: profile.displayName,
+                  avatarProps: profile.image,
+                  highres_img: highres_img,
+                  isLoggedIn: true,
+                  email: user.email!,
+                  bio: profile.bio,
+                  Permissions: user.Permissions,
+                }));
               }
-            );
-
-            const user = await retryRes.data.user;
-            if (user) {
-              const platform = user.lastLoggedInWith;
-              const profile = user[platform];
-              let highres_img = profile.image;
-              if (profile.image.includes("s96-c")) {
-                highres_img = profile.image.replace("s96-c", "s500-c");
-              } else if (profile.image.includes("sz=50")) {
-                highres_img = profile.image.replace("sz=50", "sz=240");
-              }
-              console.log("dddddddddddddddddddddddddddddddddd");
-              console.log(user);
-              setUser((prevState) => ({
-                ...prevState,
-                userName: profile.displayName,
-                avatarProps: profile.image,
-                highres_img: highres_img,
-                isLoggedIn: true,
-                email: user.email!,
-                bio: profile.bio,
-                Permissions: user.Permissions,
-              }));
+            } catch (refreshError) {
+              console.log(refreshError);
             }
-          } catch (refreshError) {
-            console.log(refreshError);
           }
         }
-  }
-    }
-  };
+      }
+    };
 
-  // Call the function when the component mounts
-  fetchUser();
-}, []);
-
+    // Call the function when the component mounts
+    fetchUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
       Cookies.remove("token");
       Cookies.remove("refreshToken");
-   await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
         withCredentials: true,
       });
       // console.log(response);
@@ -206,13 +205,14 @@ const response = (error as any).response;
         userName: "",
         avatarProps:
           "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
-          highres_img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+        highres_img:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
         isLoggedIn: false,
         Loginwithgoogle: false,
         Loginwithgithub: false,
         Permissions: ["newuser"],
-      }))
-    setToken(null);
+      }));
+      setToken(null);
       navigate("/login");
     } catch (err) {
       console.error(err);
@@ -373,8 +373,8 @@ const response = (error as any).response;
               </NextUILink>
             </div>
           )}
-          <div className="sm:hidden flex mr-5">
-            <NavBarShortScreen/>
+          <div className='sm:hidden flex mr-5'>
+            <NavBarShortScreen />
           </div>
         </div>
       </div>
@@ -385,7 +385,7 @@ const response = (error as any).response;
 const ListItem = React.forwardRef<
   React.ElementRef<typeof RouterLink>,
   React.ComponentPropsWithoutRef<typeof RouterLink>
->(({ className, title, children, to, ...props },_ref) => {
+>(({ className, title, children, to, ...props }, _ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
@@ -407,4 +407,3 @@ const ListItem = React.forwardRef<
   );
 });
 ListItem.displayName = "ListItem";
-
