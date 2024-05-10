@@ -383,7 +383,7 @@ const response = (error as any).response;
 const ListItem = React.forwardRef<
   React.ElementRef<typeof RouterLink>,
   React.ComponentPropsWithoutRef<typeof RouterLink>
->(({ className, title, children, to, ...props }) => {
+>(({ className, title, children, to, ...props },_ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>

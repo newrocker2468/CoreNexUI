@@ -240,7 +240,7 @@ app.get(
       { expiresIn: "7d" } // Set the refresh token to expire in 7 days
     );
 
-    // Send the tokens back to the client
+/*    // Send the tokens back to the client
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 60 * 60 * 1000, // 1 hour
@@ -253,9 +253,9 @@ app.get(
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       sameSite: "none",
       secure: true,
-    });
-  
-    res.redirect(`${process.env.FRONTEND_URL}/home`);
+    });*/
+
+    res.redirect(`${process.env.FRONTEND_URL}/home?token=${token}&refreshToken=${refreshToken}`);
   }
 );
 
