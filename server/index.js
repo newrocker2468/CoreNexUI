@@ -593,8 +593,19 @@ app.get("/logout", function (req, res) {
       console.log(err);
       res.status(500).send("Could not log out.");
     } else {
-      res.clearCookie("token");
-           res.clearCookie("refreshToken");
+res.clearCookie("token", {
+  domain: `${process.env.FRONTEND_URL}`,
+  path: "/",
+  secure: true,
+  sameSite: "none",
+});
+res.clearCookie("refreshToken", {
+  domain: `${process.env.FRONTEND_URL}`,
+  path: "/",
+  secure: true,
+  sameSite: "none",
+});
+
       // // Clear the 'rememberMeToken' cookie
       // res.clearCookie("rememberMeToken");
       res.status(200).send("Logged out.");
