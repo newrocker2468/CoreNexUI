@@ -139,6 +139,7 @@ export default function NavTest() {
         const response = (error as any).response;
 
         // If the error is due to an expired token, refresh the token
+        axios.defaults.withCredentials = true;
         if (error instanceof Error) {
           if (response.status === 401) {
             try {

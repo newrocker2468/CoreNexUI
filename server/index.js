@@ -60,8 +60,6 @@ app.use(
       "https://master--zesty-maamoul-0216d4.netlify.app/",
     ],
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    // secure: true,
   })
 );
 
