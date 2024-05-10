@@ -1,7 +1,7 @@
 import Cardcomp from "@/components/Cardcomp";
 import SideBar from "@/components/SideBar";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 export default function Home() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(
