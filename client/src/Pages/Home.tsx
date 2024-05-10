@@ -23,15 +23,17 @@ export default function Home() {
 
     if (!token || !refreshToken) return;
 
-    Cookies.set("token", token, {      
+    Cookies.set("token", token, {
       expires: 60 * 60 * 1000, // 1 hour
       sameSite: "none",
       secure: true,
+      domain: `${import.meta.env.VITE_BASE_URL}`,
     });
     Cookies.set("refreshToken", refreshToken, {
       expires: 7 * 24 * 60 * 60 * 1000, // 7 days
       sameSite: "none",
       secure: true,
+      domain: `${import.meta.env.VITE_BASE_URL}`,
     });
   }, []);
 
