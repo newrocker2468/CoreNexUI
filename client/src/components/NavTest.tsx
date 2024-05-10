@@ -111,7 +111,7 @@ useEffect(() => {
           withCredentials: true,
         }
       );
-
+      console.log(response.data);
       const user = await response.data.user;
       if (user) {
         const platform = user.lastLoggedInWith;
