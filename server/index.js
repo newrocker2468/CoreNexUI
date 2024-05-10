@@ -1779,6 +1779,12 @@ app.get("/validate-token", verifyJWT, (req, res) => {
 });
 
 app.post("/refresh_token", verifyJWT, (req, res) => {
+  console.log("COOKIES")
+  console.log(req.cookies)
+
+  console.log("REQ")
+  console.log(req)
+
   const user = req.user;
    if(user){
      const token = jwt.sign(
