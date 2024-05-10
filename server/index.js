@@ -1775,6 +1775,7 @@ app.get("/validate-token", (req, res) => {
 });
 app.post("/refresh_token", (req, res) => {
   const refreshToken = req.cookies.refreshToken;
+  console.log(refreshToken)
   if (!refreshToken) return res.sendStatus(401); // No token provided
 
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET,async (err, decoded) => {
