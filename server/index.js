@@ -241,24 +241,22 @@ app.get(
     );
 
    // Send the tokens back to the client
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 1000, // 1 hour
-      sameSite: "none",
-      secure: true,
-      domain: `${process.env.FRONTEND_URL}`,
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   maxAge: 60 * 60 * 1000, // 1 hour
+    //   sameSite: "none",
+    //   secure: true,
+    // });
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: "none",
-      secure: true,
-      domain: `${process.env.FRONTEND_URL}`,
-    });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    //   sameSite: "none",
+    //   secure: true,
+    // });
 
-    // res.redirect(`${process.env.FRONTEND_URL}/home?token=${token}&refreshToken=${refreshToken}`);
-    res.redirect(`${process.env.FRONTEND_URL}/home`);
+    res.redirect(`${process.env.FRONTEND_URL}/home?token=${token}&refreshToken=${refreshToken}`);
+    // res.redirect(`${process.env.FRONTEND_URL}/home`);
   }
 );
 
@@ -593,19 +591,8 @@ app.get("/logout", function (req, res) {
       console.log(err);
       res.status(500).send("Could not log out.");
     } else {
-res.clearCookie("token", {
-  domain: `${process.env.FRONTEND_URL}`,
-  path: "/",
-  secure: true,
-  sameSite: "none",
-});
-res.clearCookie("refreshToken", {
-  domain: `${process.env.FRONTEND_URL}`,
-  path: "/",
-  secure: true,
-  sameSite: "none",
-});
-
+      res.clearCookie("token");
+           res.clearCookie("refreshToken");
       // // Clear the 'rememberMeToken' cookie
       // res.clearCookie("rememberMeToken");
       res.status(200).send("Logged out.");

@@ -1,7 +1,7 @@
 import Cardcomp from "@/components/Cardcomp";
 import SideBar from "@/components/SideBar";
 import { useEffect, useState } from "react";
-// import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(
@@ -16,26 +16,26 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   const token = urlParams.get("token");
-  //   const refreshToken = urlParams.get("refreshToken");
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    const refreshToken = urlParams.get("refreshToken");
 
-  //   if (!token || !refreshToken) return;
+    if (!token || !refreshToken) return;
 
-  //   Cookies.set("token", token, {
-  //     expires: 60 * 60 * 1000, // 1 hour
-  //     sameSite: "none",
-  //     secure: true,
-  //     // domain: `${import.meta.env.VITE_BASE_URL}`,
-  //   });
-  //   Cookies.set("refreshToken", refreshToken, {
-  //     expires: 7 * 24 * 60 * 60 * 1000, // 7 days
-  //     sameSite: "none",
-  //     secure: true,
-  //     // domain: `${import.meta.env.VITE_BASE_URL}`,
-  //   });
-  // }, []);
+    Cookies.set("token", token, {
+      expires: 60 * 60 * 1000, // 1 hour
+      sameSite: "none",
+      secure: true,
+      // domain: `${import.meta.env.VITE_BASE_URL}`,
+    });
+    Cookies.set("refreshToken", refreshToken, {
+      expires: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: "none",
+      secure: true,
+      // domain: `${import.meta.env.VITE_BASE_URL}`,
+    });
+  }, []);
 
   return (
     <div className='flex'>

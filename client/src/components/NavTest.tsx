@@ -25,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
 import UserContext from "./UserContext";
 import { Link as RouterLink} from "react-router-dom";
-
+import Cookies from "js-cookie";
 import { NavBarShortScreen } from "./NavBarShortScreen";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -195,6 +195,8 @@ const response = (error as any).response;
 
   const handleLogout = async () => {
     try {
+      Cookies.remove("token");
+      Cookies.remove("refreshToken");
    await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
         withCredentials: true,
       });
