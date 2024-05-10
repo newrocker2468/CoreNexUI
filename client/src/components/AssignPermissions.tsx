@@ -190,17 +190,17 @@ export default function AssignPermissions() {
             </Button>
           </div>
           <h1 className='text-center mt-[1rem]'>
-            Note : Admin permission will be selected by defaul if all other
-            permissions are given to change remove admin permission first the
-            add other permissions{" "}
+            Important: By default, 'Admin' permission is selected if all other
+            permissions are granted. To modify this, please remove 'Admin'
+            permission first, then add the desired permissions.
           </h1>
           <h1 className='text-center mt-[1rem]'>
-            Note : If Permission is Selected by default user will have newuser
-            permission{" "}
+            Note: If a permission is selected by default, the user will be
+            assigned the 'New User' permission.
           </h1>
           <h2 className='text-center mb-[2rem]'>
-            with newuser permission user can only view and create css elements
-            but after login
+            With 'New User' permission, a user can only view and create CSS
+            elements after logging in.
           </h2>
         </div>
       )}

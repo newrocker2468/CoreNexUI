@@ -66,6 +66,11 @@ const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
               },
             }}
           >
+            {" "}
+            <MenuItem component={<Link to='/home' />}>
+              {" "}
+        Home
+            </MenuItem>
             <SubMenu label='Elements'>
               <MenuItem component={<Link to='/Csselements' />}> All</MenuItem>
               <MenuItem component={<Link to='/Csselements/button' />}>
@@ -117,6 +122,10 @@ const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
               {" "}
               Challenges
             </MenuItem>
+            <MenuItem component={<Link to='/event' />}>
+              {" "}
+              Event Management
+            </MenuItem>
             {/* <MenuItem component={<Link to='/docs' />}> Documentation</MenuItem> */}
             {user?.Permissions?.some((permission) =>
               [
@@ -141,7 +150,6 @@ const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
                 Admin Controls
               </MenuItem>
             )}
-
             {/* <MenuItem component={<Link to='/Create' />}>
               {" "}
              + Create new element

@@ -17,7 +17,8 @@ import { useTheme } from "./theme-provider";
 import UserContext from "./UserContext";
 import SideBar from "./SideBar";
 import { ModeToggle } from "./mode-toggle";
-
+import LoginWithEmail from "./LoginWithEmail";
+import Btn from "./Btn";
 export function NavBarShortScreen() {
   const { user } = useContext(UserContext);
   const { theme } = useTheme();
@@ -55,27 +56,37 @@ export function NavBarShortScreen() {
           <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
         <div className='flex justify-around items-center mt-[2rem] ml-[2rem]'>
-          <User
-            name={user.userName || "User"}
-            description={
-              user.Permissions.includes("admin") ? "Admin" : "CoreNex User"
-            }
-            avatarProps={{
-              src: `${user.avatarProps}`,
-              size: "lg",
-            }}
-          />
+          {user.isLoggedIn ? (
+            <User
+              name={user.userName || "User"}
+              description={
+                user.Permissions.includes("admin") ? "Admin" : "CoreNex User"
+              }
+              avatarProps={{
+                src: `${user.avatarProps}`,
+                size: "lg",
+              }}
+            />
+          ) : (
+            <LoginWithEmail />
+          )}
           <ModeToggle />
         </div>
 
         <div className='flex justify-center items-center '>
           <SideBar fheight={false} marginb={true} fwidth={true} />
         </div>
+        {/* <div>
+          <Btn Text='Log Out' color='danger' />
+        </div> */}
         <SheetFooter>
           <SheetClose asChild>
-            <Button type='submit' onClick={() => setIsSidebarOpen(false)}>
-              Close
-            </Button>
+            <div className="flex justify-between items-center">
+              <Button type='submit' onClick={() => setIsSidebarOpen(false)}>
+                Close
+              </Button>
+             <Button color="danger"></Button>
+            </div>
           </SheetClose>
         </SheetFooter>
       </SheetContent>
