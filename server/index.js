@@ -46,6 +46,8 @@ app.use(express.static(path.join(__dirname, "build")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const verifyJWT = require("./middlewares/verifyJWT.js")
+
 app.use(
   cors({
     origin: [
@@ -1754,7 +1756,7 @@ app.post("/CssChallengecreate/:id/create", async (req, res) => {
   }
 });
 
-app.get("/validate-token", (req, res) => {
+app.get("/validate-token", verifyJWT, (req, res) => {
   if (req.cookies.token) {
     const token = req.cookies.token;
     if (!token) {
@@ -1774,17 +1776,9 @@ app.get("/validate-token", (req, res) => {
     res.status(401).json({ message: "No token provided" });
   }
 });
-app.post("/refresh_token", (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-  console.log(refreshToken)
-  if (!refreshToken) return res.sendStatus(401); // No token provided
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET,async (err, decoded) => {
-    if (err) return res.sendStatus(403); // Invalid token
-    console.log(decoded);
-    const user = await userdb.findOne({ email: decoded.email });
-    console.log(user);
-    // Create new JWT
+app.post("/refresh_token", verifyJWT, (req, res) => {
+  const user = req.user;
    if(user){
      const token = jwt.sign(
        {
@@ -1819,7 +1813,6 @@ app.post("/refresh_token", (req, res) => {
    else{
     res.json({message:"user doesnt exist"})
    }
-  });
 });
 
 
