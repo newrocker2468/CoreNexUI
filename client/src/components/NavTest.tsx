@@ -145,7 +145,8 @@ export default function NavTest() {
             try {
               // Request a new token
               await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/refresh_token`
+                `${import.meta.env.VITE_BASE_URL}/refresh_token`,{},
+                {withCredentials: true}
               ).catch(() => {
                 console.log("ERROR FETCHING API REFRSH TOKEN");
               })
@@ -168,7 +169,7 @@ export default function NavTest() {
                 } else if (profile.image.includes("sz=50")) {
                   highres_img = profile.image.replace("sz=50", "sz=240");
                 }
-                console.log("dddddddddddddddddddddddddddddddddd");
+            
                 console.log(user);
                 setUser((prevState) => ({
                   ...prevState,

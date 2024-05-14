@@ -268,8 +268,8 @@ app.get(
       secure: true,
     });
 
-    res.redirect(`${process.env.FRONTEND_URL}/home?token=${token}&refreshToken=${refreshToken}`);
-    // res.redirect(`${process.env.FRONTEND_URL}/home`);
+    // res.redirect(`${process.env.FRONTEND_URL}/home?token=${token}&refreshToken=${refreshToken}`);
+    res.redirect(`${process.env.FRONTEND_URL}/home`);
   }
 );
 
@@ -1795,42 +1795,91 @@ app.get("/validate-token", verifyJWT, (req, res) => {
   }
 });
 
-app.post("/refresh_token", verifyJWT, (req, res) => {
-  const user = req.user;
-   if(user){
-     const token = jwt.sign(
-       {
-         email: user.email,
-         google: {
-           displayName: user.google.displayName || "",
-           image: user.google.image || "",
-           bio: user.google.bio || "",
-         },
-         github: {
-           displayName: user.github.displayName || "",
-           image: user.github.image || "",
-           bio: user.github.bio || "",
-         },
-         lastLoggedInWith: user.lastLoggedInWith,
-         Permissions: user.Permissions,
-       },
-       process.env.TOKEN_SECRET
-     );
-     res.cookie("token", token, {
-       httpOnly: true,
-       maxAge: 7 * 24 * 60 * 60 * 1000,
-       sameSite: "none",
-       secure: true,
-     });
+// app.post("/refresh_token", verifyJWT, (req, res) => {
+//   const user = req.user;
+//    if(user){
+//      const token = jwt.sign(
+//        {
+//          email: user.email,
+//          google: {
+//            displayName: user.google.displayName || "",
+//            image: user.google.image || "",
+//            bio: user.google.bio || "",
+//          },
+//          github: {
+//            displayName: user.github.displayName || "",
+//            image: user.github.image || "",
+//            bio: user.github.bio || "",
+//          },
+//          lastLoggedInWith: user.lastLoggedInWith,
+//          Permissions: user.Permissions,
+//        },
+//        process.env.TOKEN_SECRET
+//      );
+//      res.cookie("token", token, {
+//        httpOnly: true,
+//        maxAge: 7 * 24 * 60 * 60 * 1000,
+//        sameSite: "none",
+//        secure: true,
+//      });
 
-     // Decode the JWT
-     const decodedtoken = jwt.decode(token);
-     // Send the decoded JWT to the client
-     res.json({ token: decodedtoken });
-   }
-   else{
-    res.json({message:"user doesnt exist"})
-   }
+//      // Decode the JWT
+//      const decodedtoken = jwt.decode(token);
+//      // Send the decoded JWT to the client
+//      res.json({ token: decodedtoken });
+//    }
+//    else{
+//     res.json({message:"user doesnt exist"})
+//    }
+// });
+app.post("/refresh_token", (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.sendStatus(401); // No token provided
+
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    async (err, decoded) => {
+      if (err) return res.sendStatus(403); // Invalid token
+      console.log(decoded);
+      const user = await userdb.findOne({ email: decoded.email });
+      console.log(user);
+      // Create new JWT
+      if (user) {
+        const token = jwt.sign(
+          {
+            email: user.email,
+            google: {
+              displayName: user.google.displayName || "",
+              image: user.google.image || "",
+              bio: user.google.bio || "",
+            },
+            github: {
+              displayName: user.github.displayName || "",
+              image: user.github.image || "",
+              bio: user.github.bio || "",
+            },
+            lastLoggedInWith: user.lastLoggedInWith,
+            Permissions: user.Permissions,
+          },
+          process.env.TOKEN_SECRET
+        );
+        res.cookie("token", token, {
+          httpOnly: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          sameSite: "none",
+          secure: true,
+        });
+
+        // Decode the JWT
+        const decodedtoken = jwt.decode(token);
+        // Send the decoded JWT to the client
+        res.json({ token: decodedtoken });
+      } else {
+        res.json({ message: "user doesnt exist" });
+      }
+    }
+  );
 });
 
 
