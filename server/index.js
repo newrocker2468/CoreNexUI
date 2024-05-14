@@ -68,6 +68,7 @@ app.use(
       "https://corenexui-production.up.railway.app",
       "https://core-nex-ui.vercel.app/",
       "https://core-nex-ui-s2jo.vercel.app/",
+      "https://corenexui.netlify.app/",
       "https://master--zesty-maamoul-0216d4.netlify.app/",
     ],
     credentials: true,
