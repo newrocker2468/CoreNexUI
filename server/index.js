@@ -68,7 +68,7 @@ app.use(
       "https://corenexui-production.up.railway.app",
       "https://core-nex-ui.vercel.app/",
       "https://core-nex-ui-s2jo.vercel.app/",
-      "https://corenexui.netlify.app/",
+      "https://corenexui.netlify.app",
       "https://master--zesty-maamoul-0216d4.netlify.app/",
     ],
     credentials: true,
@@ -391,9 +391,9 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
-        console.log(profile);
-        console.log(profile._json.bio);
-        let user = await userdb.findOne({ email: profile._json.blog });
+        // console.log(profile);
+        console.log(profile._json);
+        let user = await userdb.findOne({ email: profile._json.email });
         if (!user) {
           user = new userdb({
             github: {
@@ -408,7 +408,7 @@ passport.use(
               image: "",
               bio: "",
             },
-            email: profile.emails[0].value,
+            email: profile._json.email,
             password: uuidv4(),
             lastLoggedInWith: "github",
             Permissions: ["newuser"],
@@ -419,7 +419,7 @@ passport.use(
           console.log("User already exists");
           user = await userdb.findOneAndUpdate(
             // Assign the result to user
-            { email: profile._json.blog }, // Use the correct field for email
+            { email: profile._json.email }, // Use the correct field for email
             {
               $set: {
                 github: {
@@ -429,7 +429,7 @@ passport.use(
                   bio: profile._json.bio,
                 },
                 lastLoggedInWith: "github",
-                email: profile._json.blog,
+                email: profile._json.email,
               },
             },
 
@@ -488,12 +488,29 @@ app.get(
     );
 
     // Send the token back to the client
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
-    });
+      const refreshToken = jwt.sign(
+        {
+          email: req.user.email,
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: "7d" } // Set the refresh token to expire in 7 days
+      );
+
+      // Send the tokens back to the client
+      res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000, // 1 hour
+        sameSite: "none",
+        secure: true,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: "none",
+        secure: true,
+      });
+
 
     // Redirect user to the desired page
     res.redirect(`${process.env.FRONTEND_URL}/home`);
