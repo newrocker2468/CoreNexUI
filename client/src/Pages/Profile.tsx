@@ -119,7 +119,7 @@ useEffect(() => {
              <SideBar />
            </div>
          )}
-         <div className='flex flex-col w-[70%] p-5 '>
+         <div className='flex flex-col w-full p-5 '>
            <div className='flex justify-flex-start  '>
              <AnimatedLoading
                img={`${user.highres_img}`}

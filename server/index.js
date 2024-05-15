@@ -35,6 +35,19 @@ const SanitizeHtmlCss = require("./middlewares/SanitizeHtmlCss");
 //git checkout master
 //git merge origin/master
 //npm i
+app.use(express.json());
+
+app.use(cookieParser());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: process.env.DATABASE,
+    }),
+  })
+);
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: process.env.SMTP_HOST,
@@ -80,19 +93,7 @@ app.use(
 );
 
 
-app.use(express.json());
 
-app.use(cookieParser());
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({
-      mongoUrl: process.env.DATABASE, 
-    }),
-  })
-);
 app.use(passport.initialize());
 app.use(passport.session());
 passport.serializeUser((user, done) => {
@@ -526,7 +527,6 @@ app.get(
 
 
   app.post("/login", async (req, res) => {
-    console.log("ddddddddd");
     const { email, password, remember } = req.body;
     console.log(email, password, remember);
   try{
