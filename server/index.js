@@ -1152,7 +1152,7 @@ app.get("/getuserdata", async (req, res) => {
       }
     });
   } else {
-    res.status(401).json({ message: "No token provided" });
+    res.json({ message: "No token provided" });
   }
 });
 app.get("/getuserdata/csschallenges", async (req, res) => {
@@ -1169,10 +1169,12 @@ app.get("/getuserdata/csschallenges", async (req, res) => {
         res.status(200).json({ user });
       } catch (err) {
         console.log(err);
+        res.status(500).json({ message: "An error occurred while fetching user data." });
       }
     });
   } else {
-    res.status(401).json({ message: "No token provided" });
+    console.log("no token provided");
+    res.json({ message: "No Token Please Login" });
   }
 });
 app.get("/getuserdata/:email",async(req,res)=>{
