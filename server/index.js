@@ -61,6 +61,7 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE,
+      autoRemove:"native"
     }),
     cookie: {
       httpOnly: true,
