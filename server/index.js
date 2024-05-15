@@ -28,7 +28,9 @@ const uuid = require("uuid");
 const File = require("./models/noteAndFolderSchemas");
 const Notes = require("./models/noteAndFolderSchemas");
 const path = require("path");
+const mongoSanitize = require("express-mongo-sanitize");
 const MongoStore = require("connect-mongo")
+const SanitizeHtmlCss = require("./middlewares/SanitizeHtmlCss");
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -43,6 +45,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
+app.use(mongoSanitize());
 app.use(express.static(path.join(__dirname, "build")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -872,7 +875,7 @@ app.post("/csschallengesget", async (req, res) => {
 //   }
 //   // CssElementdb.save();
 // });
-app.post("/editor/create/:id", async (req, res) => {
+app.post("/editor/create/:id",SanitizeHtmlCss, async (req, res) => {
   const { id } = req.params;
   console.log(req.body);
   if (!req.body.login) {
