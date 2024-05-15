@@ -25,7 +25,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Userdata from "./Userdata";
 import UserContext from "./UserContext";
 import { Link as RouterLink } from "react-router-dom";
-import Cookies from "js-cookie";
 import { NavBarShortScreen } from "./NavBarShortScreen";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -196,8 +195,6 @@ export default function NavTest() {
 
   const handleLogout = async () => {
     try {
-      Cookies.remove("token");
-      Cookies.remove("refreshToken");
       await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
         withCredentials: true,
       });
@@ -214,7 +211,6 @@ export default function NavTest() {
         Loginwithgithub: false,
         Permissions: ["newuser"],
       }));
-      setToken(null);
       navigate("/login");
     } catch (err) {
       console.error(err);

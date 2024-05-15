@@ -41,6 +41,7 @@ import ViewChallengePostCode from "./Pages/ViewChallengePostsCode";
 import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
 import NotesUpload from "./Pages/NotesUpload";
 import NotesUploadComp from "./components/NotesUploadComp";
+import UserGuide from "./Pages/UserGuide";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -121,6 +122,7 @@ const checkPermissions = (
                 path='/Csselements/:category'
                 element={<CssElementsCategory />}
               />
+              <Route path='/docs' element={<UserGuide />} />
               <Route path='/notes/upload' element={<NotesUpload />} />
               ;
               <Route
@@ -165,7 +167,6 @@ const checkPermissions = (
                       "deletenotes",
                       "updatesubmissions",
                       "deletesubmissions",
-                      
                     ]) ? (
                     <AdminPanel />
                   ) : (

@@ -1,0 +1,36 @@
+User Guide: Safe HTML and CSS Practices
+Introduction
+When creating content for the web, it’s important to use HTML and CSS safely to ensure that your website remains secure and functions as intended. This guide outlines the best practices for using HTML and CSS within our platform, based on our sanitization rules.
+
+HTML Elements and Attributes
+Our platform supports a wide range of HTML elements, each with specific attributes that you can use to create rich and interactive content. Below is a list of some commonly used elements and the attributes that are safe to use:
+
+Basic Elements
+Divs: Use div elements to structure your content. You can assign classes, IDs, and styles for layout and design.
+Spans: Ideal for styling small sections of text or inline elements. They support classes, roles, and ARIA attributes for accessibility.
+Images: To include images, use the img tag with attributes like src, alt, title, and dimensions. Ensure your images are hosted on trusted sources.
+Form Elements
+Buttons: Create clickable buttons with the button tag. Define button types, names, and other form-related attributes.
+Inputs: Use input elements for user inputs. Specify the input type (text, checkbox, radio, etc.), and include validation attributes like required and pattern.
+Textareas: For multi-line text inputs, textarea is your go-to element. Control its size and limitations with attributes like rows and maxlength.
+Media Elements
+Audio and Video: Embed media using audio and video tags. Control playback with attributes like autoplay, controls, and loop.
+Canvas: Draw graphics on the fly with the canvas element. Define its width and height to set up your drawing area.
+Structural Elements
+Forms: Group your input elements within a form tag. Set up form actions, methods, and other settings to control data submission.
+Tables: Although not listed in the allowed tags, tables can be used for tabular data. Use table, tr, td, and related tags to create grids.
+CSS Best Practices
+CSS is used to style your HTML content. To maintain security, follow these guidelines:
+
+Inline Styles: Apply styles directly to elements using the style attribute when necessary. Keep in mind that external stylesheets are preferred for maintainability.
+Classes and IDs: Use classes and IDs to apply styles defined in external stylesheets or within style tags in the head of your document.
+Security Measures
+Our platform employs a sanitization middleware to ensure that the content you create is safe and secure. Here’s how it works:
+
+Sanitization Process: When you submit HTML or CSS content, our system automatically removes any unsafe tags, attributes, or properties. This process is designed to prevent security vulnerabilities such as Cross-Site Scripting (XSS) attacks.
+Allowed Content: The middleware allows a wide range of HTML elements and attributes that are considered safe for web content creation. It ensures that only non-harmful tags and attributes are permitted.
+CSS Safety: In CSS, potentially harmful properties like @import and url() are removed to prevent the loading of malicious resources.
+Conclusion
+By adhering to the guidelines provided in this user guide, you can create content confidently, knowing that it will be both safe and functional. Remember to always preview your content within our platform to ensure it appears as expected after the sanitization process.
+
+For a complete list of allowed HTML elements and attributes, please refer to our comprehensive documentation or contact our support team.

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import Btn from "@/components/Btn";
 import {
   Sheet,
   SheetClose,
@@ -18,11 +19,38 @@ import UserContext from "./UserContext";
 import SideBar from "./SideBar";
 import { ModeToggle } from "./mode-toggle";
 import LoginWithEmail from "./LoginWithEmail";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 export function NavBarShortScreen() {
-  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { user,setUser } = useContext(UserContext);
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const handleLogout = async () => {
+    try {
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
+        withCredentials: true,
+      });
+      // console.log(response);
+      setUser((prevState) => ({
+        ...prevState,
+        userName: "",
+        avatarProps:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+        highres_img:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/128px-Default_pfp.svg.png",
+        isLoggedIn: false,
+        Loginwithgoogle: false,
+        Loginwithgithub: false,
+        Permissions: ["newuser"],
+      }));
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     setIsSidebarOpen(false);
@@ -67,9 +95,11 @@ export function NavBarShortScreen() {
               }}
             />
           ) : (
-            <LoginWithEmail />
+            <div className="flex  justify-center items-center gap-[1rem]">
+              <LoginWithEmail />
+              <ModeToggle />
+            </div>
           )}
-          <ModeToggle />
         </div>
 
         <div className='flex justify-center items-center '>
@@ -80,11 +110,13 @@ export function NavBarShortScreen() {
         </div> */}
         <SheetFooter>
           <SheetClose asChild>
-            <div className="flex justify-between items-center">
+            <div className='flex justify-between items-center'>
               <Button type='submit' onClick={() => setIsSidebarOpen(false)}>
                 Close
               </Button>
-             <Button color="danger"></Button>
+              {user.isLoggedIn ? (
+                <Btn color='danger' Text='Logout' onClick={handleLogout} />
+              ) : null}
             </div>
           </SheetClose>
         </SheetFooter>

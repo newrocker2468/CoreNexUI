@@ -1,8 +1,8 @@
 const sanitizeHtml = require("sanitize-html");
 
-// Middleware to sanitize HTML and CSS
+
 function SanitizeHtmlCss(req, res, next) {
-  // Define the options for sanitizing HTML
+
   const htmlSanitizeOptions = {
     allowedTags: [
       "button",
@@ -173,19 +173,19 @@ function SanitizeHtmlCss(req, res, next) {
     },
   };
 
-  // Sanitize HTML
+
   if (req.body.html) {
     req.body.html = sanitizeHtml(req.body.html, htmlSanitizeOptions);
   }
 
-  // Sanitize CSS (basic example, you may need a more robust solution)
+
   if (req.body.css) {
     req.body.css = req.body.css.replace(/@import\s+[^;]+;/gi, ""); // Remove @import statements
     req.body.css = req.body.css.replace(/url\((.*?)\)/gi, ""); // Remove url()
-    // Add more sanitization rules as needed
+
   }
 
-  next(); // Proceed to the next middleware or route handler
+  next();
 }
 
 module.exports = SanitizeHtmlCss;
