@@ -1,7 +1,6 @@
 import { Card, CardHeader, CardFooter, Image, Button } from "@nextui-org/react";
 // import csschallenge from  "../images/csschallenge.png";
 import csschallenge from "../images/csschallenges.jpg";
-import sheet from "../images/sheet.jpg";
 import notes from "../images/notes.jpg";
 import { Link } from "react-router-dom";
 // import challenges from "@/Icons/challeges.png";
