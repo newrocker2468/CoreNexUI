@@ -11,7 +11,7 @@ interface CssElementProps {
 }
 
 const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
-  console.log(htmlcssPairs);
+  // console.log(htmlcssPairs);
 
    const [isSelected] = useState(
 htmlcssPairs.isSelected

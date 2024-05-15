@@ -352,7 +352,7 @@ const navigate = useNavigate();
             </div>
           </div>
 
-          <div className='Right w-full lg:w-auto flex justify-center items-center h-[70vh] lg:h-auto'>
+          <div className='Right w-full lg:w-auto flex justify-start items-center h-[70vh] lg:h-auto '>
             <h1 className='h1-Login'>Welcome Back</h1>
             <h3 className='h3-login'>Log in to your account to continue</h3>
             <div className='Box'>

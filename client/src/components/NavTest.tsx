@@ -145,16 +145,16 @@ export default function NavTest() {
               await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/refresh_token`,{},
                 {withCredentials: true}
-              ).catch(() => {
-                console.log("ERROR FETCHING API REFRSH TOKEN");
+              ).catch((err) => {
+                console.log(err);
               })
 
               // Retry the original request
               const retryRes = await axios(
                 `${import.meta.env.VITE_BASE_URL}/validate-token`
-              ).catch(() => {
-                console.log("ERROR FETCHING API REFRSH TOKEN 2");
-              })
+              ).catch((err) => {
+                console.log(err);
+              });
 
               // @ts-expect-error -  DATA IS UNDEGINED
               const user = await retryRes.data.user;

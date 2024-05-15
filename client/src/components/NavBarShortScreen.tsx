@@ -56,9 +56,9 @@ export function NavBarShortScreen() {
     setIsSidebarOpen(false);
   }, [location]);
 
-  useEffect(() => {
-    console.log(isSidebarOpen);
-  }, [isSidebarOpen]);
+  // useEffect(() => {
+  //   console.log(isSidebarOpen);
+  // }, [isSidebarOpen]);
 
   return (
     <Sheet
