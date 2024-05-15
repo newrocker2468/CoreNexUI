@@ -17,7 +17,6 @@ interface CsscardProps {
 }
 
 const EventCard: FC<CsscardProps> = ({ title, description, img,sdate,edate }) => {
-  console.log(title + "dddddddddddddddddddddddddddddddddddddd")
   const [isHovered, setIsHovered] = useState(false);
   const { hoverProps } = useHover({
     onHoverStart: () => setIsHovered(true),
@@ -47,11 +46,11 @@ const EventCard: FC<CsscardProps> = ({ title, description, img,sdate,edate }) =>
   return (
     <>
       <div
-        className={`m-4 card  h-[50vh] w-[78vw] card border relative overflow-hidden cursor-pointer flex  justify-between m-auto `}
+        className={`m-4 card  md:h-[50vh] w-[78vw] card border relative overflow-hidden cursor-pointer flex  justify-between m-auto flex-col-reverse md:flex-row h-auto `}
         {...hoverProps}
       >
         <div
-          className={`ml-[2.5rem] flex overflow-hidden flex-col justify-evenly align-center card_desc relative min-w-[30%] max-w-[40%]`}
+          className={`md:ml-[3.5rem] mt-[1.5rem] mb-[1.5rem] flex overflow-hidden flex-col justify-evenly items-center md:items-start card_desc relative md:min-w-[30%] md:max-w-[40%] gap-[2rem] w-[100%] md:w-auto `}
         >
           <p
             className={`relative rounded-lg m-1 font-bold w-[7rem] ${
@@ -64,14 +63,17 @@ const EventCard: FC<CsscardProps> = ({ title, description, img,sdate,edate }) =>
               className='inline'
               width={"25rem"}
             />
-            <span className='mr-1.5'> {calculateStatus(sdate || "", edate || "")}</span>
+            <span className='mr-1.5'>
+              {" "}
+              {calculateStatus(sdate || "", edate || "")}
+            </span>
           </p>
 
           <div>
             <h2 className='font-bold text-[2.25rem]'>
               {title || "Card Title"}
             </h2>
- {/*            <h3 className='font-italic'>{sdesc || "Short Description"}</h3> */}
+            {/*            <h3 className='font-italic'>{sdesc || "Short Description"}</h3> */}
           </div>
           <p className='text-left'>{description || "Card Description"}</p>
           <div className='flex justify-start'>

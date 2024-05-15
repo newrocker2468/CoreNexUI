@@ -26,7 +26,6 @@ const Csscard: FC<CsscardProps> = ({
   sdesc,
   img,
   status,
-
   edate,
   numSubmissions,
 }) => {
