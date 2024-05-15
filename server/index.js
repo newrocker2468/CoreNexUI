@@ -2348,8 +2348,7 @@ app.post("/files", async (req, res) => {
 
   if (!token) {
     return res
-      .status(401)
-      .json({ message: "No token provided. Please log in again." });
+      .json({ message: "Please login First." });
   }
 
   try {

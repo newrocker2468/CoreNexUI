@@ -56,6 +56,12 @@ useEffect(() => {
         withCredentials: true,
       })
       .then((response) => {
+        if (response.data.message == "Please login First.") {
+          toast.error("You Need to login to delete notes", {
+            position: "top-center",
+          });
+          return;
+        }
         if (response.status === 200) {
           toast.success("Note Deleted Successfully", {
             position: "top-center",
@@ -66,8 +72,7 @@ useEffect(() => {
           );
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
         toast.error("An error occurred while deleting the note.", {
           position: "top-center",
         });
@@ -77,8 +82,12 @@ useEffect(() => {
   return (
     <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        // display: "grid",
+        // gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        alignItems: "center",
         gap: "10px",
       }}
     >
