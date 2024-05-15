@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+
 
 import * as React from "react";
 import { Link as NextUILink } from "@nextui-org/react";
@@ -9,7 +9,7 @@ import { ModeToggle } from "@/components/mode-toggle.jsx";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo.tsx";
 import { useTheme } from "./theme-provider";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import LoginWithEmail from "@/components/LoginWithEmail";
 import {
   NavigationMenu,
@@ -100,7 +100,6 @@ export default function NavTest() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
-  const [, setToken] = useState(null);
   useEffect(() => {
     const fetchUser = async () => {
       try {

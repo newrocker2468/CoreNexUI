@@ -9,6 +9,7 @@ import { Link } from "@nextui-org/react";
 // import { useTheme } from "./theme-provider";
 import SideBar from "./SideBar";
 // import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+
 import Editor from "@monaco-editor/react"; 
 import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "./UserContext";
@@ -608,7 +609,7 @@ const email = user.email
     const div = divRef.current;
     if (!div) return;
 
-    // Only attach a shadow root if one doesn't already exist
+    
     let shadowRoot = div.shadowRoot;
     if (!shadowRoot) {
       shadowRoot = div.attachShadow({ mode: "open" });
@@ -687,170 +688,179 @@ useEffect(() => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <div style={{ display: "flex" }}>
-      {isSidebarVisible && (
-        <div className='flex-shrink-0 overflow-auto h-screen'>
-          <SideBar />
-        </div>
-      )}
+    <>
+      <div >
+        <p>
+          Please review our <Link href='/docs'>User Guide</Link> for best
+          practices before submitting your content for approval.
+        </p>
+      </div>
+      <div style={{ display: "flex" }}>
+        {isSidebarVisible && (
+          <div className='flex-shrink-0 overflow-auto h-screen'>
+            <SideBar />
+          </div>
+        )}
 
-      <div className='flex flex-wrap justify-center w-full'>
-        <div
-          style={{ height: "max-content" }}
-          className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
-        >
-          <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
-            <ModalContent>
-              {() => (
-                <>
-                  <ModalHeader className='flex flex-col gap-1'>
-                    Select Category
-                  </ModalHeader>
-                  <ModalBody>
-                    <div className='flex align-center justify-center'>
-                      <RadioCreateCss
-                        Category={Category}
-                        setCategory={setCategory}
-                        setHtml={setHtml}
-                        setCss={setCss}
+        <div className='flex flex-wrap justify-center w-full'>
+          <div
+            style={{ height: "max-content" }}
+            className='flex justify-center align-center flex-col mt-[2rem] md:w-[50%] w-[95%]'
+          >
+            <Modal isOpen={isModalVisible} onOpenChange={onOpenChange}>
+              <ModalContent>
+                {() => (
+                  <>
+                    <ModalHeader className='flex flex-col gap-1'>
+                      Select Category
+                    </ModalHeader>
+                    <ModalBody>
+                      <div className='flex align-center justify-center'>
+                        <RadioCreateCss
+                          Category={Category}
+                          setCategory={setCategory}
+                          setHtml={setHtml}
+                          setCss={setCss}
+                        />
+                      </div>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button
+                        color='danger'
+                        variant='light'
+                        onPress={() => {
+                          redirect();
+                        }}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        color='primary'
+                        onPress={() => {
+                          setIsModalVisible(false);
+                        }}
+                      >
+                        Start
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+            <h3>Output</h3>
+            <div className='relative'>
+              <div className='absolute top-3 right-4 '>
+                <Switch
+                  isSelected={isSelected}
+                  onValueChange={setIsSelected}
+                  className='z-10'
+                >
+                  {!isSelected ? (
+                    <span className='font-bold text-white'>#212121</span>
+                  ) : (
+                    <span className='text-black font-bold'>#e8e8e8</span>
+                  )}
+                </Switch>
+              </div>
+
+              <div
+                ref={divRef}
+                className='container'
+                style={{
+                  borderRadius: "1rem",
+                  zIndex: 1,
+                  position: "relative",
+                  backgroundColor: `${!isSelected ? "#212121" : "#e8e8e8"}`,
+                  width: "auto",
+                  minWidth: "100%",
+                  maxWidth: "100%",
+                  height: "auto",
+                  minHeight: "20rem",
+                  maxHeight: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              />
+            </div>
+          </div>
+
+          <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
+            <div className='flex justify-end absolute right-0'>
+              <div className='mr-[4rem]'>
+                <Button onClick={uploadToDatabase} color='primary'>
+                  Upload To database
+                </Button>
+              </div>
+            </div>
+            <Tabs aria-label='Options'>
+              <Tab key='Html' title='HTML'>
+                <Card>
+                  <CardBody>
+                    <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
+                      <Editor
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          fontFamily:
+                            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                          fontSize: 18,
+                          wordWrap: "on",
+                        }}
+                        height='100vh'
+                        defaultLanguage='html'
+                        value={html}
+                        onChange={(newValue) => {
+                          if (newValue !== undefined) {
+                            setHtml(newValue);
+                          }
+                        }}
+                        defaultValue='<!--Enter Your Html Code Here-->'
+                        onMount={handleEditorDidMount}
+                        theme={theme === "dark" ? "vs-dark" : "vs-light"}
+                        className='border-2 border-black rounded overflow-hidden'
                       />
                     </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      color='danger'
-                      variant='light'
-                      onPress={() => {
-                        redirect();
-                      }}
-                    >
-                      Close
-                    </Button>
-                    <Button
-                      color='primary'
-                      onPress={() => {
-                        setIsModalVisible(false);
-                      }}
-                    >
-                      Start
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-          <h3>Output</h3>
-          <div className='relative'>
-            <div className='absolute top-3 right-4 '>
-              <Switch
-                isSelected={isSelected}
-                onValueChange={setIsSelected}
-                className='z-10'
-              >
-                {!isSelected ? (
-                  <span className='font-bold text-white'>#212121</span>
-                ) : (
-                  <span className='text-black font-bold'>#e8e8e8</span>
-                )}
-              </Switch>
-            </div>
-            <div
-              ref={divRef}
-              className='container'
-              style={{
-                borderRadius: "1rem",
-                zIndex: 1,
-                position: "relative",
-                backgroundColor: `${!isSelected ? "#212121" : "#e8e8e8"}`,
-                width: "auto",
-                minWidth: "100%",
-                maxWidth: "100%",
-                height: "auto",
-                minHeight: "20rem",
-                maxHeight: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-              }}
-            />
+                  </CardBody>
+                </Card>
+              </Tab>
+              <Tab key='Css' title='Css'>
+                <Card>
+                  <CardBody>
+                    <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
+                      <Editor
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          fontFamily:
+                            "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                          fontSize: 18,
+                          wordWrap: "on",
+                        }}
+                        height='100vh'
+                        defaultLanguage='css'
+                        value={css}
+                        onChange={(newValue) => {
+                          if (newValue !== undefined) {
+                            setCss(newValue);
+                          }
+                        }}
+                        defaultValue=''
+                        onMount={handleEditorDidMount}
+                        className='border-2 border-black rounded overflow-hidden'
+                      />
+                    </div>
+                  </CardBody>
+                </Card>
+              </Tab>
+            </Tabs>
           </div>
-        </div>
-
-        <div className='flex flex-col h-[60dvh] md:w-[50%] w-[95%]'>
-          <div className='flex justify-end absolute right-0'>
-            <div className='mr-[4rem]'>
-              <Button onClick={uploadToDatabase} color='primary'>
-                Upload To database
-              </Button>
-            </div>
-          </div>
-          <Tabs aria-label='Options'>
-            <Tab key='Html' title='HTML'>
-              <Card>
-                <CardBody>
-                  <div style={{ maxHeight: "70dvh", overflowY: "hidden" }}>
-                    <Editor
-                      options={{
-                        minimap: {
-                          enabled: false,
-                        },
-                        fontFamily:
-                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                        fontSize: 18,
-                        wordWrap: "on",
-                      }}
-                      height='100vh'
-                      defaultLanguage='html'
-                      value={html}
-                      onChange={(newValue) => {
-                        if (newValue !== undefined) {
-                          setHtml(newValue);
-                        }
-                      }}
-                      defaultValue='<!--Enter Your Html Code Here-->'
-                      onMount={handleEditorDidMount}
-                      theme={theme === "dark" ? "vs-dark" : "vs-light"}
-                      className='border-2 border-black rounded overflow-hidden'
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-            </Tab>
-            <Tab key='Css' title='Css'>
-              <Card>
-                <CardBody>
-                  <div style={{ maxHeight: "70dvh", overflowY: "scroll" }}>
-                    <Editor
-                      options={{
-                        minimap: {
-                          enabled: false,
-                        },
-                        fontFamily:
-                          "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                        fontSize: 18,
-                        wordWrap: "on",
-                      }}
-                      height='100vh'
-                      defaultLanguage='css'
-                      value={css}
-                      onChange={(newValue) => {
-                        if (newValue !== undefined) {
-                          setCss(newValue);
-                        }
-                      }}
-                      defaultValue=''
-                      onMount={handleEditorDidMount}
-                      className='border-2 border-black rounded overflow-hidden'
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-            </Tab>
-          </Tabs>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
