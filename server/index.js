@@ -31,6 +31,7 @@ const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize");
 const MongoStore = require("connect-mongo")
 const SanitizeHtmlCss = require("./middlewares/SanitizeHtmlCss");
+const verifyJWT = require("./middlewares/verifyJWT.js");
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -38,6 +39,21 @@ const SanitizeHtmlCss = require("./middlewares/SanitizeHtmlCss");
 app.use(express.json());
 
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      `${process.env.FRONTEND_URL}`,
+      "https://firebasestorage.googleapis.com",
+      "https://corenexui-production.up.railway.app",
+      "https://core-nex-ui.vercel.app/",
+      "https://core-nex-ui-s2jo.vercel.app/",
+      "https://corenexui.netlify.app",
+      "https://master--zesty-maamoul-0216d4.netlify.app/",
+    ],
+    credentials: true,
+  })
+);
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -74,23 +90,9 @@ app.use(function (req, res, next) {
 });
 
 
-const verifyJWT = require("./middlewares/verifyJWT.js")
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      `${process.env.FRONTEND_URL}`,
-      "https://firebasestorage.googleapis.com",
-      "https://corenexui-production.up.railway.app",
-      "https://core-nex-ui.vercel.app/",
-      "https://core-nex-ui-s2jo.vercel.app/",
-      "https://corenexui.netlify.app",
-      "https://master--zesty-maamoul-0216d4.netlify.app/",
-    ],
-    credentials: true,
-  })
-);
+
+
 
 
 
