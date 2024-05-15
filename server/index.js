@@ -602,6 +602,7 @@ app.post("/verify/:email/resendotp", async (req, res) => {
 
   let html = fs.readFileSync("template.html", "utf8");
   html = html.replace("%OTP%", otp);
+  html = html.replaceAll("%FRONTEND_URL%", process.env.FRONTEND_URL);
 
   let mailOptions = {
     from: "corenexui1@gmail.com",
@@ -1690,6 +1691,7 @@ app.get("/verify/:email/getotp", async (req, res) => {
   await user.save();
 
 let html = fs.readFileSync("template.html", "utf8"); 
+  html = html.replaceAll("%FRONTEND_URL%", process.env.FRONTEND_URL);
 html = html.replace("%OTP%", otp);
 
 let mailOptions = {
