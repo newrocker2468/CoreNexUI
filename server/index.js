@@ -28,6 +28,7 @@ const uuid = require("uuid");
 const File = require("./models/noteAndFolderSchemas");
 const Notes = require("./models/noteAndFolderSchemas");
 const path = require("path");
+const MongoStore = require("connect-mongo")
 //git fetch origin
 //git checkout master
 //git merge origin/master
@@ -84,6 +85,9 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: process.env.DATABASE, 
+    }),
   })
 );
 app.use(passport.initialize());
