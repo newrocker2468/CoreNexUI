@@ -6,6 +6,7 @@ import EditEventModal from "./EditEventModal";
 import "@/Styles/CssChallengeDescription.css"
 import EventDeleteModal from "./EventDeleteModal";
 import {Image} from "@nextui-org/react";
+import Loader from "./Loader";
 
 
 
@@ -62,7 +63,11 @@ const EventDescription = () => {                  //changed
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; 
+    return (
+      <div className='flex justify-center items-center'>
+        <Loader />
+      </div>
+    ); 
   }
 
   if (!Cssdata) {

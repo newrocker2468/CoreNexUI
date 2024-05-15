@@ -42,6 +42,7 @@ import EmailVerificationStatus from "./Pages/EmailVerificationStatus";
 import NotesUpload from "./Pages/NotesUpload";
 import NotesUploadComp from "./components/NotesUploadComp";
 import UserGuide from "./Pages/UserGuide";
+import Loader from "./components/Loader";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -111,6 +112,7 @@ const checkPermissions = (
             <NavTest />
             <Routes>
               <Route path='/notes/upload/*' element={<NotesUploadComp />} />
+              <Route path='/loader' element={<Loader />} />
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
               <Route path='/signup' element={<Signup />} />
@@ -151,7 +153,9 @@ const checkPermissions = (
                 path='/admin'
                 element={
                   loading ? (
-                    <div>Loading</div>
+                    <div className='flex justify-center items-center'>
+                      <Loader />
+                    </div>
                   ) : checkPermissions(user.Permissions, [
                       "admin",
                       "approveposts",
@@ -178,7 +182,9 @@ const checkPermissions = (
                 path='/admin/uploadattendance'
                 element={
                   loading ? (
-                    <div>Loading</div>
+                    <div className='flex justify-center items-center'>
+                      <Loader />
+                    </div>
                   ) : checkPermissions(user.Permissions, ["admin"]) ? (
                     <UploadData />
                   ) : (
@@ -190,7 +196,9 @@ const checkPermissions = (
                 path='/admin/managepermissions'
                 element={
                   loading ? (
-                    <div>Loading</div>
+                    <div className='flex justify-center items-center'>
+                      <Loader />
+                    </div>
                   ) : checkPermissions(user.Permissions, ["admin"]) ? (
                     <PermissionManager />
                   ) : (
@@ -202,7 +210,9 @@ const checkPermissions = (
                 path='/admin/csselements/status'
                 element={
                   loading ? (
-                    <div>Loading</div>
+                    <div className='flex justify-center items-center'>
+                      <Loader />
+                    </div>
                   ) : checkPermissions(user.Permissions, [
                       "admin",
                       "approveposts",

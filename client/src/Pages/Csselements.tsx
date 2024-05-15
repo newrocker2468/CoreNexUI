@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import CssElement from "@/components/CssElement";
 import SideBar from "@/components/SideBar";
+import Loader from "@/components/Loader";
 
 interface MyObject {
   css: string;
@@ -63,7 +64,7 @@ export default function Csselements() {
   const id = uuidv4();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
 
   return (

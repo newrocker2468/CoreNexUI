@@ -12,6 +12,7 @@ import EditChallengeModal from "./EditChallengeModal";
 import Btn from "./Btn";
 import { toast } from "sonner";
 import ChallengesPosts from "./ChallengesPosts";
+import Loader from "./Loader";
 
 interface Challenge1 {
   id: string | undefined;
@@ -84,7 +85,11 @@ useEffect(() => {
   console.log(votesno);
 }, [votesno]);
   if (isLoading) {
-    return <div>Loading...</div>; 
+    return (
+      <div className='flex justify-center items-center'>
+        <Loader />
+      </div>
+    ); 
   }
 
   if (!Cssdata) {

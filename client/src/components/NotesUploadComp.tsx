@@ -10,6 +10,7 @@ import axios from "axios";
 import FileList from "./FileList";
 import { toast } from "sonner";
 import UserContext from "./UserContext";
+import Loader from "./Loader";
 interface MyFile {
   _id: string;
   path: string;
@@ -114,7 +115,7 @@ export default function NotesUploadComp() {
 
   return (
     <>
-      <div className="flex justify-center items-center flex-col  gap-[1rem]">
+      <div className='flex justify-center items-center flex-col  gap-[1rem]'>
         <Label htmlFor='picture'>Picture</Label>
         <Shdcninput
           id='picture'
@@ -125,10 +126,12 @@ export default function NotesUploadComp() {
         />
         <Btn Text='Upload' color='primary' onClick={handleUpload}></Btn>
 
-        <div className="">
+        <div className=''>
           <h2>Uploaded Files</h2>
           {isLoading ? (
-            <p>Loading...</p> // Show a loading message while the data is loading
+            <p className='flex justify-center items-center'>
+              <Loader />
+            </p> // Show a loading message while the data is loading
           ) : (
             <FileList files={uploadedFiles} setFiles={setUploadedFiles} />
           )}
