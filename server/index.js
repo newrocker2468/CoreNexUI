@@ -409,7 +409,7 @@ passport.use(
     async function (accessToken, refreshToken, profile, done) {
       try {
         // console.log(profile);
-        console.log(profile._json);
+        // console.log(profile._json);
         let user = await userdb.findOne({ email: profile._json.email });
         if (!user) {
           user = new userdb({
@@ -452,21 +452,19 @@ passport.use(
 
             { new: true }
           );
-          console.log(user);
+          // console.log(user);
 
           return done(null, user);
         }
 
-        console.log(user); // Log the updated user
+        // console.log(user);
         return done(null, user);
       } catch (err) {
         console.log(err);
       }
 
-      console.log(profile);
-
-      console.log("hi");
-      console.log(profile._json);
+      // console.log(profile);
+      // console.log(profile._json);
       done(null, profile);
     }
   )
@@ -537,7 +535,7 @@ app.get(
 
   app.post("/login", async (req, res) => {
     const { email, password, remember } = req.body;
-    console.log(email, password, remember);
+  
   try{
     const user = await userdb.findOne({ email: email });
     if (!user) {
@@ -548,7 +546,7 @@ app.get(
     if(user){
 
         const validPassword = await bcrypt.compare(password, user.password);
-        console.log(validPassword);
+   
         if (!validPassword) {
           return res.json({ message: "Invalid Credentials !",error:true });
         }
@@ -722,7 +720,6 @@ app.post("/csschallenges/:id", async (req, res) => {
           else{
             res.json({ message: "You are not authorized to add CSS challenges." });
           }
-        console.log(decoded);
       }
     );
   } else {
@@ -731,7 +728,6 @@ app.post("/csschallenges/:id", async (req, res) => {
   }
 });
 app.post("/csschallengesupdate", async (req, res) => {
-  console.log(req.cookies.token);
 const token = req.cookies.token;
 if(token){
   jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
@@ -789,10 +785,8 @@ if(req.cookies.token){
     }
     if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("deletechallenges")){
        const { id } = req.body;
-       console.log("id " + id);
        try {
          const challenges = await Csschallengesdb.findOneAndDelete({ id: id });
-         console.log(challenges);
          res
            .status(200)
            .json({ message: "CSS challenges deleted successfully." });
@@ -829,7 +823,6 @@ else{
 // });
 app.post("/csschallengesget", async (req, res) => {
   const { id } = req.body;
-  console.log("id " + id);
   try {
     let challenges = await Csschallengesdb.findOne({ id: id });
     if (challenges) {
@@ -886,7 +879,6 @@ app.post("/csschallengesget", async (req, res) => {
 // });
 app.post("/editor/create/:id",SanitizeHtmlCss, async (req, res) => {
   const { id } = req.params;
-  console.log(req.body);
   if (!req.body.login) {
     console.log("not login");
     res.json({ message: "You are not logged in. Login First" }).status(400);
@@ -1039,8 +1031,6 @@ const challenge = await Csschallengesdb.findOne({
 
 app.post("/csschallenge/editor/:id/delete", async (req, res) => {
   const token = req.cookies.token;
-  console.log(token);
-  console.log(req.params.id);
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
@@ -1057,7 +1047,6 @@ app.post("/csschallenge/editor/:id/delete", async (req, res) => {
       const challenge = await Csschallengesdb.findOne({
         submissions: { $elemMatch: { _id: req.params.id } },
       }).populate("submissions.user");
-      console.log(challenge);
 
       if (!challenge) {
         console.log("Submission not found");
@@ -1086,7 +1075,6 @@ app.post(
   "/challenges/:challengeId/submissions/:submissionId/vote",
   async (req, res) => {
     const token = req.cookies.token;
-    console.log(token);
     if (!token) {
       return res
         .json({ message: "Login first to use voting Functionality" });
@@ -1167,7 +1155,6 @@ app.get("/getuserdata", async (req, res) => {
   }
 });
 app.get("/getuserdata/csschallenges", async (req, res) => {
-  console.log("getuserdata");
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
@@ -1179,7 +1166,6 @@ app.get("/getuserdata/csschallenges", async (req, res) => {
       try {
         const user = await userdb.findOne({ email: decoded.email });
         res.status(200).json({ user });
-        console.log(user);
       } catch (err) {
         console.log(err);
       }
@@ -1258,8 +1244,7 @@ app.post("/editor/:id/update", async (req, res) => {
         if (!CssElements) {
           return res.status(404).json({ message: "CSS elements not found." });
         }
-
-        console.log(CssElements.user.email, decoded.email);
+      
         if (
           decoded.Permissions.includes("admin") ||
           decoded.Permissions.includes("editcsselement") ||
@@ -1341,9 +1326,7 @@ app.get("/getuserdata/match/:id", async (req, res) => {
 
 app.get("/events", async (req, res) => {
   try {
-    console.log("route hit ")
     const Event = await Eventsdb.find({});
-    console.log(Event)
     res.json(Event);
   } catch (error) {
     console.error(error);
@@ -1455,10 +1438,8 @@ app.post("/event/:id/delete", async (req, res) => {
     }
     if(decoded.Permissions.includes("admin") || decoded.Permissions.includes("deleteevents")){
       const { id } = req.body;
-      console.log("id " + id);
       try {
         const Event = await Eventsdb.findOneAndDelete({ id: id });
-        console.log(Event);
         res.status(200).json({ message: "Event deleted successfully" });
       } catch (error) {
         console.error(error);
@@ -1480,10 +1461,8 @@ app.post("/event/:id/delete", async (req, res) => {
 
 app.post("/eventsget", async (req, res) => {
   const { id } = req.body;
-  console.log("id " + id);
   try {
     const Event = await Eventsdb.findOne({ id: id });
-    console.log(Event);
     res.status(200).json(Event);
   } catch (error) {
     console.error(error);
@@ -1784,8 +1763,7 @@ app.post("/login/save", async (req, res) => {
 
     // Set the 'remember' value in a cookie instead of the session
     res.cookie("remember", remember, { maxAge: 900000, httpOnly: true });
-
-    console.log("Cookie set");
+  
     // You can redirect to another route here
   } catch (error) {
     console.error(error);
@@ -1874,11 +1852,8 @@ app.post("/refresh_token", (req, res) => {
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
     async (err, decoded) => {
-      if (err) return res.sendStatus(403); // Invalid token
-      console.log(decoded);
+      if (err) return res.sendStatus(403); 
       const user = await userdb.findOne({ email: decoded.email });
-      console.log(user);
-      // Create new JWT
       if (user) {
         const token = jwt.sign(
           {
@@ -1994,7 +1969,6 @@ app.post("/Cssinapproval/delete/:id", async (req, res) => {
                 element: element,
                 message: "Request Rejected, and Element Deleted SuccessFully!",
               });
-              console.log(element);
              } catch (err) {
                console.log(err);
                res.status(500).json({ message: err.message });
@@ -2073,7 +2047,6 @@ app.post("/Cssinapproval/approve/:id", async (req, res) => {
                try {
                const { id } = req.params;
                const { email } = req.body;
-               console.log(id, email);
 
                const csselements = await CssElementdb.findOneAndUpdate(
                  { _id: id },
@@ -2094,7 +2067,6 @@ app.post("/Cssinapproval/approve/:id", async (req, res) => {
                const elements = await CssElementdb.find({
                  approvalStatus: "inReview",
                }).populate("user");
-               console.log(elements);
                res.json({
                  elements: elements,
                  message: "Csselement Approved Successfully",
@@ -2130,7 +2102,6 @@ app.post("/Cssinapproval/approve/:id", async (req, res) => {
         approvalStatus: "approved",
       });
       if(!elements){res.json({message:`No  elements found`,error:true})}
-      console.log(elements);
       res.json(elements);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -2200,7 +2171,6 @@ app.post("/assignpermissions/:email", async (req, res) => {
 
 
 app.post("/challenge/:id/submission", async (req, res) => {
-  console.log("route hit");
   const { id } = req.params;
   const { html, css, login, email, Category, isSelected } = req.body;
   if (!login) {
@@ -2266,10 +2236,6 @@ app.post("/challenge/:id/submission", async (req, res) => {
 app.get("/data", async (req, res) => {
   try {
     const tables = await Table.find({});
-
-   
-
-    console.log(tables);
     res.json(tables);
   } catch (err) {
     console.error(err);
