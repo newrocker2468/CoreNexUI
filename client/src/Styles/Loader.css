@@ -36,7 +36,7 @@
   height: 100%;
   padding-left: 6px;
   color: #956afa;
-  animation: spin_4991 4s infinite;
+  animation: spin_4991 8s infinite;
 }
 
 @keyframes spin_4991 {
