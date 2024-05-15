@@ -48,14 +48,19 @@ interface UserdataProps {
           </DropdownItem>
           <DropdownItem key='settings'>
             <Link href='/profile' className='no-underline text-current'>
-              My Settings
+              My Profile
             </Link>
           </DropdownItem>
-          <DropdownItem key='team_settings'>Team Settings</DropdownItem>
-          <DropdownItem key='analytics'>Analytics</DropdownItem>
+          <DropdownItem key='/docs'>
+            {" "}
+            <Link href='/docs' className='no-underline text-current'>
+             User Guide
+            </Link>
+          </DropdownItem>
+          {/* <DropdownItem key='analytics'>Analytics</DropdownItem>
           <DropdownItem key='system'>System</DropdownItem>
           <DropdownItem key='configurations'>Configurations</DropdownItem>
-          <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
+          <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem> */}
           <DropdownItem key='logout' color='danger' onClick={handleLogout}>
             Log Out
           </DropdownItem>
