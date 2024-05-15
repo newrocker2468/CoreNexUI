@@ -1507,7 +1507,7 @@ app.get("/getuser", async (req, res) => {
 });
 app.post("/notesUpload/:id/upload", async (req, res) => {
   try {
-    const Note = new Notesdb({
+    const Note = new Notes({
       id: req.params.id,
       topicName: req.body.Name,
       description: req.body.description,
@@ -1526,7 +1526,7 @@ app.post("/notesUpload/:id/upload", async (req, res) => {
 
 app.post("/notesupload/:id/update", async (req, res) => {
   try {
-    const Note = await Notesdb.findByIDAndupdateOne({ _id: req.params.id });
+    const Note = await Notes.findByIDAndupdateOne({ _id: req.params.id });
     res.status(200).json(Note);
   } catch (error) {
     console.error(error);
@@ -1538,7 +1538,7 @@ app.post("/notesupload/:id/update", async (req, res) => {
 
 app.post("/notesupload/:id/delete", async (req, res) => {
   try {
-    const Note = await Notesdb.findByIDAnddeleteOne({ _id: req.params.id });
+    const Note = await Notes.findByIDAnddeleteOne({ _id: req.params.id });
     res.status(200).json({ message: "Document successfully Deleted" });
   } catch (error) {
     console.error(error);
@@ -1616,12 +1616,16 @@ if(!user){
     return res.json({ message: "Email Already Verified" });
   }
   user.emailVerificationToken = uuid.v4();
+  let html = fs.readFileSync("verifybylink.html", "utf8"); 
+  html = html.replaceAll("%FRONTEND_URL%", process.env.FRONTEND_URL);
+  html = html.replace("%username%",user.google.displayName || user.github.displayName || user.default.displayName || user.email);
   await user.save();
+  html = html.replaceAll("%emailVerificationToken%", user.emailVerificationToken);
   let mailOptions = {
     from: "corenexui1@gmail.com",
     to: email,
     subject: "Email Verification",
-    html: `<a href="${process.env.FRONTEND_URL}/verify-email/${user.emailVerificationToken}">Click here to verify your email</a>`,
+    html: html,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
