@@ -1,33 +1,50 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AnimatedLoading from "@/components/AnimatedLoading";
 import UserContext from "@/components/UserContext";
 import { useContext, useEffect, useState } from "react";
 import SideBar from "@/components/SideBar";
-import { Tabs, Tab, Card, CardBody, User } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+// import {User} from "@nextui-org/react";
 import axios from "axios";
 import CssElement from "@/components/CssElement";
 
 import { v4 as uuidv4 } from "uuid";
+// interface MyObject {
+//   css: string;
+//   html: string;
+//   id: string;
+//   user: {
+//     Permissions: [];
+//     email: string;
+//     google: {
+//       image: string;
+//     };
+//     github: {
+//       image: string;
+//     };
+//     cssElements:[]
+//   };
+//   isSelected: boolean;
+//   approvalStatus: string;
+// }
 interface MyObject {
-  css: string;
-  html: string;
-  id: string;
-  user: {
-    Permissions: [];
-    email: string;
-    google: {
-      image: string;
-    };
-    github: {
-      image: string;
-    };
+  google: {
+    id: string;
+    displayName: string;
+    image: string;
   };
-  isSelected: boolean;
-  approvalStatus:string;
-}
+  github: { id: string; displayName: string; image: string };
+  email: string;
+  lastLoggedInWith: string;
 
+  cssElements: any;
+  cssElementsInReview: any;
+  Permissions: [];
+}
 const Profile = () => {
-  const [approvedposts, setapprovedposts] = useState<MyObject[]>([]);
-    const [inreviewposts, setinreviewposts] = useState<MyObject[]>([]);
+  // const [approvedposts, setapprovedposts] = useState<MyObject[]>([]);
+  //   const [inreviewposts, setinreviewposts] = useState<MyObject[]>([]);
+    const[userdata,setuserdata]=useState<MyObject>();
   const { user } = useContext(UserContext);
   const [isSidebarVisible, setIsSidebarVisible] = useState(
     window.innerWidth > 800
@@ -77,8 +94,9 @@ useEffect(()=>{
   )
   .then((res)=>{
     console.log(res.data.user);
-  setapprovedposts(res.data.user.cssElements);
-  setinreviewposts(res.data.user.cssElementsInReview);
+  // setapprovedposts(res.data);
+  setuserdata(res.data.user);
+  // setinreviewposts(res.data.user.cssElementsInReview);
   })
 }
 catch(err){
@@ -87,8 +105,9 @@ catch(err){
 },[])
 
 useEffect(() => {
-  console.log(setapprovedposts);
-}, [approvedposts]);
+
+  console.log(userdata);
+}, [userdata]);
   const emailname = printUntilAt(user.email);
   // console.log(user);
   
@@ -125,26 +144,30 @@ useEffect(() => {
                  <Card>
                    <CardBody>
                      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4'>
-                       {approvedposts
-                         .filter((pair) => pair.approvalStatus === "approved")
-                         .map((pair) => (
+                       {userdata?.cssElements
+                         .filter(
+                           (pair: { approvalStatus: string }) =>
+                             pair.approvalStatus === "approved"
+                         )
+                         .map((pair: any) => (
                            <div className='m-3' key={uuidv4()}>
                              <CssElement htmlcssPairs={pair} key={uuidv4()} />
-                             {pair.user && pair.user.email ? (
+                             {userdata && userdata.email ? (
                                <div key={uuidv4()} className='font-bold m-3'>
-                                 <User
-                                   name={`By ${pair.user.email}`}
+                                 {/* <User
+                                   name={`By ${userdata.email}`}
                                    avatarProps={{
                                      src: `${
-                                       pair.user.github.image ||
-                                       pair.user.google.image ||
-                                       `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
+                                       userdata.lastLoggedInWith === "google"
+                                         ? userdata.google.image
+                                         : userdata.github.image ||
+                                           `https://avatars.dicebear.com/api/avataaars/${userdata.email}.svg`
                                      }`,
                                    }}
-                                 />
+                                 /> */}
                                </div>
                              ) : (
-                               "Deleted User"
+                               `Error retrieving data`
                              )}
                            </div>
                          ))}
@@ -156,26 +179,30 @@ useEffect(() => {
                  <Card>
                    <CardBody>
                      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4'>
-                       {inreviewposts
-                         .filter((pair) => pair.approvalStatus === "inReview")
-                         .map((pair) => (
+                       {userdata?.cssElementsInReview
+                         .filter(
+                           (pair: { approvalStatus: string }) =>
+                             pair.approvalStatus === "inReview"
+                         )
+                         .map((pair: any) => (
                            <div className='m-3' key={uuidv4()}>
                              <CssElement htmlcssPairs={pair} key={uuidv4()} />
-                             {pair.user && pair.user.email ? (
+                             {userdata && userdata.email ? (
                                <div key={uuidv4()} className='font-bold m-3'>
-                                 <User
-                                   name={`By ${pair.user.email}`}
+                                 {/* <User
+                                   name={`By ${userdata.email}`}
                                    avatarProps={{
                                      src: `${
-                                       pair.user.github.image ||
-                                       pair.user.google.image ||
-                                       `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
+                                       userdata.lastLoggedInWith === "google"
+                                         ? userdata.google.image
+                                         : userdata.github.image ||
+                                           `https://avatars.dicebear.com/api/avataaars/${userdata.email}.svg`
                                      }`,
                                    }}
-                                 />
+                                 /> */}
                                </div>
                              ) : (
-                               "Deleted User"
+                               `Error retrieving data`
                              )}
                            </div>
                          ))}
