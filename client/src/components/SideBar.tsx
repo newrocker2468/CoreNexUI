@@ -123,10 +123,8 @@ const SideBar: FC<user> = ({ fheight, marginb, fwidth }) => {
               {" "}
               Event Management
             </MenuItem>
-            <MenuItem component={<Link to='/docs' />}>
-              {" "}
-              User Guide
-            </MenuItem>
+            <MenuItem component={<Link to='/docs' />}> User Guide</MenuItem>
+     {user.isLoggedIn ? ( <MenuItem component={<Link to='/profile' />}> My Profile</MenuItem>) : ""}
             {/* <MenuItem component={<Link to='/docs' />}> Documentation</MenuItem> */}
             {user?.Permissions?.some((permission) =>
               [
