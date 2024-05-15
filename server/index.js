@@ -62,6 +62,12 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE,
     }),
+    cookie: {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: "none",
+      secure: true,
+    },
   })
 );
 const transporter = nodemailer.createTransport({
