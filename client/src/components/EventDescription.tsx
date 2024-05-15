@@ -92,59 +92,26 @@ const EventDescription = () => {                  //changed
         ""
       )}
 
-      
-          <h1>{Cssdata.eventName}</h1>
+      {/* <h1>{Cssdata.eventName}</h1>
           <p>{Cssdata.description}</p>
-     <img src={Cssdata.img} alt="" />
+     <img src={Cssdata.img} alt="" /> */}
 
-
-       
-    <div className="container">
-     <div className="left">
-     <Image
-     isBlurred
-      alt="NextUI hero Image with delay"
-      src={Cssdata.img}
-    />
-    
-     </div>
-     {/* <div className="keyfeature"> */}
-     <div className="right">
-     <div className="wrapper">
-<div className="circle-1"></div>
-<div className="circle-2"></div>
-<div className="inner-card">
-  <section className="top">
-    <span className="u-l">Key Description of the Event {Cssdata.eventName} </span>
-  </section>
-  <section className="bottom">
-    <ul className="users">
-      <li className="user">
-        <span className="user-name">EVENT NAME</span>
-        <span className="user-occupation">{Cssdata.eventName}</span>
-      </li>
-      <li className="user">
-        <span className="user-name">Event Description</span>
-        <span className="user-occupation">{Cssdata.description}</span>
-      </li>
-      <li className="user">
-        <span className="user-name">Status</span>
-        <span className="user-occupation">{Cssdata.status}</span>
-      </li>
-      <li className="user">
-        <span className="user-name">Date</span>
-        <span className="user-occupation">{Cssdata.date.from}-to-{Cssdata.date.to}</span>
-      </li>
-    </ul>   
-  </section>
-</div>
-</div>
-</div>
-     
-
-    </div>
-     
-
+      <div className='m-5 flex rounded-full justify-around md:flex-row flex-col'>
+        <div className='flex rounded-full md:max-w-[45dvw]'>
+          <Image src={Cssdata.img} alt='image' width='100%' height='100%' />
+        </div>
+        <div className='flex justify-center flex-col items-center md:items-start'>
+          <h1 className='text-4xl font-bold'>{Cssdata.eventName}</h1>
+          <p className='text-lg'>
+            {Cssdata.date.from} - {Cssdata.date.to}
+          </p>
+        </div>
+      </div>
+      <div className='flex m-5' style={{
+        overflowWrap: 'anywhere',
+      }}>
+        <p className='text-lg'>{Cssdata.description}</p>
+      </div>
     </>
   );
 };

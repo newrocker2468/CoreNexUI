@@ -93,6 +93,12 @@ export function NavBarShortScreen() {
                 src: `${user.avatarProps}`,
                 size: "lg",
               }}
+              onClick={() => {navigate("/profile")}}
+              style={{
+                cursor: "pointer",
+              
+              }}
+              
             />
           ) : (
             <div className="flex  justify-center items-center gap-[1rem]">
