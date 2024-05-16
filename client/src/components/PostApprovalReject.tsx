@@ -21,6 +21,7 @@ interface MyObject {
     };
     lastLoggedInWith:string;
   };
+  elementtype: string;
   isSelected: boolean;
 }
 
@@ -176,6 +177,7 @@ const response = (error as any).response;
                       />
                     </div>
                     <CssElement htmlcssPairs={pair} key={uuidv4()} />
+                    <div className="text-center m-5">Element Type : {pair.elementtype}</div>
                     <div className='flex m-3 justify-around'>
                       <Button
                         onClick={() =>
