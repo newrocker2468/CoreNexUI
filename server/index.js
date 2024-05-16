@@ -2382,3 +2382,8 @@ app.get("/files", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
+app.use((req, res, next) => {
+  res.status(404).send("404 Not Found");
+  // Or render a custom 404 page if you have a view engine set up
+  // res.status(404).render('NotFoundPage');
+});

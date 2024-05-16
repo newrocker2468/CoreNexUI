@@ -108,7 +108,8 @@ useEffect(() => {
           )}
         </div>
       </section>
-      {Cssdata?.map((data, index) => {
+  {Cssdata && Cssdata.length > 0 ? (
+        Cssdata?.map((data, index) => {
         return (
           <div className='mt-[3rem] mb-[3rem]' key={index}>
             <Link
@@ -129,7 +130,8 @@ useEffect(() => {
             </Link>
           </div>
         );
-      })}
+      })
+  ) : ("No Events Available to Display") }
     </>
   );
 };

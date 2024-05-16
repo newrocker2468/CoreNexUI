@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Btn from "@/components/Btn";
 import {
@@ -84,25 +84,30 @@ export function NavBarShortScreen() {
         </SheetHeader>
         <div className='flex justify-around items-center mt-[2rem] ml-[2rem]'>
           {user.isLoggedIn ? (
-            <User
-              name={user.userName || "User"}
-              description={
-                user.Permissions.includes("admin") ? "Admin" : "CoreNex User"
-              }
-              avatarProps={{
-                src: `${user.avatarProps}`,
-                size: "lg",
-              }}
-              onClick={() => {navigate("/profile")}}
-              style={{
-                cursor: "pointer",
-              
-              }}
-              
-            />
+            <div className='flex  justify-center items-center gap-[2rem]'>
+              <User
+                name={user.userName || "User"}
+                description={
+                  user.Permissions.includes("admin") ? "Admin" : "CoreNex User"
+                }
+                avatarProps={{
+                  src: `${user.avatarProps}`,
+                  size: "lg",
+                }}
+                onClick={() => {
+                  navigate("/profile");
+                }}
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+              <ModeToggle />
+            </div>
           ) : (
-            <div className="flex  justify-center items-center gap-[1rem]">
-              <LoginWithEmail />
+            <div className='flex  justify-center items-center gap-[1rem]'>
+              <Link to='/login'>
+                <LoginWithEmail />
+              </Link>
               <ModeToggle />
             </div>
           )}

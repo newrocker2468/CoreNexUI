@@ -43,6 +43,7 @@ import NotesUpload from "./Pages/NotesUpload";
 import NotesUploadComp from "./components/NotesUploadComp";
 import UserGuide from "./Pages/UserGuide";
 import Loader from "./components/Loader";
+import NotFoundPage from "./Pages/NotFoundPage";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -111,6 +112,7 @@ const checkPermissions = (
             <RootLayout />
             <NavTest />
             <Routes>
+              <Route path='*' element={<NotFoundPage />} />
               <Route path='/notes/upload/*' element={<NotesUploadComp />} />
               <Route path='/loader' element={<Loader />} />
               <Route path='/' element={<Home />} />

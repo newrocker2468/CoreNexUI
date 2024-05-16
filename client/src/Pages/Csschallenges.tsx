@@ -101,7 +101,7 @@ useEffect(() => {
         </div>
       </section>
       <div className="flex flex-col justify-center items-center ">
-        {Cssdata?.map((data, index) => {
+      {Cssdata && Cssdata.length > 0 ? (Cssdata?.map((data, index) => {
           return (
             <div className='md:mt-[1rem] mt-[5rem]' key={index}>
               <Link
@@ -124,7 +124,7 @@ useEffect(() => {
               </Link>
             </div>
           );
-        })}
+        })) : ("No Challenges Available To Display")}
       </div>
     </>
   );
