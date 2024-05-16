@@ -31,7 +31,7 @@ interface Challenge1 {
 const CssChallengeDescription = () => {
   const params = useParams();
   const[sortedSubmissions, setSortedSubmissions] = useState([]);
-  const [votesno] = useState(0);
+  // const [votesno] = useState(0);
   const [Cssdata, setCssdata] = useState<Challenge1 | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line
