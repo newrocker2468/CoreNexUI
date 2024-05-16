@@ -109,7 +109,6 @@ export default function NavTest() {
             withCredentials: true,
           }
         );
-        console.log(response.data);
         const user = await response.data.user;
         if (user) {
           const platform = user.lastLoggedInWith;
@@ -167,8 +166,7 @@ export default function NavTest() {
                 } else if (profile.image.includes("sz=50")) {
                   highres_img = profile.image.replace("sz=50", "sz=240");
                 }
-            
-                console.log(user);
+              
                 setUser((prevState) => ({
                   ...prevState,
                   userName: profile.displayName,

@@ -93,7 +93,7 @@ useEffect(()=>{
   },
   )
   .then((res)=>{
-    console.log(res.data.user);
+
   // setapprovedposts(res.data);
   setuserdata(res.data.user);
   // setinreviewposts(res.data.user.cssElementsInReview);
@@ -104,10 +104,10 @@ catch(err){
   }
 },[])
 
-useEffect(() => {
+// useEffect(() => {
 
-  console.log(userdata);
-}, [userdata]);
+//   console.log(userdata);
+// }, [userdata]);
   const emailname = printUntilAt(user.email);
   // console.log(user);
   

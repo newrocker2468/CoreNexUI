@@ -45,7 +45,7 @@ const CssChallengeDescription = () => {
         withCredentials: true,
       }
     );
-    console.log(response.data.user);
+
     setUser( response.data.user);
     setIsLoading(false); // Add this line
   };
@@ -74,16 +74,14 @@ const CssChallengeDescription = () => {
         setCssdata(res.data.challenges);
         setIsLoading(false);
         setSortedSubmissions(res.data.sortedSubmissions);
-        console.log("dddddddddddddddddddddddddddddddddddd");
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
-useEffect(() => {
-  console.log(votesno);
-}, [votesno]);
+// useEffect(() => {
+//   console.log(votesno);
+// }, [votesno]);
   if (isLoading) {
     return (
       <div className='flex justify-center items-center'>

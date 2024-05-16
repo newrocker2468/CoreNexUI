@@ -173,7 +173,7 @@ const handleClick = useCallback(
             zIndex: 1,
             position: "relative",
             cursor: "pointer",
-            backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+            backgroundColor: `${!isSelected ? "#e8e8e8" : "#212121"}`,
             width: "auto",
             minWidth: "100%",
             maxWidth: "100%",

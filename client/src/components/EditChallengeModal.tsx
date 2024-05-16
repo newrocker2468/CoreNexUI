@@ -60,7 +60,7 @@ const EditChallengeModal: FC<EditProps> = ({
     ? new Date(Cssdata.date.to)
     : addDays(new Date(), 7);
   // const [id] = useState(`${Cssdata?.id}`);
-const [setUser]=useState<any>(null)
+const [,setUser]=useState<any>(null)
   const [files, setFiles] = useState<File[]>([]);
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: storedStartDate,
@@ -115,28 +115,21 @@ const CreateChallenge = async ( displayImage: string) => {
         withCredentials: true,
       }
     );
-    if(response.data.message){
-      toast(response.data.message, {
-        position: "top-center",
-      });
-    
-    }
+
 
 
     if (response.data.message) {
       toast(response.data.message, {
+        duration: 2500,
         position: "top-center",
+        action: {
+          label: "X",
+          onClick: () => console.log("Action"),
+        },
       });
     }
 
-    toast.success("Css Challenge Updated Successfully !", {
-      duration: 2500,
-      position: "top-center",
-      action: {
-        label: "X",
-        onClick: () => console.log("Action"),
-      },
-    });
+  
     navigate(-1)
     // setCssdata(response.data);
   } catch (error) {
@@ -145,14 +138,14 @@ const CreateChallenge = async ( displayImage: string) => {
   }
 };
 const fetchuserdata = async () => {
-  console.log("fetchuserdata");
+  // console.log("fetchuserdata");
   axios.get(`${import.meta.env.VITE_BASE_URL}/validate-token`, {
     headers: {
       "Content-Type": "application/json",
     },
     withCredentials: true,
   }).then((response) => {
-    console.log(response.data);
+    // console.log(response.data);
         if(response.data.user){
          setUser(response.data.user)
         }

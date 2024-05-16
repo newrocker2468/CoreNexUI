@@ -9,9 +9,9 @@ import SideBar from "./SideBar";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import UserContext from "@/components/UserContext";
-import { useTheme } from "./theme-provider";
+
 const ViewChallengeCode = () => {
-  const { theme } = useTheme();
+ 
   const [isSidebarVisible, setIsSidebarVisible] = useState(
     window.innerWidth > 800
   );
@@ -21,9 +21,7 @@ const ViewChallengeCode = () => {
   const { id } = useParams();
   const [html, setHtml] = useState("<!--Code Here -->");
   const [css, setCss] = useState("");
-  const [isSelected, setIsSelected] = useState(
-    theme === "light" ? false : true
-  );
+  const [isSelected, setIsSelected] = useState(false);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BASE_URL}/csschallenge/editor/${id}`)
@@ -693,7 +691,7 @@ const ViewChallengeCode = () => {
                   onValueChange={setIsSelected}
                   className='z-10'
                 >
-                  {isSelected ? (
+                  {!isSelected ? (
                     <span className='text-black font-bold'>#e8e8e8</span>
                   ) : (
                     <span className='font-bold text-white'>#212121</span>
@@ -707,7 +705,7 @@ const ViewChallengeCode = () => {
                   borderRadius: "1rem",
                   zIndex: 1,
                   position: "relative",
-                  backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+                  backgroundColor: `${!isSelected ? "#e8e8e8" : "#212121"}`,
                   width: "auto",
                   minWidth: "100%",
                   maxWidth: "100%",

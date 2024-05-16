@@ -17,9 +17,7 @@ const fetchEventData = async () => {
  })
    .then((response) => response.json())
    .then((data) => {
-     console.log(data);
      EventData.push(...data);
-     console.log(EventData);
    })
    .catch((error) => console.error("Error:", error));
 };

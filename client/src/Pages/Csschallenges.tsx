@@ -21,7 +21,6 @@ const [showToast, setShowToast] = useState(false);
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const showToast_Delete = urlParams.get("Delete");
-  console.log(showToast);
   if (showToast_Delete) {
     toast.success("Css Challenge Deleted Successfully !", {
       duration: 2500,
@@ -78,7 +77,6 @@ useEffect(() => {
           withCredentials: true,
         })
         .then((response) => {
-          console.log(response.data.user);
           setUser(response.data.user);
         });
     } catch (error) {

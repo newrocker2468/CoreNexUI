@@ -20,7 +20,6 @@ const fetchCsschallengesdata = async () => {
     .then((response) => response.json())
     .then((data) => {
       Csschallengesdata.push(...data);
-      console.log(Csschallengesdata);
     })
     .catch((error) => console.error("Error:", error));
 };

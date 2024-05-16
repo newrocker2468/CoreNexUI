@@ -189,10 +189,7 @@ useEffect(() => {
                       justifyContent: "center",
                     }}
                   >
-                    {files &&
-                    activeIndex >= 0 &&
-                    activeIndex < files.length &&
-                    files[activeIndex] ? (
+                    {files && files[activeIndex] ? (
                       files[activeIndex].mimetype === "application/pdf" ? (
                         <iframe
                           src={files[activeIndex].path}

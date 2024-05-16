@@ -8,7 +8,7 @@ export default function Cardcomp() {
   return (
     <div className='gap-2 grid grid-cols-12 grid-rows-2 px-8'>
       <Card isFooterBlurred className='col-span-12 sm:col-span-4 h-[300px]'>
-        <CardHeader className='absolute z-10 top-1 flex-col !items-start'>
+        <CardHeader className='absolute z-10 flex-col !items-start bg-grey bg-opacity-50'>
           <p className='text-tiny uppercase font-bold text-white'>
             Css Elements
           </p>
@@ -40,7 +40,7 @@ export default function Cardcomp() {
       </Card>
 
       <Card isFooterBlurred className='col-span-12 sm:col-span-4 h-[300px]'>
-        <CardHeader className='absolute z-10 top-1 flex-col !items-start'>
+        <CardHeader className='absolute z-10 flex-col !items-start bg-grey bg-opacity-50'>
           <p className='text-tiny /60 uppercase font-bold text-white'>
             Css Challenges
           </p>
@@ -77,13 +77,12 @@ export default function Cardcomp() {
       </Card>
 
       <Card isFooterBlurred className='col-span-12 sm:col-span-4 h-[300px]'>
-        <CardHeader className='absolute z-10 top-1 flex-col !items-start'>
+        <CardHeader className='absolute z-10 bg-grey bg-opacity-50 flex-col !items-start'>
           <p className='text-tiny /60 uppercase font-bold text-white'>
             User Guide
           </p>
           <h4 className=' font-medium text-large text-white'>
-            Read Guide and Make Css Elements Accordingly to Improve your Chances
-            Of Approval
+          Refer Guide For Creating Elements
           </h4>
         </CardHeader>
         <Image
@@ -116,9 +115,9 @@ export default function Cardcomp() {
         isFooterBlurred
         className='w-full h-[300px] col-span-12 sm:col-span-5'
       >
-        <CardHeader className='absolute z-10 top-1 flex-col items-start'>
-          <p className='text-tiny /60 uppercase font-bold text-black'>New</p>
-          <h4 className='font-medium text-2xl text-black'>Upload Notes</h4>
+        <CardHeader className='absolute z-10 bg-grey bg-opacity-50 flex-col items-start'>
+          <p className='text-tiny /60 uppercase font-bold text-white'>New</p>
+          <h4 className='font-medium text-2xl text-white'>Upload Notes</h4>
         </CardHeader>
 
         <Image
@@ -151,7 +150,7 @@ export default function Cardcomp() {
         isFooterBlurred
         className='w-full h-[300px] col-span-12 sm:col-span-7'
       >
-        <CardHeader className='absolute z-10 top-1 flex-col items-start'>
+        <CardHeader className='absolute z-10 bg-grey bg-opacity-50 flex-col items-start'>
           <p className='text-tiny /60 uppercase font-bold  text-white'>
             {" "}
             EVENT MANAGEMENT
