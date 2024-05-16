@@ -4,6 +4,9 @@ const sanitizeHtml = require("sanitize-html");
 function SanitizeHtmlCss(req, res, next) {
 
   const htmlSanitizeOptions = {
+        parser: {
+      lowerCaseAttributeNames: false
+    },
     allowedTags: [
       "button",
       "input",
@@ -18,6 +21,7 @@ function SanitizeHtmlCss(req, res, next) {
       "legend",
       "select",
       "option",
+      "rect",
       "textarea",
       "progress",
       "datalist",
