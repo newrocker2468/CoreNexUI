@@ -79,7 +79,6 @@ htmlcssPairs.isSelected
         display:flex;
         align-items: center;
         justify-content: center;
-        margin: auto;
       }
       .get-code {
       display: none;
