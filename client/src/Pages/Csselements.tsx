@@ -21,6 +21,7 @@ interface MyObject {
       image: string;
     };
   };
+
   isSelected: boolean;
 }
 

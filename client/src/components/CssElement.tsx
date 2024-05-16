@@ -41,7 +41,7 @@ const [height,setheight]=useState(120)
 
     const newWidth = contentWidth * 1.1;
     const newHeight = contentHeight * 1.1;
-setheight(newHeight);
+setheight(div.scrollHeight);
     div.style.width = `${newWidth}px`;
     div.style.height = `${newHeight}px`;
 
@@ -66,39 +66,25 @@ setheight(newHeight);
       * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
-      body {
-        height: 100vh;
-        margin: 0;
-        background-color: #e8e8e8;
-        margin: auto;
-      }
+   
       .main {
         all:initial;
         display:flex;
         align-items: center;
         justify-content: center;
-        max-height:${height}px;
-        overflow:hidden;
+
       }
-      .get-code {
-      display: none;
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      color: white;
-      text-decoration: none;
-      width: 100px;
-      background-color: black;
-      text-align: center;
-    }
+      
+
    
     </style>
-    <div class='main'>
-      ${htmlcssPairs.html}
+
+
+<div class="main">
+      ${htmlcssPairs.html} 
+</div>
     </div>
     
   `;
@@ -113,6 +99,7 @@ setheight(newHeight);
           navigate(`/editor/${htmlcssPairs.id}`);
         
       }}})
+      
     shadowRoot.addEventListener("click", (event) => {
       event.stopPropagation();
     });
@@ -121,28 +108,30 @@ setheight(newHeight);
 
   return (
     <>
-      <div
-        ref={divRef}
-        className='container'
-        style={{
-          borderRadius: "1rem",
-          zIndex: 1,
-          position: "relative",
-          cursor: "pointer",
-          backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
-          width: "auto",
-          minWidth: "100%",
-          maxWidth: "100%",
-          height: "auto",
-          minHeight: "20rem",
-          maxHeight: "100%",
-          display: "flex",
-          alignItems: "stretch",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}
-      />
-      <h1></h1>
+      <>
+    
+          <div
+            ref={divRef}
+            className='container'
+  
+            style={{
+              borderRadius: "1rem",
+              zIndex: 1,
+              position: "relative",
+              cursor: "pointer",
+              backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+              width: "auto",
+              minWidth: "100%",
+              maxWidth: "100%",
+              minHeight: "20rem",
+              maxHeight: "100%",
+              display: "flex",
+              alignItems: "stretch",
+              justifyContent: "center",
+              overflow: "visible", // Changed to visible
+            }}
+          />
+      </>
     </>
   );
 };

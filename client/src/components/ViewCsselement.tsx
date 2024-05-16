@@ -42,7 +42,7 @@ const ViewCsselement = () => {
             // toast.error("Error 404 ! Element Not Found");
             // navigate("/Csselements");
           });
-    },[])
+    },[id])
 
 function handleEditorDidMount(editor: any, monaco: any) {
   monaco.editor.defineTheme("myTheme", {
@@ -601,7 +601,7 @@ const updateelement = () => {
       
       }
         body {
-              all: initial;
+     
           display:flex;
           align-items: center;
           justify-content: center;
@@ -609,14 +609,14 @@ const updateelement = () => {
         margin: 0;
         background-color: #e8e8e8;
       }
-.container{
-           all: initial;
+.main{
+          all:initial;
            display:flex;
           align-items: center;
           justify-content: center;
 }
     </style>
-    <div class='container'>
+    <div class='main'>
     ${html}
     
     </div>

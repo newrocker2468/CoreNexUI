@@ -623,7 +623,7 @@ const email = user.email
         box-sizing: border-box;
       }
         body {
-              all: initial;
+         
           display:flex;
           align-items: center;
           justify-content: center;
@@ -631,14 +631,14 @@ const email = user.email
         margin: 0;
         background-color: #e8e8e8;
       }
-.container{
+.main{
            all: initial;
            display:flex;
           align-items: center;
           justify-content: center;
 }
     </style>
-    <div class='container'>
+    <div class='main'>
     ${html}
     
     </div>
