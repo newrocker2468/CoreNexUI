@@ -8,6 +8,7 @@ function SanitizeHtmlCss(req, res, next) {
       lowerCaseAttributeNames: false
     },
     allowedTags: [
+      "p",
       "button",
       "a",
       "input",
@@ -50,7 +51,7 @@ function SanitizeHtmlCss(req, res, next) {
       path: ['d', 'fill'],
       rect: ['x', 'y', 'width', 'height', 'fill'],
       a: ["href", "name", "target", "rel"],
-      
+      p: ["style"],
       button: [
         "name",
         "type",
