@@ -411,13 +411,14 @@ passport.use(
         console.log(profile);
         // console.log(profile._json);
         let user = await userdb.findOne({
-          email: profile._json.email || profile.emails[0].value,
+          email:
+            profile.emails[0].value || profile._json.email,
         });
         if (!user) {
           user = new userdb({
             github: {
               Id: profile.id,
-              displayName: profile._json.login || profile.displayName,
+              displayName: profile.displayName || profile._json.login,
               image: profile.photos[0].value,
               bio: profile._json.bio,
             },
@@ -427,7 +428,7 @@ passport.use(
               image: "",
               bio: "",
             },
-            email: profile._json.email || profile.emails[0].value,
+            email:  profile.emails[0].value || profile._json.email ,
             password: uuidv4(),
             lastLoggedInWith: "github",
             Permissions: ["newuser"],
@@ -438,7 +439,7 @@ passport.use(
           console.log("User already exists");
           user = await userdb.findOneAndUpdate(
             // Assign the result to user
-            { email: profile._json.email }, // Use the correct field for email
+            { email: profile.emails[0].value }, // Use the correct field for email
             {
               $set: {
                 github: {
@@ -448,7 +449,7 @@ passport.use(
                   bio: profile._json.bio,
                 },
                 lastLoggedInWith: "github",
-                email: profile._json.email || profile.emails[0].value,
+                email: profile.emails[0].value || profile._json.email  ,
               },
             },
 
