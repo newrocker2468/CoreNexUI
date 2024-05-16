@@ -45,9 +45,11 @@ function SanitizeHtmlCss(req, res, next) {
       "meter",
       "time",
       "mark",
+      "mask",
     ],
     allowedAttributes: {
       "*": ["class", "id", "name", "style"],
+      mask:["fill"],
       path: ["d", "fill", "clip-rule"],
       rect: ["x", "y", "width", "height", "fill"],
       a: ["href", "name", "target", "rel"],
