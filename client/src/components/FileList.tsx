@@ -113,10 +113,11 @@ useEffect(() => {
             borderRadius: "5px",
             padding: "10px",
             textWrap: "pretty",
-            backgroundColor: index === activeIndex ? "grey" : "",
+            backgroundColor: index === activeIndex ? "grey" : "black",
             cursor: "pointer",
           }}
-          onMouseOver={() => !isModalOpen && setActiveIndex(index)} // Only change activeIndex when modal is not open
+          onMouseOver={() => !isModalOpen && setActiveIndex(index)}
+          onMouseLeave={() => !isModalOpen && setActiveIndex(null)} 
           onClick={() => handleClick(index)}
         >
           <img
