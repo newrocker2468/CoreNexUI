@@ -9,6 +9,7 @@ function SanitizeHtmlCss(req, res, next) {
       "input",
       "div",
       "svg",
+      "path",
       "img",
       "span",
       "label",
@@ -41,6 +42,7 @@ function SanitizeHtmlCss(req, res, next) {
     ],
     allowedAttributes: {
       "*": ["class", "id", "name", "style"],
+      path: ['d', 'fill'],
       button: [
         "name",
         "type",
