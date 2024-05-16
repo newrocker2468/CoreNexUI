@@ -16,7 +16,7 @@ interface CsscardProps {
   edate?: string;
 }
 
-const EventCard: FC<CsscardProps> = ({ title, description, img,sdate,edate }) => {
+const EventCard: FC<CsscardProps> = ({ title,img,sdate,edate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { hoverProps } = useHover({
     onHoverStart: () => setIsHovered(true),
@@ -75,7 +75,7 @@ const EventCard: FC<CsscardProps> = ({ title, description, img,sdate,edate }) =>
             </h2>
             {/*            <h3 className='font-italic'>{sdesc || "Short Description"}</h3> */}
           </div>
-          <p className='text-left'>{description || "Card Description"}</p>
+          {/* <p className='text-left'>{description || "Card Description"}</p> */}
           <div className='flex justify-start'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
