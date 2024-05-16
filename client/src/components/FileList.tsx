@@ -66,10 +66,19 @@ useEffect(() => {
           toast.success("Note Deleted Successfully", {
             position: "top-center",
           });
-          // Remove the deleted note from the local state so the UI updates
-          setFiles(
-            files.filter((file: { _id: string }) => file._id !== noteId)
-          );
+
+               if (Array.isArray(response.data.Notesr)) {
+          setFiles(response.data.Notesr);
+          if (activeIndex !== null && files[activeIndex]._id === noteId) {
+            setActiveIndex(null);
+          }
+        } else {
+          console.error('Unexpected response structure:', response.data);
+          toast.error("Failed to update the notes list.", {
+            position: "top-center",
+          });
+        }
+      
         }
       })
       .catch(() => {
@@ -180,24 +189,30 @@ useEffect(() => {
                       justifyContent: "center",
                     }}
                   >
-                    {files[activeIndex] &&
-                    files[activeIndex].mimetype === "application/pdf" ? (
-                      <iframe
-                        src={files[activeIndex].path}
-                        width='100%'
-                        height='500px'
-                      />
+                    {files &&
+                    activeIndex >= 0 &&
+                    activeIndex < files.length &&
+                    files[activeIndex] ? (
+                      files[activeIndex].mimetype === "application/pdf" ? (
+                        <iframe
+                          src={files[activeIndex].path}
+                          width='100%'
+                          height='500px'
+                        />
+                      ) : (
+                        <Image
+                          src={files[activeIndex].path}
+                          alt=''
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                            margin: "auto",
+                          }}
+                        />
+                      )
                     ) : (
-                      <Image
-                        src={files[activeIndex].path}
-                        alt=''
-                        style={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
-                          objectFit: "contain", // Ensure the image scales down to fit within the div
-                          margin: "auto", // Add this line
-                        }}
-                      />
+                      <p>No file selected or file does not exist.</p>
                     )}
                   </div>
                   <div
