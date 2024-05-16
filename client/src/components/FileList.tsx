@@ -113,7 +113,7 @@ useEffect(() => {
             borderRadius: "5px",
             padding: "10px",
             textWrap: "pretty",
-            backgroundColor: index === activeIndex ? "grey" : "black",
+            backgroundColor: index === activeIndex ? "grey" : "transparent",
             cursor: "pointer",
           }}
           onMouseOver={() => !isModalOpen && setActiveIndex(index)}
