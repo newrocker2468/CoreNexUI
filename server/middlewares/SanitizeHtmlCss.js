@@ -4,8 +4,8 @@ const sanitizeHtml = require("sanitize-html");
 function SanitizeHtmlCss(req, res, next) {
 
   const htmlSanitizeOptions = {
-        parser: {
-      lowerCaseAttributeNames: false
+    parser: {
+      lowerCaseAttributeNames: false,
     },
     allowedTags: [
       "p",
@@ -48,8 +48,8 @@ function SanitizeHtmlCss(req, res, next) {
     ],
     allowedAttributes: {
       "*": ["class", "id", "name", "style"],
-      path: ['d', 'fill'],
-      rect: ['x', 'y', 'width', 'height', 'fill'],
+      path: ["d", "fill", "clip-rule"],
+      rect: ["x", "y", "width", "height", "fill"],
       a: ["href", "name", "target", "rel"],
       p: ["style"],
       button: [

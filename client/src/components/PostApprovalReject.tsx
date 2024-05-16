@@ -19,6 +19,7 @@ interface MyObject {
     github: {
       image: string;
     };
+    lastLoggedInWith:string;
   };
   isSelected: boolean;
 }
@@ -165,12 +166,12 @@ const response = (error as any).response;
                           pair.user ? pair.user.email : "User Deleted"
                         }`}
                         avatarProps={{
-                          src: `${
-                            pair.user
-                              ? pair.user.github?.image ||
-                                pair.user.google?.image
-                              : ""
-                          }`,
+                          src:
+                            pair.user.lastLoggedInWith === "github"
+                              ? pair.user.github.image
+                              : pair.user.lastLoggedInWith === "google"
+                              ? pair.user.google.image
+                              : `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`,
                         }}
                       />
                     </div>

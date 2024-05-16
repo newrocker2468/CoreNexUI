@@ -20,6 +20,7 @@ interface MyObject {
     github: {
       image: string;
     };
+    lastLoggedInWith:string;
   };
 
   isSelected: boolean;
@@ -77,16 +78,15 @@ export default function Csselements() {
       )}
       <div className='flex-grow'>
         <div className='grid place-items-center'>
+          <Button
+            href={`/editor/create/${id}`}
+            as={nLink}
+            color='primary'
+            variant='solid'
+          >
+            Create CssElement
+          </Button>
 
-            <Button
-              href={`/editor/create/${id}`}
-              as={nLink}
-              color='primary'
-              variant='solid'
-            >
-              Create CssElement
-            </Button>
-        
           <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
             {htmlCssPairs.map((pair) => (
               <div className='m-3' key={uuidv4()}>
@@ -96,11 +96,12 @@ export default function Csselements() {
                     <User
                       name={`By ${pair.user.email}`}
                       avatarProps={{
-                        src: `${
-                          pair.user.github.image ||
-                          pair.user.google.image ||
-                          `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`
-                        }`,
+                        src:
+                          pair.user.lastLoggedInWith === "github"
+                            ? pair.user.github.image
+                            : pair.user.lastLoggedInWith === "google"
+                            ? pair.user.google.image
+                            : `https://avatars.dicebear.com/api/avataaars/${pair.user.email}.svg`,
                       }}
                     />
                   </div>
