@@ -556,7 +556,7 @@ const ViewChallengeCode = () => {
       )
       .then(() => {
         // console.log(response);
-        navigate(-2);
+        navigate(-1);
         toast.success("Element Deleted Successfully", {
           position: "top-center",
         });
@@ -571,7 +571,7 @@ const ViewChallengeCode = () => {
         { withCredentials: true }
       )
       .then((response) => {
-        navigate(-2);
+        navigate(-1);
         toast.info(response.data.message, {
           position: "top-center",
         });
