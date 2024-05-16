@@ -157,7 +157,7 @@ const response = (error as any).response;
                 Create
               </Link> */}
 
-            <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
+            <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 xl:grid-cols-3  2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
               {ElementsforApproval && ElementsforApproval.length > 0 ? (
                 ElementsforApproval.map((pair) => (
                   <div className='m-3' key={uuidv4()}>
