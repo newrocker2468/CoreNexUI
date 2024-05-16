@@ -74,7 +74,8 @@ setheight(div.scrollHeight);
         display:flex;
         align-items: center;
         justify-content: center;
-
+ maxHeight: "100%";
+ overflow:"hidden";
       }
       
 
@@ -109,28 +110,26 @@ setheight(div.scrollHeight);
   return (
     <>
       <>
-    
-          <div
-            ref={divRef}
-            className='container'
-  
-            style={{
-              borderRadius: "1rem",
-              zIndex: 1,
-              position: "relative",
-              cursor: "pointer",
-              backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
-              width: "auto",
-              minWidth: "100%",
-              maxWidth: "100%",
-              minHeight: "20rem",
-              maxHeight: "100%",
-              display: "flex",
-              alignItems: "stretch",
-              justifyContent: "center",
-              overflow: "visible", // Changed to visible
-            }}
-          />
+        <div
+          ref={divRef}
+          className='container'
+          style={{
+            borderRadius: "1rem",
+            zIndex: 1,
+            position: "relative",
+            cursor: "pointer",
+            backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
+            width: "auto",
+            minWidth: "100%",
+            maxWidth: "100%",
+            minHeight: "20rem",
+            maxHeight: "20rem",
+            display: "flex",
+            alignItems: "stretch",
+            justifyContent: "center",
+            overflow: "hidden",
+          }}
+        />
       </>
     </>
   );
