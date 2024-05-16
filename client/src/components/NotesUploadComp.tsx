@@ -11,6 +11,7 @@ import FileList from "./FileList";
 import { toast } from "sonner";
 import UserContext from "./UserContext";
 import Loader from "./Loader";
+
 interface MyFile {
   _id: string;
   path: string;
@@ -42,7 +43,7 @@ export default function NotesUploadComp() {
   const [folderName] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<MyFile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [btnisLoading, setbtnIsLoading] = useState(false);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setSelectedFiles(e.target.files);
@@ -50,6 +51,7 @@ export default function NotesUploadComp() {
   }; const handleUpload = async () => {
     if(user.isLoggedIn===true){
    if (selectedFiles) {
+ setbtnIsLoading(true);
      const storage = getStorage();
      const promises = Array.from(selectedFiles).map((file) => {
        const storageRef = ref(storage, `${folderName}/${file.name}`);
@@ -86,6 +88,7 @@ export default function NotesUploadComp() {
            return;
          }
          setUploadedFiles([...uploadedFiles, ...response.data]);
+         setbtnIsLoading(false);
        });
    }
     }
@@ -97,7 +100,6 @@ export default function NotesUploadComp() {
  
   };
  useEffect(() => {
-   // Fetch the list of uploaded files from your backend
    axios
      .get(`${import.meta.env.VITE_BASE_URL}/files`, {
        withCredentials: true,
@@ -105,14 +107,17 @@ export default function NotesUploadComp() {
      .then((response) => {
        console.log(response.data);
        setUploadedFiles(response.data);
-       setIsLoading(false); // Set loading to false after the data has loaded
+        setIsLoading(false);
+        
      });
  }, []);
 
   useEffect(() => {
     console.log(uploadedFiles);
   }, [uploadedFiles]);
-
+if(isLoading){
+  return <Loader/>
+}
   return (
     <>
       <div className='flex justify-center items-center flex-col  gap-[1rem]'>
@@ -124,16 +129,20 @@ export default function NotesUploadComp() {
           onChange={handleFileChange}
           multiple
         />
-        <Btn Text='Upload' color='primary' onClick={handleUpload}></Btn>
+        <Btn
+          Text='Upload'
+          color='primary'
+          onClick={handleUpload}
+          isloading={btnisLoading}
+        ></Btn>
 
         <div className=''>
           <h2>Uploaded Files</h2>
-          {isLoading ? (
-            <p className='flex justify-center items-center'>
-              <Loader />
-            </p> // Show a loading message while the data is loading
-          ) : (
+
+          {uploadedFiles.length > 0 ? (
             <FileList files={uploadedFiles} setFiles={setUploadedFiles} />
+          ) : (
+            "No files uploaded yet"
           )}
         </div>
       </div>
