@@ -1270,6 +1270,7 @@ app.post("/editor/:id/update", async (req, res) => {
                   css: req.body.css,
                   elementtype: req.body.Category,
                   approvalStatus: approvalStatus,
+                  isSelected:req.body.isSelected
                 },
               },
               { new: true }

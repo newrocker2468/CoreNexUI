@@ -556,7 +556,7 @@ const updateelement = () => {
   axios
     .post(
       `${import.meta.env.VITE_BASE_URL}/editor/${id}/update`,
-      { html, css, sameUser },
+      { html, css, sameUser,isSelected },
       { withCredentials: true }
     )
     .then((response) => {
