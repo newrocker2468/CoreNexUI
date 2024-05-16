@@ -5,6 +5,11 @@ declare module "lucide-react" {
   export const Sun: FunctionComponent;
 }
 
+declare global {
+  interface JQuery {
+    velocity: any; // Adjust the type as needed
+  }
+}
 
 declare global {
   interface Window {
