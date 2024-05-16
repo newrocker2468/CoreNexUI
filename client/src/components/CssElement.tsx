@@ -16,7 +16,7 @@ const CssElement: FC<CssElementProps> = ({ htmlcssPairs }) => {
    const [isSelected] = useState(
 htmlcssPairs.isSelected
    );
-
+const [height,setheight]=useState(120)
   const divRef = useRef<HTMLDivElement>(null);
   useParams<{ id: string; }>();
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ htmlcssPairs.isSelected
 
     const newWidth = contentWidth * 1.1;
     const newHeight = contentHeight * 1.1;
-
+setheight(newHeight);
     div.style.width = `${newWidth}px`;
     div.style.height = `${newHeight}px`;
 
@@ -79,6 +79,8 @@ htmlcssPairs.isSelected
         display:flex;
         align-items: center;
         justify-content: center;
+        max-height:${height}px;
+        overflow:hidden;
       }
       .get-code {
       display: none;
