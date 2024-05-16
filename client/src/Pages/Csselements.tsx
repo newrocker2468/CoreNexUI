@@ -87,7 +87,7 @@ export default function Csselements() {
             Create CssElement
           </Button>
 
-          <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 lg:grid-cols-3  2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
+          <div className='grid grid-cols-1 gap-x-3 gap-y-5 md:grid-cols-2 xl:grid-cols-3  2xl:min-w-[294px] items-stretch content-stretch w-full mb-48'>
             {htmlCssPairs.map((pair) => (
               <div className='m-3' key={uuidv4()}>
                 <CssElement htmlcssPairs={pair} key={uuidv4()} />
