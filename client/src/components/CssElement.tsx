@@ -36,13 +36,13 @@ const [,setheight]=useState(120)
     const div = divRef.current;
     if (!div) return;
 
-    const contentWidth = div.scrollWidth;
+    // const contentWidth = div.scrollWidth;
     const contentHeight = div.scrollHeight;
 
-    const newWidth = contentWidth * 1.1;
+    // const newWidth = contentWidth * 1.1;
     const newHeight = contentHeight * 1.1;
 setheight(div.scrollHeight);
-    div.style.width = `${newWidth}px`;
+    // div.style.width = `${newWidth}px`;
     div.style.height = `${newHeight}px`;
 
     div.addEventListener("click", handleClick);
@@ -119,7 +119,8 @@ setheight(div.scrollHeight);
             position: "relative",
             cursor: "pointer",
             backgroundColor: `${isSelected ? "#e8e8e8" : "#212121"}`,
-            width: "auto",
+          // minWidth:"max-content",
+            // width: "max-content",
             minWidth: "100%",
             maxWidth: "100%",
             minHeight: "20rem",
