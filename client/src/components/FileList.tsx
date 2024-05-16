@@ -228,6 +228,7 @@ useEffect(() => {
 
                 <ModalFooter>
                   {(user?.Permissions?.includes("deletenotes") ||
+                    user?.Permissions?.includes("admin") ||
                     user?._id === files[activeIndex].user) && (
                     <Button
                       color='danger'

@@ -74,8 +74,9 @@ setheight(div.scrollHeight);
         display:flex;
         align-items: center;
         justify-content: center;
- maxHeight: "100%";
+ 
  overflow:"hidden";
+ width: "max-content";
       }
       
 

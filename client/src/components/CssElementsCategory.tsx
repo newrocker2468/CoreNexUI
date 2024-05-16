@@ -29,6 +29,7 @@ const [data, setData] = useState([]);
     fetch(`${import.meta.env.VITE_BASE_URL}/Csselements/${category}`)
       .then((response) => response.json())
       .then((fetchedData) => {
+        console.log(fetchedData);
         if (fetchedData.error) {
           toast("error", {
             position: "top-center",
@@ -75,6 +76,21 @@ const [data, setData] = useState([]);
               {data.map((element) => (
                 <div className='m-3' key={uuidv4()}>
                   <CssElement key={uuidv4()} htmlcssPairs={element} />
+                  {/* {element.user ? (
+                    <User
+                      name={`By ${element.user.email}`}
+                      avatarProps={{
+                        src:
+                          element.user.lastLoggedInWith === "github"
+                            ? element.user.github.image
+                            : element.user.lastLoggedInWith === "google"
+                            ? element.user.google.image
+                            : `https://avatars.dicebear.com/api/avataaars/${element.user.email}.svg`,
+                      }}
+                    />
+                  ) : (
+                    ""
+                  )} */}
                 </div>
               ))}
             </div>

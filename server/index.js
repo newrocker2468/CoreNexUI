@@ -2109,7 +2109,7 @@ app.post("/Cssinapproval/approve/:id", async (req, res) => {
       const elements = await CssElementdb.find({
         elementtype: category,
         approvalStatus: "approved",
-      });
+      }).populate("user");
       if(!elements){res.json({message:`No  elements found`,error:true})}
       res.json(elements);
     } catch (err) {
