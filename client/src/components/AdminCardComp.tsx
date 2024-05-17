@@ -143,8 +143,7 @@ export default function AdminCardcomp() {
             EVENT MANAGEMENT
           </p>
           <h4 className='/90 font-medium text-xl text-white'>
-            Manage Events and Get Notified Upload Attendance Sheets to Manage
-            Attendance
+            Manage Events
           </h4>
         </CardHeader>
         <Image
