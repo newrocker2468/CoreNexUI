@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import DataTable from "./DataTable";
+import { Button } from "@nextui-org/react";
 
 function UploadData() {
   const [file, setFile] = useState<File | null>(null);
@@ -62,7 +63,7 @@ const [, setData] = useState<any[]>([]);
           type='file'
           onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
         />
-        <button type='submit'>Upload</button>
+        <Button type='submit' color="primary">Upload</Button>
       </form>
       {/* Render data in a table */}
       {/* <Table
