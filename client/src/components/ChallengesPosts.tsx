@@ -66,11 +66,17 @@ const handleClick = useCallback(
     const target = event.target as HTMLDivElement;
     if (target === divRef.current) {
       if (window.location.pathname === `/Csschallenges/${id}`) {
-        navigate(`/editor/${htmlcssPairs.id}`);
+        if(htmlcssPairs._id){
+          navigate(`/csschallenge/editor/${htmlcssPairs._id}`);
+        }
+        else{
+          navigate(`/csschallenge/editor/${htmlcssPairs.id}`);
+        
+        }
       }
     }
   },
-  [id, navigate, htmlcssPairs.id]
+  [id, htmlcssPairs._id, htmlcssPairs.id, navigate]
 );
 
 
@@ -86,7 +92,6 @@ const handleClick = useCallback(
 
     div.style.width = `${newWidth}px`;
     div.style.height = `${newHeight}px`;
-    div.addEventListener("click", handleClick);
 
     return () => {
       div.removeEventListener("click", handleClick);
@@ -145,18 +150,7 @@ const handleClick = useCallback(
 
     div.addEventListener("click", handleClick);
 
-    // div.addEventListener("click", handleClick);
-    div.addEventListener("click", (event) => {
-      console.log("clicked");
-      if (htmlcssPairs._id) {
-        navigate(`/csschallenge/editor/${htmlcssPairs._id}`);
-      }
-      if (event.target === div) {
-        if (window.location.pathname === `/Csschallenges/${id}`) {
-          navigate(`/csschallenge/editor/${htmlcssPairs.id}`);
-        }
-      }
-    });
+
     shadowRoot.addEventListener("click", (event) => {
       event.stopPropagation();
     });
