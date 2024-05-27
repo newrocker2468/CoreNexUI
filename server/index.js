@@ -2144,12 +2144,12 @@ app.post("/assignpermissions/:email", async (req, res) => {
        if (decoded.email !== req.params.email) {
          const { email } = req.params;
          const { selected } = req.body;
-
+         
          const user = await userdb.findOne({ email: email });
          if (!user) return res.status(404).send("User not found");
 
          const updatedPermissions = [
-           ...new Set([...user.Permissions, ...selected]),
+           ...new Set([...selected]),
          ];
 
          user.Permissions = updatedPermissions;

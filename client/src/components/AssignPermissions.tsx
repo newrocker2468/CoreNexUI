@@ -70,7 +70,8 @@ export default function AssignPermissions() {
           toast.success(res.data.message, {
             position: "top-center",
             duration: 5000,
-          });
+          }); 
+          setSelectedUser(res.data.user);
         });
     } catch (err) {
       console.log(err);
