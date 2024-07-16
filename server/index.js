@@ -206,6 +206,10 @@ passport.use(
   )
 );
 
+app.get("/health", (req, res) => {
+  res.json({status: "ok", version: "1.0.0"})
+})
+
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
