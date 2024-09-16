@@ -46,8 +46,6 @@ app.use(
       `${process.env.FRONTEND_URL}`,
       "https://firebasestorage.googleapis.com",
       "https://corenexui.jaskaran.dev",
-      "https://core-nex-ui.vercel.app/",
-      "https://core-nex-ui-s2jo.vercel.app/",
       "https://corenexui.netlify.app",
       "https://master--zesty-maamoul-0216d4.netlify.app/",
     ],
