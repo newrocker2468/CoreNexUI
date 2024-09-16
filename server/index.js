@@ -44,8 +44,9 @@ app.use(
     origin: [
       "http://localhost:5173",
       `${process.env.FRONTEND_URL}`,
+      
       "https://firebasestorage.googleapis.com",
-      "https://corenexui-production.up.railway.app",
+      "https://corenexui.jaskaran.dev",
       "https://core-nex-ui.vercel.app/",
       "https://core-nex-ui-s2jo.vercel.app/",
       "https://corenexui.netlify.app",

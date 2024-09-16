@@ -45,7 +45,7 @@ const Csscard: FC<CsscardProps> = ({
         {...hoverProps}
       >
         <div
-          className={`md:ml-[3.5rem] mt-[1.5rem] mb-[1.5rem] flex overflow-hidden flex-col justify-evenly items-center md:items-start card_desc relative md:min-w-[30%] md:max-w-[40%]  w-[100%] md:w-auto `}
+          className={`md:ml-[3.5rem] mt-[1.5rem] mb-[1.5rem] flex overflow-hidden flex-col justify-evenly items-center md:items-start card_desc relative md:min-w-[30%] md:max-w-[40%] w-[100%] md:w-auto `}
         >
           <p
             className={`relative rounded-lg m-1 font-bold w-[7rem] ${
