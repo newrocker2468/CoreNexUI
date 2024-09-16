@@ -1,2 +1,2 @@
-/* /index.html 200
-/.netlify/functions/* 200
+/auth/google/callback    /index.html 200
+/auth/github/callback   /index.html 200
