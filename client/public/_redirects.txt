@@ -1,0 +1,6 @@
+# OAuth Callbacks
+/auth/google/callback    /index.html 200
+/auth/github/callback   /index.html 200
+
+# Catch-All Rule for Regular Navigation
+/*    /index.html   200
