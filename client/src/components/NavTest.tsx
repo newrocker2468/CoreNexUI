@@ -100,16 +100,24 @@ export default function NavTest() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, setUser } = useContext(UserContext);
+  const headers = {
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+    Expires: "0",
+    // Other headers if needed
+  };
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios(
           `${import.meta.env.VITE_BASE_URL}/validate-token`,
-          {
+          { headers,
             withCredentials: true,
           }
         );
+        
         const user = await response.data.user;
+        console.log(user);
         if (user) {
           const platform = user.lastLoggedInWith;
           const profile = user[platform];
@@ -141,16 +149,19 @@ export default function NavTest() {
           if (response.status === 401) {
             try {
               // Request a new token
-              await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/refresh_token`,{},
-                {withCredentials: true}
-              ).catch((err) => {
-                console.log(err);
-              })
+              await axios
+                .post(
+                  `${import.meta.env.VITE_BASE_URL}/refresh_token`,
+                  {},
+                  { headers,withCredentials: true }
+                )
+                .catch((err) => {
+                  console.log(err);
+                });
 
               // Retry the original request
               const retryRes = await axios(
-                `${import.meta.env.VITE_BASE_URL}/validate-token`
+                `${import.meta.env.VITE_BASE_URL}/validate-token`,{headers,withCredentials: true}
               ).catch((err) => {
                 console.log(err);
               });
@@ -166,7 +177,7 @@ export default function NavTest() {
                 } else if (profile.image.includes("sz=50")) {
                   highres_img = profile.image.replace("sz=50", "sz=240");
                 }
-              
+
                 setUser((prevState) => ({
                   ...prevState,
                   userName: profile.displayName,

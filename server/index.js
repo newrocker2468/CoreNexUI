@@ -515,6 +515,9 @@ app.get(
   }
 );
 
+
+
+
 app.post("/login", async (req, res) => {
   const { email, password, remember } = req.body;
 
@@ -1782,6 +1785,7 @@ app.post("/CssChallengecreate/:id/create", async (req, res) => {
 });
 
 app.get("/validate-token", verifyJWT, (req, res) => {
+  console.log("hittttttttttttttttttttt");
   if (req.cookies.token) {
     const token = req.cookies.token;
     if (!token) {
