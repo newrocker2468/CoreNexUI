@@ -138,7 +138,9 @@ function validateUser(req, res, next) {
 // app.get("*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "./client/dist/index.html"));
 // });
-
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", version: "1.0.0" });
+});
 //!SECTION Google Auth
 passport.use(
   new GoogleStrategy(
@@ -146,9 +148,10 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
+      passReqToCallback: true,
       scope: ["profile", "email"],
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, params,profile, cb) => {
       try {
         let user = await userdb.findOne({ email: profile.emails[0].value });
         if (!user) {
@@ -193,30 +196,29 @@ passport.use(
           );
 
           //  console.log(user);
-          return done(null, user);
+          return cb(null, user);
         }
 
-        return done(null, user);
+        return cb(null, user);
       } catch (err) {
-        return done(err, null);
+        return cb(err, null);
       }
     }
   )
 );
 
-app.get("/health", (req, res) => {
-  res.json({status: "ok", version: "1.0.0"})
-})
-
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
 );
 
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: `${process.env.FRONTEND_URL}/login`,
+    prompt: "select_account",
   }),
   function (req, res) {
     // Successful authentication, create JWT.
@@ -384,6 +386,7 @@ passport.use(
       authorizationURL:
         "https://github.com/login/oauth/authorize?prompt=consent",
       scope: ["user", "repo"],
+          
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
