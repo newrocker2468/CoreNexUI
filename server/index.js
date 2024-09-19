@@ -148,6 +148,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
+      callbackURL: "/auth/google/callback",
       passReqToCallback: true,
       scope: ["profile", "email"],
     },
@@ -382,7 +383,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "/auth/github/callback",
+      callbackURL: `${process.env.BACKEND_URL}/auth/github/callback`,
       authorizationURL:
         "https://github.com/login/oauth/authorize?prompt=consent",
       scope: ["user", "repo"],
