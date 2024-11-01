@@ -37,34 +37,26 @@ To get started with Corenex UI, follow these steps:
 
 2. **Navigate to the project directory:**
    ```bash
-  cd corenex-ui
-3. **Install dependencies:**
-  ```bash
-  npm install
-4.**Start Up the Servers:**
-**Client**
-```bash
-npm run dev
-**Server**
-```bash
-nodemon
+   cd corenex-ui
+ 
+3. **Install dependencies:**:
+   ```bash
+   cd corenex-ui
 
-OR
+4.**Start Up the Servers**:
+                 
+a.**Client**
 
-**Server**
-```bash
-node index.js
+    npm run dev
+b.**Server**
 
-**Usage**
-To integrate Corenex UI into your project, import the necessary components and start building your application. For detailed documentation and examples, please refer to the documentation.
+    nodemon
+.
 
-**Contributing**
-We welcome contributions from the community! Please read our contributing guidelines to get started.
+   **OR**
 
-**License**
-This project is licensed under the MIT License. See the LICENSE file for details.
+.
 
-**Acknowledgements**
-A big thank you to uiverse.io for the inspiration and to all the contributors who have helped make this project a reality.
+b.**Server**
 
-   
+    node index.js
