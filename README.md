@@ -41,7 +41,7 @@ To get started with Corenex UI, follow these steps:
  
 3. **Install dependencies:**:
    ```bash
-   cd corenex-ui
+   npm i
 
 4.**Start Up the Servers**:
                  
