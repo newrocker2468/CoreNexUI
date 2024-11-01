@@ -60,3 +60,19 @@ b.**Server**
 b.**Server**
 
     node index.js
+
+**Usage**
+
+To integrate Corenex UI into your project, import the necessary components and start building your application. For detailed documentation and examples, please refer to the documentation.
+
+**Contributing**
+
+We welcome contributions from the community! Please read our contributing guidelines to get started.
+
+**License**
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+**Acknowledgements**
+
+A big thank you to uiverse.io for the inspiration and to all the contributors who have helped make this project a reality.
