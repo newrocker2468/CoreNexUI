@@ -3,18 +3,18 @@ import { FC, useEffect, useState } from "react";
 import Code from "./Code";
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCode,faBook } from "@fortawesome/free-solid-svg-icons";
+import { faCode, faBook } from "@fortawesome/free-solid-svg-icons";
 import RandomQuoteGenerator from "@/middlewares/RandomQuoteGenerator";
 interface AppProps {}
 const AnimatedCode: FC<AppProps> = () => {
-const firstpart = `
+  const firstpart = `
 import React, { useState, useEffect } from 'react';
 
 const Motivation = () => {
   const [alive, setAlive] = useState(true); 
 `;
 
-const name = ` const [learning, setLearning] = useState(false);
+  const name = ` const [learning, setLearning] = useState(false);
 
   useEffect(() => {
     if (alive) {
@@ -22,7 +22,7 @@ const name = ` const [learning, setLearning] = useState(false);
     }
   }, [alive]);`;
 
-const property = `
+  const property = `
   return (
     <div>
       {learning ? (
@@ -33,32 +33,28 @@ const property = `
     </div>
   );`;
 
-const rest = `
+  const rest = `
 };
 
 export default Motivation;
 `;
 
-  
-  const [quote, setQuote] = useState<string>(
-    ""
-  );
-const [devMode, setDevMode] = useState(false);
+  const [quote, setQuote] = useState<string>("");
+  const [devMode, setDevMode] = useState(false);
 
-//!SECTION this is only for development purpose
-useEffect(() => {
-  if (!devMode) {
-    setDevMode(true);
-    return;
-  }
-  const fetchQuote = async () => {
-    const quote1 = await RandomQuoteGenerator();
-    setQuote(quote1[0].quote);
-  };
+  //!SECTION this is only for development purpose
+  useEffect(() => {
+    if (!devMode) {
+      setDevMode(true);
+      return;
+    }
+    const fetchQuote = async () => {
+      const quote1 = await RandomQuoteGenerator();
+      setQuote(quote1);
+    };
 
-  fetchQuote();
-}, [devMode]);
-
+    fetchQuote();
+  }, [devMode]);
 
   const firstpartLines = firstpart.split("\n").length;
   const nameLines = name.split("\n").length;
@@ -149,7 +145,6 @@ useEffect(() => {
             </Card>
           </Tab>
         </Tabs>
-
       </div>
     </>
   );
